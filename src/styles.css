@@ -262,6 +262,36 @@ a:focus-visible {
   text-transform: uppercase;
 }
 
+.section-select {
+  display: grid;
+  gap: 7px;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: #c8d9d0;
+  background: rgba(255, 255, 255, 0.025);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.section-select select {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid rgba(197, 242, 104, 0.2);
+  border-radius: 9px;
+  color: #eaf4ef;
+  background: #10231b;
+  font-size: 11px;
+  text-transform: none;
+}
+
+.section-select select:focus-visible {
+  outline: 3px solid var(--lime);
+  outline-offset: 2px;
+}
+
 .planned-feature {
   display: grid;
   grid-template-columns: auto 1fr auto;

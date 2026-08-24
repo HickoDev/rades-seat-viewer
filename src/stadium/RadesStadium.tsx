@@ -1,4 +1,5 @@
 import { radesStadiumConfig } from './config/radesStadiumConfig';
+import { StadiumBowl } from './bowl/StadiumBowl';
 import { FootballPitch } from './pitch/FootballPitch';
 import { AthleticsTrack } from './track/AthleticsTrack';
 
@@ -16,6 +17,7 @@ export function RadesStadium() {
     >
       <AthleticsTrack />
       <FootballPitch />
+      <StadiumBowl />
     </group>
   );
 }

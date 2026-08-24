@@ -50,6 +50,11 @@ export const radesStadiumConfig = {
       rowDepth: 0.82,
       rowHeight: 0.42,
       aisleWidth: 1.4,
+      walkwayWidth: 2.4,
+      vomitoryEverySections: 2,
+      vomitoryRow: 11,
+      vomitoryWidth: 3.2,
+      vomitoryHeight: 2.6,
     },
     {
       id: 'upper',
@@ -62,6 +67,11 @@ export const radesStadiumConfig = {
       rowDepth: 0.86,
       rowHeight: 0.46,
       aisleWidth: 1.5,
+      walkwayWidth: 2.8,
+      vomitoryEverySections: 2,
+      vomitoryRow: 8,
+      vomitoryWidth: 3.4,
+      vomitoryHeight: 2.8,
     },
   ],
   roof: {

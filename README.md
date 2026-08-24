@@ -2,7 +2,7 @@
 
 Radès View is an interactive procedural 3D representation of Stade Olympique Hammadi-Agrebi in Radès, Tunisia. The long-term product will let spectators explore the stadium, preview an approximate first-person seat view, and understand geometric sun exposure during a match.
 
-This repository currently contains **Milestones 1–2**: the application foundation plus a procedural regulation-size pitch, markings, goals, athletics track, lanes, and geographic/debug guides. It is not a ticket-booking application, and it does not yet contain the stadium bowl, seats, sunlight simulation, weather forecasts, or heatmap.
+This repository currently contains **Milestones 1–3**: the application foundation, pitch and athletics track, plus a procedural two-tier elliptical bowl with selectable sections, aisles, walkways, and vomitory portals. It is not a ticket-booking application, and it does not yet contain seats, sunlight simulation, weather forecasts, or a heatmap.
 
 ## Requirements
 

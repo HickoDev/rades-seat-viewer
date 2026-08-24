@@ -43,6 +43,11 @@ export type StadiumConfig = {
     rowDepth: number;
     rowHeight: number;
     aisleWidth: number;
+    walkwayWidth: number;
+    vomitoryEverySections: number;
+    vomitoryRow: number;
+    vomitoryWidth: number;
+    vomitoryHeight: number;
   }>;
   roof: {
     innerRadiusX: number;

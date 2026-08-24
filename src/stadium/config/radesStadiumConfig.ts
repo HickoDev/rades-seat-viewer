@@ -3,18 +3,20 @@ import type { StadiumConfig } from '../types/stadium.types';
 /**
  * All distances are metres and all angles are degrees.
  *
- * Milestone 1 deliberately records unverified values as calibration estimates.
- * They provide a coherent coordinate envelope for the scene but must not be
- * presented as surveyed architectural measurements.
+ * Source-backed facts and calibration estimates deliberately coexist here.
+ * Every non-trivial value is classified in `verification`; configurable
+ * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-1',
+  version: 'rades-procedural-2',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
-    latitude: 36.7478,
-    longitude: 10.2728,
-    northRotationDegrees: 0,
+    latitude: 36.74777,
+    longitude: 10.27281,
+    // Derived from the mapped pitch long axis. This is not a surveyed bearing.
+    northRotationDegrees: -75.2,
+    statedCapacity: 60_000,
   },
   pitch: {
     length: 105,
@@ -33,7 +35,7 @@ export const radesStadiumConfig = {
     mowingStripeCount: 12,
   },
   track: {
-    laneCount: 8,
+    laneCount: 10,
     laneWidth: 1.22,
     straightLength: 84.39,
     innerCurveRadius: 36.5,
@@ -44,7 +46,7 @@ export const radesStadiumConfig = {
       name: 'Lower tier',
       sectionCount: 32,
       rowCount: 28,
-      startRadiusX: 78,
+      startRadiusX: 96,
       startRadiusZ: 60,
       baseHeight: 2,
       rowDepth: 0.82,
@@ -55,14 +57,16 @@ export const radesStadiumConfig = {
       vomitoryRow: 11,
       vomitoryWidth: 3.2,
       vomitoryHeight: 2.6,
+      // Curved terraces behind both goals; angular boundaries need plans.
+      seatlessSectionIndices: [0, 1, 2, 13, 14, 15, 16, 17, 18, 29, 30, 31],
     },
     {
       id: 'upper',
       name: 'Upper tier',
       sectionCount: 32,
       rowCount: 25,
-      startRadiusX: 102,
-      startRadiusZ: 80,
+      startRadiusX: 122,
+      startRadiusZ: 86,
       baseHeight: 18.5,
       rowDepth: 0.86,
       rowHeight: 0.46,
@@ -72,20 +76,23 @@ export const radesStadiumConfig = {
       vomitoryRow: 8,
       vomitoryWidth: 3.4,
       vomitoryHeight: 2.8,
+      seatlessSectionIndices: [0, 1, 2, 13, 14, 15, 16, 17, 18, 29, 30, 31],
     },
   ],
   roof: {
-    innerRadiusX: 86,
-    innerRadiusZ: 65,
-    outerRadiusX: 128,
-    outerRadiusZ: 102,
-    innerHeight: 34,
-    outerHeight: 42,
+    innerRadiusX: 108,
+    innerRadiusZ: 78,
+    outerRadiusX: 154,
+    outerRadiusZ: 119,
+    innerHeight: 29,
+    outerHeight: 33,
     panelThickness: 0.9,
     trussRadius: 0.18,
   },
   structure: {
     frameCount: 64,
+    portalFrameHeight: 33,
+    coveredEnclosureAreaSquareMetres: 13_000,
     exteriorRadiusOffset: 8,
     columnRadius: 0.48,
     facadeHeight: 29,
@@ -110,25 +117,41 @@ export const radesStadiumConfig = {
     eyeHeight: 1.2,
     arcTableSamples: 1024,
   },
+  occupants: {
+    playerCount: 22,
+    standingPlayerHeight: 1.78,
+    seatedPersonHeight: 1.24,
+    highQualityCrowdOccupancy: 0.7,
+    lowQualityCrowdOccupancy: 0.28,
+  },
   verification: {
     values: {
-      'identity.latitude': 'estimate-requires-calibration',
-      'identity.longitude': 'estimate-requires-calibration',
-      'identity.northRotationDegrees': 'estimate-requires-calibration',
+      'identity.latitude': 'calibrated-from-open-geodata',
+      'identity.longitude': 'calibrated-from-open-geodata',
+      'identity.northRotationDegrees': 'calibrated-from-open-geodata',
+      'identity.statedCapacity': 'verified-from-contractor',
       'pitch.length': 'verified-from-project-brief',
       'pitch.width': 'verified-from-project-brief',
       'pitch.markings': 'estimate-requires-calibration',
-      track: 'estimate-requires-calibration',
+      'track.laneCount': 'corroborated-secondary-source',
+      'track.dimensions': 'estimate-requires-calibration',
       tiers: 'estimate-requires-calibration',
       roof: 'estimate-requires-calibration',
-      'structure.frameCount': 'verified-from-project-brief',
+      'structure.frameCount': 'verified-from-contractor',
+      'structure.portalFrameHeight': 'verified-from-contractor',
+      'structure.coveredEnclosureAreaSquareMetres': 'verified-from-contractor',
       'structure.dimensions': 'estimate-requires-calibration',
       seats: 'estimate-requires-calibration',
+      'seats.virageTerraces': 'confirmed-by-project-owner',
+      'seats.virageSectionBoundaries': 'estimate-requires-calibration',
+      occupants: 'estimate-requires-calibration',
     },
     notes: [
-      'Coordinates are approximate and require verification against an authoritative survey.',
-      'Scene north rotation is a neutral placeholder pending geographic calibration.',
-      'Track, bowl, and roof dimensions are configurable design estimates for later milestones.',
+      'The contractor SBF reports 60,000 seats, a 13,000 m² covered enclosure, and 64 portal frames reaching 33 m.',
+      'Coordinates and scene orientation are calibrated from OpenStreetMap geometry and still require a survey.',
+      'The ten-lane track is corroborated by secondary references; its exact construction geometry requires verification.',
+      'Bowl and roof radii are procedural calibration estimates chosen to clear the track and match the visible silhouette.',
+      'Both virages are modeled as seatless terraces; their exact section boundaries still require seating plans.',
     ],
   },
 } satisfies StadiumConfig;

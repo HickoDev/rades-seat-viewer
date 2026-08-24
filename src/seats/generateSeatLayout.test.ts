@@ -6,6 +6,26 @@ import { generateSeatLayout } from './generateSeatLayout';
 const layout = generateSeatLayout(radesStadiumConfig);
 
 describe('generateSeatLayout', () => {
+  it('does not mistake stated capacity for an exact plastic-seat count', () => {
+    expect(layout.metadata.length).toBeLessThan(
+      radesStadiumConfig.identity.statedCapacity,
+    );
+    expect(layout.metadata.length).toBeGreaterThan(25_000);
+  });
+
+  it('leaves both configurable virage terraces without seat instances', () => {
+    const seatlessIds = radesStadiumConfig.tiers.flatMap((tier) =>
+      tier.seatlessSectionIndices.map(
+        (sectionIndex) =>
+          `${tier.id}-${String(sectionIndex + 1).padStart(2, '0')}`,
+      ),
+    );
+
+    expect(
+      layout.metadata.every((seat) => !seatlessIds.includes(seat.sectionId)),
+    ).toBe(true);
+  });
+
   it('generates unique seat ids associated with their section and tier', () => {
     const ids = new Set(layout.metadata.map((seat) => seat.id));
 
@@ -21,7 +41,7 @@ describe('generateSeatLayout', () => {
 
   it('raises successive rows', () => {
     const sectionSeats = layout.metadata.filter(
-      (seat) => seat.sectionId === 'lower-01' && seat.seatNumber === 1,
+      (seat) => seat.sectionId === 'lower-05' && seat.seatNumber === 1,
     );
 
     expect(sectionSeats.length).toBeGreaterThan(2);

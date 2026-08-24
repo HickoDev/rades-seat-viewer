@@ -34,6 +34,14 @@ export function SeatSelector() {
     return null;
   }
 
+  if (seatsForSection.length === 0) {
+    return (
+      <p className="seat-selector__terrace" role="status">
+        Virage terrace · no individual plastic seats in this section.
+      </p>
+    );
+  }
+
   return (
     <div className="seat-selector" aria-label="Seat controls">
       <label>

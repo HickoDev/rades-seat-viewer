@@ -31,7 +31,7 @@ export function StructuralFrames() {
           ),
           new Vector3(
             Math.cos(angle) * roof.outerRadiusX,
-            roof.outerHeight,
+            structure.portalFrameHeight,
             Math.sin(angle) * roof.outerRadiusZ,
           ),
           structure.columnRadius * 0.52,

@@ -67,10 +67,10 @@ export function StadiumCanvas() {
 
       <div
         className="north-indicator"
-        aria-label="Scene north awaits calibration"
+        aria-label="Scene north aligned from open map geometry"
       >
         <span>N</span>
-        <small>calibrate</small>
+        <small>map aligned</small>
       </div>
     </section>
   );

@@ -2,7 +2,7 @@
 
 Radès View is an interactive procedural 3D representation of Stade Olympique Hammadi-Agrebi in Radès, Tunisia. The long-term product will let spectators explore the stadium, preview an approximate first-person seat view, and understand geometric sun exposure during a match.
 
-This repository contains **Milestones 1–9**: the interactive procedural stadium, instanced seats, guided camera modes, structural occluders, astronomical sun direction, selected-seat shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, and cached section/row sunlight heatmaps. It is not a ticket-booking application.
+This repository contains **Milestones 1–10**: the interactive procedural stadium, source-informed Radès calibration, instanced seats, static instanced spectators and players, guided camera modes, structural occluders, astronomical sun direction, selected-seat shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, and cached section/row sunlight heatmaps. It is not a ticket-booking application.
 
 ## Requirements
 
@@ -41,6 +41,7 @@ npx playwright install chromium
 - `src/app` composes application-level providers and the responsive shell.
 - `src/scene` owns React Three Fiber canvas concerns, lighting, environment, camera controls, and pixel-ratio adaptation.
 - `src/stadium` is the stable composition boundary for future procedural geometry.
+- `src/people` generates the static 22-player match scene and deterministic seated crowd with shared instanced geometry.
 - `src/stadium/config/radesStadiumConfig.ts` is the single typed source of stadium measurements.
 - `src/state` contains serializable interaction state only; Three.js objects stay in the scene layer.
 - `src/ui` contains accessible DOM controls outside the WebGL canvas.
@@ -51,11 +52,26 @@ npx playwright install chromium
 
 TanStack Query caches Open-Meteo requests, while Zod validates every response before it reaches the interface. Forecasts are only requested inside Open-Meteo's 16-day horizon; astronomical simulation remains available for long-range dates. GSAP handles reduced-motion-aware camera flights, SunCalc and Luxon handle astronomy and `Africa/Tunis` time, and `three-mesh-bvh` accelerates repeated rays against static complex occluders.
 
-Heatmaps use one representative seat per section or per row, run in a Web Worker only when event time, resolution, or the central configuration version changes, and cache results in local storage. They are deliberately labelled as representative estimates. Auto rendering quality caps device pixel ratio and selects simpler shared seat geometry on compact touch devices.
+Heatmaps use one representative seat per section or per row, run in a Web Worker only when event time, resolution, or the central configuration version changes, and cache results in local storage. They are deliberately labelled as representative estimates. Auto rendering quality caps device pixel ratio and selects simpler shared seat and spectator geometry plus a lower crowd occupancy on compact touch devices. Spectators and players are intentionally static, use no skeletal animation, and are excluded from sunlight-occluder raycasts.
 
-## Measurement status
+## Measurement and calibration status
 
-The 105 × 68 metre pitch, 64 structural frames, and `Africa/Tunis` timezone are recorded from the project brief. Coordinates, scene north rotation, track, tier, bowl, and roof values are explicitly marked as configurable estimates requiring authoritative verification and calibration.
+The model separates sourced facts from procedural estimates in the central typed configuration:
+
+- The 105 × 68 metre pitch and `Africa/Tunis` timezone remain explicit project requirements.
+- Stadium contractor SBF reports a 60,000 spectator capacity, a 13,000 m² covered enclosure, and 64 portal frames reaching 33 m. Capacity is not treated as a count of plastic seat instances.
+- The two virages are modeled as stepped terraces without individual chair instances, following project-owner calibration. Their exact angular boundaries still require seating plans.
+- The mapped stadium centre and pitch bearing are derived from OpenStreetMap geometry, not a land survey.
+- A ten-lane track is a corroborated secondary-source value. Track construction details, all bowl radii, roof radii, access ramps, and other uncertain dimensions remain configurable estimates.
+
+Calibration references:
+
+- [SBF supporting structure project](https://sbf.com.tn/en/the-supporting-structure-of-the-olympic-stadium/)
+- [FIFA pitch dimensions and surrounding areas](https://publications.fifa.com/de/football-stadiums-guidelines/technical-guideline/stadium-guidelines/pitch-dimensions-and-surrounding-areas/)
+- [IFAB Law 3 — two teams of up to eleven players](https://www.theifab.com/laws/latest/the-players/)
+- [OpenStreetMap stadium geometry](https://www.openstreetmap.org/way/104576770)
+- [OpenStreetMap mapped pitch geometry](https://www.openstreetmap.org/way/26235346)
+- [French-language stadium summary (secondary source for the ten-lane track)](https://fr.wikipedia.org/wiki/Stade_olympique_de_Rad%C3%A8s)
 
 The result should be described as a recognisable procedural approximation, not an exact digital twin.
 

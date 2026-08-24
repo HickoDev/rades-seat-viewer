@@ -12,7 +12,15 @@ import type { SeatLayout, SeatMetadata } from './seat.types';
 const upAxis = new Vector3(0, 1, 0);
 const unitScale = new Vector3(1, 1, 1);
 
-export function generateSeatLayout(config: StadiumConfig): SeatLayout {
+export type SeatLayoutGenerationOptions = {
+  /** Internal spectator placements may occupy seatless concrete terraces. */
+  includeSeatlessSections?: boolean;
+};
+
+export function generateSeatLayout(
+  config: StadiumConfig,
+  options: SeatLayoutGenerationOptions = {},
+): SeatLayout {
   const metadata: SeatMetadata[] = [];
   const matrixValues: number[] = [];
   const matrix = new Matrix4();
@@ -40,6 +48,13 @@ export function generateSeatLayout(config: StadiumConfig): SeatLayout {
         sectionIndex < tier.sectionCount;
         sectionIndex += 1
       ) {
+        if (
+          !options.includeSeatlessSections &&
+          tier.seatlessSectionIndices.includes(sectionIndex)
+        ) {
+          continue;
+        }
+
         const sectionId = getSectionId(tier.id, sectionIndex);
         const sectionStartAngle = sectionIndex * sectionAngle + aisleAngle / 2;
         const sectionEndAngle =

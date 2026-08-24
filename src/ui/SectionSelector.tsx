@@ -23,9 +23,12 @@ export function SectionSelector() {
           <optgroup key={tier.id} label={tier.name}>
             {Array.from({ length: tier.sectionCount }, (_, sectionIndex) => {
               const sectionId = getSectionId(tier.id, sectionIndex);
+              const isVirageTerrace =
+                tier.seatlessSectionIndices.includes(sectionIndex);
               return (
                 <option key={sectionId} value={sectionId}>
                   {tier.name} · Section {sectionIndex + 1}
+                  {isVirageTerrace ? ' · Virage terrace' : ''}
                 </option>
               );
             })}

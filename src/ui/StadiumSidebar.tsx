@@ -30,12 +30,12 @@ export function StadiumSidebar() {
       <section className="intro-card" aria-labelledby="stadium-title">
         <div className="intro-card__tag">
           <span className="status-dot" aria-hidden="true" />
-          Procedural model · Sun simulation online
+          Calibrated model · Static match scene
         </div>
         <h2 id="stadium-title">{radesStadiumConfig.identity.name}</h2>
         <p>
-          An interactive seat-view and sunlight simulator, beginning with a
-          calibrated procedural stadium model.
+          An interactive seat-view and sunlight simulator with a
+          source-calibrated procedural stadium and lightweight static crowd.
         </p>
       </section>
 
@@ -47,7 +47,7 @@ export function StadiumSidebar() {
         <button className="mode-button mode-button--active" type="button">
           <span>
             <strong>Stadium overview</strong>
-            <small>Orbit the future stadium model</small>
+            <small>Orbit the Radès stadium model</small>
           </span>
           <span className="mode-pill">{cameraMode}</span>
         </button>
@@ -94,13 +94,12 @@ export function StadiumSidebar() {
       <footer className="sidebar-footer">
         <div>
           <span>Model status</span>
-          <strong>Config estimates</strong>
+          <strong>Source-calibrated</strong>
         </div>
         <p>
-          Pitch 105 × 68 m · 64 structural frames
+          60,000 stated capacity · 64 frames at 33 m
           <br />
-          Track, bowl, roof, coordinates, and north rotation require
-          calibration.
+          Virages have no individual seats · bowl and roof remain estimates
         </p>
       </footer>
     </aside>

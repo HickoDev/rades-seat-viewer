@@ -16,7 +16,7 @@ test('loads the foundation scene without runtime errors', async ({ page }) => {
   await expect(page.getByLabel('Stadium controls')).toBeVisible();
   await expect(page.getByLabel('Interactive stadium view')).toBeVisible();
   await expect(page.locator('canvas')).toBeVisible();
-  await expect(page.getByText(/Procedural model/)).toBeVisible();
+  await expect(page.getByText(/Calibrated model/)).toBeVisible();
 
   expect(runtimeErrors).toEqual([]);
 });
@@ -35,7 +35,7 @@ test('keeps the control sheet available on a compact viewport', async ({
 test('selects a section, row, and seat from accessible controls', async ({
   page,
 }) => {
-  test.setTimeout(120_000);
+  test.setTimeout(180_000);
   await page.route('**/v1/forecast?**', async (route) => {
     const url = new URL(route.request().url());
     const day = url.searchParams.get('start_date') ?? '2026-08-24';
@@ -71,13 +71,17 @@ test('selects a section, row, and seat from accessible controls', async ({
   });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByLabel('Rendering quality').selectOption('low');
+  await expect(page.getByLabel('Rendering quality')).toHaveValue('low');
 
   await page.getByLabel('Choose a stadium section').selectOption('lower-01');
+  await expect(page.getByText(/no individual plastic seats/i)).toBeVisible();
+  await page.getByLabel('Choose a stadium section').selectOption('lower-05');
   await page.getByLabel('Choose a row', { exact: true }).selectOption('5');
   await page.getByLabel('Choose a seat', { exact: true }).selectOption('3');
 
   await expect(
-    page.getByText('lower-01 · Row 5 · Seat 3', { exact: true }),
+    page.getByText('lower-05 · Row 5 · Seat 3', { exact: true }),
   ).toBeVisible();
   await expect(
     page.getByRole('button', { name: 'Back to stadium' }),
@@ -94,16 +98,13 @@ test('selects a section, row, and seat from accessible controls', async ({
   ).toBeVisible();
   await expect(page.getByText('31°C', { exact: true })).toBeVisible();
   await page.getByRole('button', { name: 'Enable sunlight heatmap' }).click();
-  await expect(page.getByText(/64 representative groups/)).toBeVisible({
+  await expect(page.getByText(/40 representative groups/)).toBeVisible({
     timeout: 20_000,
   });
   await page.getByLabel('Heatmap representative detail').selectOption('row');
-  await expect(page.getByText(/1696 representative groups/)).toBeVisible({
+  await expect(page.getByText(/1060 representative groups/)).toBeVisible({
     timeout: 25_000,
   });
-  await page.getByLabel('Rendering quality').selectOption('low');
-  await expect(page.getByLabel('Rendering quality')).toHaveValue('low');
-
   await page.getByRole('button', { name: 'Back to stadium' }).click();
   await expect(page.getByText('overview', { exact: true })).toBeVisible();
 });

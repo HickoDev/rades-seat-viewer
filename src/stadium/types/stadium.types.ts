@@ -1,5 +1,10 @@
 export type VerificationStatus =
-  'verified-from-project-brief' | 'estimate-requires-calibration';
+  | 'verified-from-project-brief'
+  | 'verified-from-contractor'
+  | 'confirmed-by-project-owner'
+  | 'calibrated-from-open-geodata'
+  | 'corroborated-secondary-source'
+  | 'estimate-requires-calibration';
 
 export type StadiumConfig = {
   version: string;
@@ -9,6 +14,7 @@ export type StadiumConfig = {
     latitude: number;
     longitude: number;
     northRotationDegrees: number;
+    statedCapacity: number;
   };
   pitch: {
     length: number;
@@ -48,6 +54,7 @@ export type StadiumConfig = {
     vomitoryRow: number;
     vomitoryWidth: number;
     vomitoryHeight: number;
+    seatlessSectionIndices: number[];
   }>;
   roof: {
     innerRadiusX: number;
@@ -61,6 +68,8 @@ export type StadiumConfig = {
   };
   structure: {
     frameCount: number;
+    portalFrameHeight: number;
+    coveredEnclosureAreaSquareMetres: number;
     exteriorRadiusOffset: number;
     columnRadius: number;
     facadeHeight: number;
@@ -84,6 +93,13 @@ export type StadiumConfig = {
     backHeight: number;
     eyeHeight: number;
     arcTableSamples: number;
+  };
+  occupants: {
+    playerCount: number;
+    standingPlayerHeight: number;
+    seatedPersonHeight: number;
+    highQualityCrowdOccupancy: number;
+    lowQualityCrowdOccupancy: number;
   };
   verification: {
     values: Record<string, VerificationStatus>;

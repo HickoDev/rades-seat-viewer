@@ -372,6 +372,17 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
+.seat-selector__terrace {
+  margin: 0;
+  padding: 11px 12px;
+  border: 1px solid rgba(197, 242, 104, 0.2);
+  border-radius: 10px;
+  color: #dce9e2;
+  background: rgba(197, 242, 104, 0.06);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
 .seat-information {
   display: grid;
   gap: 4px;

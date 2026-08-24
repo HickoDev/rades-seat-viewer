@@ -76,6 +76,13 @@ test('selects a section, row, and seat from accessible controls', async ({
 
   await page.getByLabel('Choose a stadium section').selectOption('lower-01');
   await expect(page.getByText(/no individual plastic seats/i)).toBeVisible();
+  await expect(page.getByText('Virage POV', { exact: true })).toBeVisible();
+  await expect(
+    page.getByText(/lower-01.*Terrace row.*Position/i),
+  ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Back to stadium' }),
+  ).toBeVisible();
   await page.getByLabel('Choose a stadium section').selectOption('lower-05');
   await page.getByLabel('Choose a row', { exact: true }).selectOption('5');
   await page.getByLabel('Choose a seat', { exact: true }).selectOption('3');

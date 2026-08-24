@@ -1,6 +1,5 @@
-import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
-import { generateSeatLayout } from '../seats/generateSeatLayout';
 import type { SeatMetadata } from '../seats/seat.types';
+import { radesViewingPositionLayout } from '../seats/viewingPositions';
 
 export type CrowdMember = {
   placement: SeatMetadata;
@@ -9,10 +8,7 @@ export type CrowdMember = {
   skinColorIndex: number;
 };
 
-export const radesCrowdPlacementLayout = generateSeatLayout(
-  radesStadiumConfig,
-  { includeSeatlessSections: true },
-);
+export const radesCrowdPlacementLayout = radesViewingPositionLayout;
 
 function stableHash(value: string): number {
   let hash = 2_166_136_261;

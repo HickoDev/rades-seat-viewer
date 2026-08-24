@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
 
+import { findRepresentativeTerracePosition } from '../../seats/viewingPositions';
 import { useStadiumStore } from '../../state/useStadiumStore';
 import type { StadiumConfig } from '../types/stadium.types';
 import { createTierGeometry } from './createTierGeometry';
@@ -15,6 +16,9 @@ type StadiumTierProps = {
 export function StadiumTier({ tier }: StadiumTierProps) {
   const selectedSectionId = useStadiumStore((state) => state.selectedSectionId);
   const selectSection = useStadiumStore((state) => state.selectSection);
+  const selectTerracePosition = useStadiumStore(
+    (state) => state.selectTerracePosition,
+  );
   const sectionAngle = (Math.PI * 2) / tier.sectionCount;
   const averageRadius = (tier.startRadiusX + tier.startRadiusZ) / 2;
   const aisleAngle = tier.aisleWidth / averageRadius;
@@ -84,6 +88,7 @@ export function StadiumTier({ tier }: StadiumTierProps) {
       {geometries.map((geometry, sectionIndex) => {
         const sectionId = getSectionId(tier.id, sectionIndex);
         const isSelected = selectedSectionId === sectionId;
+        const isTerrace = tier.seatlessSectionIndices.includes(sectionIndex);
 
         return (
           <mesh
@@ -99,12 +104,24 @@ export function StadiumTier({ tier }: StadiumTierProps) {
             name={`section-${sectionId}`}
             onClick={(event) => {
               event.stopPropagation();
-              selectSection(sectionId);
+              const terracePosition = isTerrace
+                ? findRepresentativeTerracePosition(sectionId)
+                : null;
+              if (terracePosition) {
+                selectTerracePosition(
+                  sectionId,
+                  terracePosition.rowNumber,
+                  terracePosition.seatNumber,
+                );
+              } else {
+                selectSection(sectionId);
+              }
             }}
             receiveShadow
             userData={{
               sectionId,
               tierId: tier.id,
+              viewingArea: isTerrace ? 'terrace' : 'seated',
             }}
           />
         );

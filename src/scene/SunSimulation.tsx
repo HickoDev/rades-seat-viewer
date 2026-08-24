@@ -3,7 +3,7 @@ import { useEffect, useMemo } from 'react';
 import type { Object3D } from 'three';
 
 import { calculateSeatView } from '../camera/calculateSeatView';
-import { findSeat } from '../seats/seatMetadata';
+import { findViewingPosition } from '../seats/viewingPositions';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { useStadiumStore } from '../state/useStadiumStore';
 import { calculateSunPosition } from '../sunlight/calculateSunPosition';
@@ -15,6 +15,7 @@ export function SunSimulation() {
   const selectedSectionId = useStadiumStore((state) => state.selectedSectionId);
   const selectedRow = useStadiumStore((state) => state.selectedRow);
   const selectedSeat = useStadiumStore((state) => state.selectedSeat);
+  const selectedViewKind = useStadiumStore((state) => state.selectedViewKind);
   const matchStartIso = useStadiumStore((state) => state.matchStartIso);
   const matchEndIso = useStadiumStore((state) => state.matchEndIso);
   const showSunSimulation = useStadiumStore((state) => state.showSunSimulation);
@@ -43,8 +44,13 @@ export function SunSimulation() {
   );
 
   useEffect(() => {
-    const seat = findSeat(selectedSectionId, selectedRow, selectedSeat);
-    if (!showSunSimulation || !seat || !matchStartIso || !matchEndIso) {
+    const position = findViewingPosition(
+      selectedSectionId,
+      selectedRow,
+      selectedSeat,
+      selectedViewKind,
+    );
+    if (!showSunSimulation || !position || !matchStartIso || !matchEndIso) {
       setSunExposureResult(null);
       return;
     }
@@ -54,7 +60,10 @@ export function SunSimulation() {
     scene.traverse((object) => {
       if (object.userData.shadowOccluder === true) occluders.push(object);
     });
-    const view = calculateSeatView(seat, radesStadiumConfig.seats.eyeHeight);
+    const view = calculateSeatView(
+      position.metadata,
+      radesStadiumConfig.seats.eyeHeight,
+    );
     setSunExposureResult(
       simulateMatchExposure({
         matchStartIso,
@@ -75,6 +84,7 @@ export function SunSimulation() {
     selectedRow,
     selectedSeat,
     selectedSectionId,
+    selectedViewKind,
     setSunExposureResult,
     showSunSimulation,
   ]);

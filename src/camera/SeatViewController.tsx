@@ -2,7 +2,7 @@ import { useThree } from '@react-three/fiber';
 import { useEffect, useMemo, useRef } from 'react';
 import { MathUtils, Vector3 } from 'three';
 
-import { findSeat } from '../seats/seatMetadata';
+import { findViewingPosition } from '../seats/viewingPositions';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { useStadiumStore } from '../state/useStadiumStore';
 import { useReducedMotion } from '../utils/useReducedMotion';
@@ -16,15 +16,16 @@ export function SeatViewController() {
   const sectionId = useStadiumStore((state) => state.selectedSectionId);
   const row = useStadiumStore((state) => state.selectedRow);
   const seatNumber = useStadiumStore((state) => state.selectedSeat);
+  const viewKind = useStadiumStore((state) => state.selectedViewKind);
   const reducedMotion = useReducedMotion();
   const currentTarget = useMemo(() => new Vector3(), []);
   const isReady = useRef(false);
   const view = useMemo(() => {
-    const seat = findSeat(sectionId, row, seatNumber);
-    return seat
-      ? calculateSeatView(seat, radesStadiumConfig.seats.eyeHeight)
+    const position = findViewingPosition(sectionId, row, seatNumber, viewKind);
+    return position
+      ? calculateSeatView(position.metadata, radesStadiumConfig.seats.eyeHeight)
       : null;
-  }, [row, seatNumber, sectionId]);
+  }, [row, seatNumber, sectionId, viewKind]);
 
   useEffect(() => {
     if (cameraMode !== 'seat' || !view) return;

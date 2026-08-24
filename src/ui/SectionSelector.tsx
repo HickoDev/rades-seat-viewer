@@ -1,3 +1,4 @@
+import { findRepresentativeTerracePosition } from '../seats/viewingPositions';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { getSectionId } from '../stadium/bowl/sectionIds';
 import { useStadiumStore } from '../state/useStadiumStore';
@@ -5,6 +6,9 @@ import { useStadiumStore } from '../state/useStadiumStore';
 export function SectionSelector() {
   const selectedSectionId = useStadiumStore((state) => state.selectedSectionId);
   const selectSection = useStadiumStore((state) => state.selectSection);
+  const selectTerracePosition = useStadiumStore(
+    (state) => state.selectTerracePosition,
+  );
 
   return (
     <label className="section-select">
@@ -14,7 +18,18 @@ export function SectionSelector() {
         value={selectedSectionId ?? ''}
         onChange={(event) => {
           if (event.target.value) {
-            selectSection(event.target.value);
+            const sectionId = event.target.value;
+            const terracePosition =
+              findRepresentativeTerracePosition(sectionId);
+            if (terracePosition) {
+              selectTerracePosition(
+                sectionId,
+                terracePosition.rowNumber,
+                terracePosition.seatNumber,
+              );
+            } else {
+              selectSection(sectionId);
+            }
           }
         }}
       >

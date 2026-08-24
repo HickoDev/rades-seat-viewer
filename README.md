@@ -2,7 +2,7 @@
 
 Radès View is an interactive procedural 3D representation of Stade Olympique Hammadi-Agrebi in Radès, Tunisia. The long-term product will let spectators explore the stadium, preview an approximate first-person seat view, and understand geometric sun exposure during a match.
 
-This repository currently contains **Milestones 1–7**: the interactive procedural stadium, instanced seats, guided camera modes, structural occluders, astronomical sun direction, selected-seat shadow raycasts, five-minute exposure timelines, and glare classification. It is not a ticket-booking application, and it does not yet contain weather forecasts or a stadium-wide heatmap.
+This repository currently contains **Milestones 1–8**: the interactive procedural stadium, instanced seats, guided camera modes, structural occluders, astronomical sun direction, selected-seat shadow raycasts, five-minute exposure timelines, glare classification, and validated short-range weather forecasts. It is not a ticket-booking application, and it does not yet contain a stadium-wide heatmap.
 
 ## Requirements
 
@@ -46,7 +46,7 @@ npx playwright install chromium
 - `src/ui` contains accessible DOM controls outside the WebGL canvas.
 - `src/test` and `e2e` contain Vitest/Testing Library setup and Playwright smoke coverage.
 
-TanStack Query is installed at the provider boundary for later Open-Meteo integration. GSAP, SunCalc, Luxon, Zod, and `three-mesh-bvh` are installed for their planned milestones but are intentionally not wired into Milestone 1 behavior.
+TanStack Query caches Open-Meteo requests, while Zod validates every response before it reaches the interface. Forecasts are only requested inside Open-Meteo's 16-day horizon; astronomical simulation remains available for long-range dates. GSAP, SunCalc, Luxon, and `three-mesh-bvh` support the camera, sunlight, time-zone, and planned heatmap paths.
 
 ## Measurement status
 

@@ -23,6 +23,7 @@ export type StadiumState = {
   returnToOverview: () => void;
   toggleDebugGuides: () => void;
   toggleSunSimulation: () => void;
+  toggleWeather: () => void;
   setSunExposureResult: (result: SunExposureSimulation | null) => void;
 };
 
@@ -70,5 +71,6 @@ export const useStadiumStore = create<StadiumState>((set) => ({
     set((state) => ({ showDebugGuides: !state.showDebugGuides })),
   toggleSunSimulation: () =>
     set((state) => ({ showSunSimulation: !state.showSunSimulation })),
+  toggleWeather: () => set((state) => ({ showWeather: !state.showWeather })),
   setSunExposureResult: (sunExposureResult) => set({ sunExposureResult }),
 }));

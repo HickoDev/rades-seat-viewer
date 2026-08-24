@@ -24,6 +24,39 @@ test('loads the foundation scene without runtime errors', async ({ page }) => {
 test('selects a section, row, and seat from accessible controls', async ({
   page,
 }) => {
+  await page.route('**/v1/forecast?**', async (route) => {
+    const url = new URL(route.request().url());
+    const day = url.searchParams.get('start_date') ?? '2026-08-24';
+    const time = Array.from(
+      { length: 24 },
+      (_, hour) => `${day}T${hour.toString().padStart(2, '0')}:00`,
+    );
+    const values = (value: number) => time.map(() => value);
+    await route.fulfill({
+      contentType: 'application/json',
+      body: JSON.stringify({
+        latitude: 36.75,
+        longitude: 10.27,
+        timezone: 'Africa/Tunis',
+        utc_offset_seconds: 3600,
+        hourly: {
+          time,
+          temperature_2m: values(31),
+          apparent_temperature: values(33),
+          cloud_cover: values(18),
+          cloud_cover_low: values(10),
+          cloud_cover_mid: values(5),
+          cloud_cover_high: values(3),
+          direct_radiation: values(540),
+          direct_normal_irradiance: values(720),
+          shortwave_radiation: values(610),
+          precipitation_probability: values(4),
+          wind_speed_10m: values(16),
+          weather_code: values(1),
+        },
+      }),
+    });
+  });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
 
@@ -43,6 +76,11 @@ test('selects a section, row, and seat from accessible controls', async ({
     .click();
   await page.getByRole('button', { name: 'Enable sun simulation' }).click();
   await expect(page.getByText('Peak glare', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Enable weather forecast' }).click();
+  await expect(
+    page.getByText('Kickoff forecast', { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByText('31°C', { exact: true })).toBeVisible();
 
   await page.getByRole('button', { name: 'Back to stadium' }).click();
   await expect(page.getByText('overview', { exact: true })).toBeVisible();

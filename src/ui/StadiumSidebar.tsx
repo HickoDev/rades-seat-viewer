@@ -5,6 +5,7 @@ import { SeatInformation } from './SeatInformation';
 import { SeatSelector } from './SeatSelector';
 import { MatchTimeControls } from './MatchTimeControls';
 import { SunExposureTimeline } from './SunExposureTimeline';
+import { WeatherPanel } from './WeatherPanel';
 
 export function StadiumSidebar() {
   const cameraMode = useStadiumStore((state) => state.cameraMode);
@@ -83,6 +84,7 @@ export function StadiumSidebar() {
         </div>
         <MatchTimeControls />
         <SunExposureTimeline />
+        <WeatherPanel />
       </section>
 
       <footer className="sidebar-footer">

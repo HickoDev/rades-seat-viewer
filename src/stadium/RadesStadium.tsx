@@ -1,6 +1,7 @@
 import { radesStadiumConfig } from './config/radesStadiumConfig';
-import { StaticCrowd } from '../people/StaticCrowd';
-import { StaticPlayers } from '../people/StaticPlayers';
+import { MatchPlayers } from '../people/MatchPlayers';
+import { StadiumCrowd } from '../people/StadiumCrowd';
+import { TechnicalAreaPeople } from '../people/TechnicalAreaPeople';
 import { SeatInstances } from '../seats/SeatInstances';
 import { AccessRamps } from './exterior/AccessRamps';
 import { ExteriorColumns } from './exterior/ExteriorColumns';
@@ -29,10 +30,11 @@ export function RadesStadium() {
       <StadiumApron />
       <AthleticsTrack />
       <FootballPitch />
-      <StaticPlayers />
+      <MatchPlayers />
+      <TechnicalAreaPeople />
       <StadiumBowl />
       <SeatInstances />
-      <StaticCrowd />
+      <StadiumCrowd />
       <StadiumRoof />
       <RoofTrusses />
       <StructuralFrames />

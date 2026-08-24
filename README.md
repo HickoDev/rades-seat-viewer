@@ -2,7 +2,7 @@
 
 Radès View is an interactive procedural 3D representation of Stade Olympique Hammadi-Agrebi in Radès, Tunisia. The long-term product will let spectators explore the stadium, preview an approximate first-person seat view, and understand geometric sun exposure during a match.
 
-This repository contains **Milestones 1–13**: the interactive procedural stadium, source-informed Radès calibration, detailed section barriers and concourses, instanced seats, static instanced spectators and players, guided seat and virage-terrace POV modes, Radès-specific honor/press and ceremonial-entrance architecture, goal nets and match-day hoardings, structural occluders, astronomical sun direction, selected-view shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, and cached section/row sunlight heatmaps. It is not a ticket-booking application.
+This repository contains **Milestones 1–14**: the interactive procedural stadium, source-informed Radès calibration, detailed section barriers and concourses, instanced seats, a lightweight animated crowd and 22-player match scene, populated photo-calibrated technical areas, guided seat and virage-terrace POV modes, Radès-specific honor/press and ceremonial-entrance architecture, goal nets and match-day hoardings, structural occluders, astronomical sun direction, selected-view shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, and cached section/row sunlight heatmaps. It is not a ticket-booking application.
 
 ## Requirements
 
@@ -41,7 +41,7 @@ npx playwright install chromium
 - `src/app` composes application-level providers and the responsive shell.
 - `src/scene` owns React Three Fiber canvas concerns, lighting, environment, camera controls, and pixel-ratio adaptation.
 - `src/stadium` is the stable composition boundary for future procedural geometry.
-- `src/people` generates the static 22-player match scene and deterministic seated crowd with shared instanced geometry.
+- `src/people` generates improved shared human geometry, deterministic crowd placement, technical-area occupants, and the animated 22-player match scene.
 - `src/stadium/config/radesStadiumConfig.ts` is the single typed source of stadium measurements.
 - `src/state` contains serializable interaction state only; Three.js objects stay in the scene layer.
 - `src/ui` contains accessible DOM controls outside the WebGL canvas.
@@ -52,7 +52,7 @@ npx playwright install chromium
 
 TanStack Query caches Open-Meteo requests, while Zod validates every response before it reaches the interface. Forecasts are only requested inside Open-Meteo's 16-day horizon; astronomical simulation remains available for long-range dates. GSAP handles reduced-motion-aware camera flights, SunCalc and Luxon handle astronomy and `Africa/Tunis` time, and `three-mesh-bvh` accelerates repeated rays against static complex occluders.
 
-Heatmaps use one representative seat per section or per row, run in a Web Worker only when event time, resolution, or the central configuration version changes, and cache results in local storage. They are deliberately labelled as representative estimates. Auto rendering quality caps device pixel ratio and selects simpler shared seat and spectator geometry plus a lower crowd occupancy on compact touch devices. Spectators and players are intentionally static, use no skeletal animation, and are excluded from sunlight-occluder raycasts.
+Heatmaps use one representative seat per section or per row, run in a Web Worker only when event time, resolution, or the central configuration version changes, and cache results in local storage. They are deliberately labelled as representative estimates. Auto rendering quality caps device pixel ratio and selects simpler shared seat and spectator geometry plus a lower crowd occupancy on compact touch devices. Human figures remain instanced low-poly geometry: only a deterministic six-percent crowd sample receives subtle throttled idle motion, while the 22 players follow bounded formation-aware routes around a moving ball. Reduced-motion preferences freeze both systems, and all people remain excluded from sunlight-occluder raycasts.
 
 ## Measurement and calibration status
 
@@ -66,6 +66,7 @@ The model separates sourced facts from procedural estimates in the central typed
 - A ten-lane track is a corroborated secondary-source value. Track construction details, all bowl radii, roof radii, access ramps, and other uncertain dimensions remain configurable estimates.
 - Radès photo references show light-concrete radial aisles, edge barriers, framed tier vomitories, a pale illuminated concourse between tiers, continuous green infield, and a concrete service apron. The implementation reproduces those visual relationships procedurally without copying photographic assets.
 - The beige scalloped membrane, dense white inner truss, cable-stayed masts, end scoreboards, glazed honor frontage, and cream/blue/yellow main entrance are modeled as configurable visual estimates. See the [visual calibration record](docs/rades-visual-calibration.md).
+- Interior photographs locate two long segmented translucent-blue dugouts on the athletics track in front of the main stand. Their modeled dimensions, offsets, seating, and occupants are photo-calibrated estimates rather than surveyed measurements.
 
 Section barriers stay on the edges of radial aisles rather than across them. This preserves the clear circulation channel: FIFA identifies radial gangways, lateral routes, and vomitories as part of stadium circulation and notes that route widths must be established by applicable safety methodology. Barrier sizes and portal spacing in this model remain calibration estimates rather than code-compliance claims.
 
@@ -79,6 +80,7 @@ Calibration references:
 - [French-language stadium summary (secondary source for the ten-lane track)](https://fr.wikipedia.org/wiki/Stade_olympique_de_Rad%C3%A8s)
 - [Wikimedia Commons Radès stadium photo archive](https://commons.wikimedia.org/wiki/Category:Rad%C3%A8s_stadium)
 - [2017 interior photograph showing aisles, vomitories, and the concourse](https://commons.wikimedia.org/wiki/File:Stade_de_Rad%C3%A9s_2017_1.jpg)
+- [Mosaïque FM interior photograph showing the Radès technical-area shelters](https://www.mosaiquefm.net/fr/football/1138703/est-zamalek-les-virages-du-stade-de-rades-ouverts)
 - [FIFA stadium-bowl circulation guidance](https://publications.fifa.com/de/football-stadiums-guidelines/general-process-guidelines/design/stadium-bowl/)
 - [SGSA Guide to Safety at Sports Grounds overview](https://sgsa.org.uk/document/greenguide/)
 

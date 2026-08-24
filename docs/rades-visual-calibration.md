@@ -20,14 +20,14 @@ The implementation uses the following features because they recur across photogr
 - a long glazed honor/press frontage on one sideline;
 - a cream tensile roof with a scalloped outer edge and a dense white inner space truss;
 - tall external roof masts with cable stays and roof-edge floodlight arrays;
-- red athletics surfacing, a warm concrete service apron, transparent team benches, white goal nets, and event-dependent pitch-side advertising hoardings;
+- red athletics surfacing, a warm concrete service apron, paired segmented translucent-blue team shelters on the main-stand side, white goal nets, and event-dependent pitch-side advertising hoardings;
 - a cream ceremonial entrance with deep-blue arched glazing, blue trim, a yellow patterned band, and a taller central gateway.
 
 Advertising artwork changes by competition and sponsor. The application therefore uses neutral Radès/Tunisia match-day graphics instead of claiming that one photographed sponsor layout is permanent.
 
 ## Configurable estimates
 
-No public architectural plan or survey was located for the bowl section, honor suite envelope, roof opening, façade bays, or advertising-board offsets. Their dimensions live in `radesStadiumConfig.ts` and are explicitly classified as `estimate-requires-calibration`. Roof waves, truss depth, mast positions, window bay counts, and ceremonial entrance dimensions were calibrated visually against the sources below.
+No public architectural plan or survey was located for the bowl section, honor suite envelope, roof opening, façade bays, advertising-board offsets, or technical-area shelters. Their dimensions live in `radesStadiumConfig.ts` and are explicitly classified as `estimate-requires-calibration`. Roof waves, truss depth, mast positions, window bay counts, ceremonial entrance dimensions, and the dugout geometry and position were calibrated visually against the sources below. Crowd and player motion is illustrative rather than a reconstruction of a particular match.
 
 ## Reference set
 

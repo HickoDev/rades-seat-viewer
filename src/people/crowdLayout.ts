@@ -6,6 +6,9 @@ export type CrowdMember = {
   placementIndex: number;
   clothingColorIndex: number;
   skinColorIndex: number;
+  animated: boolean;
+  motionPhase: number;
+  motionStrength: number;
 };
 
 export const radesCrowdPlacementLayout = radesViewingPositionLayout;
@@ -22,8 +25,12 @@ function stableHash(value: string): number {
 export function generateCrowdMembers(
   placements: SeatMetadata[],
   occupancy: number,
+  animatedFraction = 0.06,
 ): CrowdMember[] {
   const threshold = Math.round(Math.min(Math.max(occupancy, 0), 1) * 10_000);
+  const animatedThreshold = Math.round(
+    Math.min(Math.max(animatedFraction, 0), 1) * 10_000,
+  );
   const members: CrowdMember[] = [];
 
   placements.forEach((placement, placementIndex) => {
@@ -35,6 +42,9 @@ export function generateCrowdMembers(
       placementIndex,
       clothingColorIndex: (hash >>> 8) % 7,
       skinColorIndex: (hash >>> 16) % 5,
+      animated: (hash >>> 12) % 10_000 < animatedThreshold,
+      motionPhase: ((hash >>> 4) % 6_283) / 1_000,
+      motionStrength: 0.65 + ((hash >>> 24) % 36) / 100,
     });
   });
 

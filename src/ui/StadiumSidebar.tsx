@@ -30,12 +30,12 @@ export function StadiumSidebar() {
       <section className="intro-card" aria-labelledby="stadium-title">
         <div className="intro-card__tag">
           <span className="status-dot" aria-hidden="true" />
-          Calibrated model · Static match scene
+          Calibrated model · Live match scene
         </div>
         <h2 id="stadium-title">{radesStadiumConfig.identity.name}</h2>
         <p>
           An interactive seat-view and sunlight simulator with a
-          source-calibrated procedural stadium and lightweight static crowd.
+          source-calibrated procedural stadium and lightweight animated crowd.
         </p>
       </section>
 

@@ -25,4 +25,14 @@ describe('generateCrowdMembers', () => {
       crowd.some((member) => member.placement.sectionId === virageSectionId),
     ).toBe(true);
   });
+
+  it('marks only a restrained deterministic subset for idle animation', () => {
+    const placements = radesCrowdPlacementLayout.metadata.slice(0, 10_000);
+    const crowd = generateCrowdMembers(placements, 1, 0.06);
+    const animated = crowd.filter((member) => member.animated);
+
+    expect(animated.length).toBeGreaterThan(400);
+    expect(animated.length).toBeLessThan(800);
+    expect(animated.every((member) => member.motionStrength > 0)).toBe(true);
+  });
 });

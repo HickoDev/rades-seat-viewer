@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-4',
+  version: 'rades-procedural-5',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -148,11 +148,14 @@ export const radesStadiumConfig = {
     scoreboardHeight: 6,
     scoreboardDepth: 1.1,
     scoreboardFlagPanelHeight: 4.6,
-    benchLength: 8,
-    benchDepth: 2.2,
-    benchHeight: 2.1,
+    benchLength: 11.4,
+    benchDepth: 2.5,
+    benchHeight: 2.25,
     benchBayCount: 8,
     benchFrameThickness: 0.08,
+    benchSidelineOffset: 9.2,
+    benchSeparation: 1.5,
+    benchSeatCount: 12,
   },
   grandstand: {
     side: 1,
@@ -196,6 +199,11 @@ export const radesStadiumConfig = {
     seatedPersonHeight: 1.24,
     highQualityCrowdOccupancy: 0.52,
     lowQualityCrowdOccupancy: 0.22,
+    crowdAnimatedFraction: 0.06,
+    crowdMotionAmplitude: 0.035,
+    crowdMotionCyclesPerSecond: 0.18,
+    technicalAreaSeatedPerTeam: 9,
+    technicalAreaStandingPerTeam: 2,
   },
   verification: {
     values: {
@@ -217,6 +225,7 @@ export const radesStadiumConfig = {
       'structure.portalFrameHeight': 'verified-from-contractor',
       'structure.coveredEnclosureAreaSquareMetres': 'verified-from-contractor',
       'structure.dimensions': 'estimate-requires-calibration',
+      'structure.teamBenches': 'estimate-requires-calibration',
       'grandstand.officialCapacity': 'corroborated-secondary-source',
       'grandstand.pressDeskCount': 'corroborated-secondary-source',
       'grandstand.dimensions': 'estimate-requires-calibration',
@@ -236,6 +245,8 @@ export const radesStadiumConfig = {
       'Section rails, framed vomitories, and concourse openings are photo-calibrated procedural estimates.',
       'The honor stand is reported at 7,000 places and the press stand at 300 desks; their modeled envelope is photo-calibrated rather than surveyed.',
       'Goal nets, advertising hoardings, roof waves, support masts, and the ceremonial entrance are visual estimates from dated photographs and may vary by event or renovation state.',
+      'The paired blue technical-area shelters are positioned from interior photographs; their exact dimensions and athletics-track offsets require a site survey.',
+      'Crowd and player motion is a lightweight illustrative match-day simulation, not motion-captured behavior or a reconstruction of a real match.',
     ],
   },
 } satisfies StadiumConfig;

@@ -127,6 +127,9 @@ export type StadiumConfig = {
     benchHeight: number;
     benchBayCount: number;
     benchFrameThickness: number;
+    benchSidelineOffset: number;
+    benchSeparation: number;
+    benchSeatCount: number;
   };
   grandstand: {
     side: -1 | 1;
@@ -170,6 +173,11 @@ export type StadiumConfig = {
     seatedPersonHeight: number;
     highQualityCrowdOccupancy: number;
     lowQualityCrowdOccupancy: number;
+    crowdAnimatedFraction: number;
+    crowdMotionAmplitude: number;
+    crowdMotionCyclesPerSecond: number;
+    technicalAreaSeatedPerTeam: number;
+    technicalAreaStandingPerTeam: number;
   };
   verification: {
     values: Record<string, VerificationStatus>;

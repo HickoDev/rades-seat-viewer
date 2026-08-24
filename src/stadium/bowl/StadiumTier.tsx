@@ -22,17 +22,30 @@ export function StadiumTier({ tier }: StadiumTierProps) {
   const geometries = useMemo(
     () =>
       Array.from({ length: tier.sectionCount }, (_, sectionIndex) => {
-        const centerAngle = sectionIndex * sectionAngle;
+        const startAngle = sectionIndex * sectionAngle;
+        const centerAngle = startAngle + sectionAngle / 2;
+        const hasVomitory = sectionIndex % tier.vomitoryEverySections === 0;
+        const portalRadius =
+          (tier.startRadiusX + tier.startRadiusZ) / 2 +
+          tier.vomitoryRow * tier.rowDepth;
         return createTierGeometry({
-          startAngle: centerAngle + aisleAngle / 2,
-          endAngle: centerAngle + sectionAngle - aisleAngle / 2,
+          startAngle: startAngle + aisleAngle / 2,
+          endAngle: startAngle + sectionAngle - aisleAngle / 2,
           startRadiusX: tier.startRadiusX,
           startRadiusZ: tier.startRadiusZ,
           baseHeight: tier.baseHeight,
           rowCount: tier.rowCount,
           rowDepth: tier.rowDepth,
           rowHeight: tier.rowHeight,
-          angularSegments: 6,
+          angularSegments: 24,
+          opening: hasVomitory
+            ? {
+                centerAngle,
+                angularWidth: tier.vomitoryWidth / portalRadius,
+                startRow: tier.vomitoryRow,
+                rowCount: Math.ceil(tier.vomitoryHeight / tier.rowHeight),
+              }
+            : undefined,
         });
       }),
     [aisleAngle, sectionAngle, tier],

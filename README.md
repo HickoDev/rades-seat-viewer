@@ -2,7 +2,7 @@
 
 Radès View is an interactive procedural 3D representation of Stade Olympique Hammadi-Agrebi in Radès, Tunisia. The long-term product will let spectators explore the stadium, preview an approximate first-person seat view, and understand geometric sun exposure during a match.
 
-This repository contains **Milestones 1–10**: the interactive procedural stadium, source-informed Radès calibration, instanced seats, static instanced spectators and players, guided camera modes, structural occluders, astronomical sun direction, selected-seat shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, and cached section/row sunlight heatmaps. It is not a ticket-booking application.
+This repository contains **Milestones 1–11**: the interactive procedural stadium, source-informed Radès calibration, detailed section barriers and concourses, instanced seats, static instanced spectators and players, guided camera modes, structural occluders, astronomical sun direction, selected-seat shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, and cached section/row sunlight heatmaps. It is not a ticket-booking application.
 
 ## Requirements
 
@@ -63,6 +63,9 @@ The model separates sourced facts from procedural estimates in the central typed
 - The two virages are modeled as stepped terraces without individual chair instances, following project-owner calibration. Their exact angular boundaries still require seating plans.
 - The mapped stadium centre and pitch bearing are derived from OpenStreetMap geometry, not a land survey.
 - A ten-lane track is a corroborated secondary-source value. Track construction details, all bowl radii, roof radii, access ramps, and other uncertain dimensions remain configurable estimates.
+- Radès photo references show light-concrete radial aisles, edge barriers, framed tier vomitories, a pale illuminated concourse between tiers, continuous green infield, and a concrete service apron. The implementation reproduces those visual relationships procedurally without copying photographic assets.
+
+Section barriers stay on the edges of radial aisles rather than across them. This preserves the clear circulation channel: FIFA identifies radial gangways, lateral routes, and vomitories as part of stadium circulation and notes that route widths must be established by applicable safety methodology. Barrier sizes and portal spacing in this model remain calibration estimates rather than code-compliance claims.
 
 Calibration references:
 
@@ -72,6 +75,10 @@ Calibration references:
 - [OpenStreetMap stadium geometry](https://www.openstreetmap.org/way/104576770)
 - [OpenStreetMap mapped pitch geometry](https://www.openstreetmap.org/way/26235346)
 - [French-language stadium summary (secondary source for the ten-lane track)](https://fr.wikipedia.org/wiki/Stade_olympique_de_Rad%C3%A8s)
+- [Wikimedia Commons Radès stadium photo archive](https://commons.wikimedia.org/wiki/Category:Rad%C3%A8s_stadium)
+- [2017 interior photograph showing aisles, vomitories, and the concourse](https://commons.wikimedia.org/wiki/File:Stade_de_Rad%C3%A9s_2017_1.jpg)
+- [FIFA stadium-bowl circulation guidance](https://publications.fifa.com/de/football-stadiums-guidelines/general-process-guidelines/design/stadium-bowl/)
+- [SGSA Guide to Safety at Sports Grounds overview](https://sgsa.org.uk/document/greenguide/)
 
 The result should be described as a recognisable procedural approximation, not an exact digital twin.
 

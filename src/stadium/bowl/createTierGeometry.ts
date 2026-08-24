@@ -10,6 +10,12 @@ export type TierGeometryOptions = {
   rowDepth: number;
   rowHeight: number;
   angularSegments?: number;
+  opening?: {
+    centerAngle: number;
+    angularWidth: number;
+    startRow: number;
+    rowCount: number;
+  };
 };
 
 function ellipsePoint(
@@ -31,6 +37,7 @@ export function createTierGeometry({
   startAngle,
   startRadiusX,
   startRadiusZ,
+  opening,
 }: TierGeometryOptions): BufferGeometry {
   const positions: number[] = [];
   const indices: number[] = [];
@@ -67,6 +74,20 @@ export function createTierGeometry({
       const segmentEnd =
         startAngle +
         ((endAngle - startAngle) * (segment + 1)) / angularSegments;
+      const segmentCenter = (segmentStart + segmentEnd) / 2;
+      const openingAngleDelta = opening
+        ? Math.atan2(
+            Math.sin(segmentCenter - opening.centerAngle),
+            Math.cos(segmentCenter - opening.centerAngle),
+          )
+        : Number.POSITIVE_INFINITY;
+      const isInsideOpening =
+        opening !== undefined &&
+        row >= opening.startRow &&
+        row < opening.startRow + opening.rowCount &&
+        Math.abs(openingAngleDelta) <= opening.angularWidth / 2;
+
+      if (isInsideOpening) continue;
 
       addQuad(
         ellipsePoint(segmentStart, innerRadiusX, innerRadiusZ, treadHeight),

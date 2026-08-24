@@ -8,6 +8,7 @@ import { Facade } from './exterior/Facade';
 import { StadiumBowl } from './bowl/StadiumBowl';
 import { FootballPitch } from './pitch/FootballPitch';
 import { AthleticsTrack } from './track/AthleticsTrack';
+import { StadiumApron } from './track/StadiumApron';
 import { LightingStructures } from './roof/LightingStructures';
 import { RoofTrusses } from './roof/RoofTrusses';
 import { StadiumRoof } from './roof/StadiumRoof';
@@ -25,6 +26,7 @@ export function RadesStadium() {
         implementationStatus: 'procedural-stadium-complete',
       }}
     >
+      <StadiumApron />
       <AthleticsTrack />
       <FootballPitch />
       <StaticPlayers />

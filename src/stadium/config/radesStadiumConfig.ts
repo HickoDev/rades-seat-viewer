@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-2',
+  version: 'rades-procedural-3',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -57,6 +57,8 @@ export const radesStadiumConfig = {
       vomitoryRow: 11,
       vomitoryWidth: 3.2,
       vomitoryHeight: 2.6,
+      vomitoryDepth: 2.4,
+      vomitoryFrameThickness: 0.28,
       // Curved terraces behind both goals; angular boundaries need plans.
       seatlessSectionIndices: [0, 1, 2, 13, 14, 15, 16, 17, 18, 29, 30, 31],
     },
@@ -76,9 +78,24 @@ export const radesStadiumConfig = {
       vomitoryRow: 8,
       vomitoryWidth: 3.4,
       vomitoryHeight: 2.8,
+      vomitoryDepth: 2.6,
+      vomitoryFrameThickness: 0.3,
       seatlessSectionIndices: [0, 1, 2, 13, 14, 15, 16, 17, 18, 29, 30, 31],
     },
   ],
+  bowlDetails: {
+    sectionBarrierHeight: 1.05,
+    sectionBarrierMidRailRatio: 0.54,
+    sectionBarrierRailRadius: 0.035,
+    sectionBarrierPostEveryRows: 4,
+    concourseWallInset: 0.55,
+    concoursePortalWidth: 5.2,
+    concoursePortalHeight: 2.65,
+    concoursePortalArchRise: 0.62,
+    concoursePortalDepth: 0.16,
+    concourseSignWidth: 0.95,
+    concourseSignHeight: 0.24,
+  },
   roof: {
     innerRadiusX: 108,
     innerRadiusZ: 78,
@@ -136,6 +153,7 @@ export const radesStadiumConfig = {
       'track.laneCount': 'corroborated-secondary-source',
       'track.dimensions': 'estimate-requires-calibration',
       tiers: 'estimate-requires-calibration',
+      bowlDetails: 'estimate-requires-calibration',
       roof: 'estimate-requires-calibration',
       'structure.frameCount': 'verified-from-contractor',
       'structure.portalFrameHeight': 'verified-from-contractor',
@@ -152,6 +170,7 @@ export const radesStadiumConfig = {
       'The ten-lane track is corroborated by secondary references; its exact construction geometry requires verification.',
       'Bowl and roof radii are procedural calibration estimates chosen to clear the track and match the visible silhouette.',
       'Both virages are modeled as seatless terraces; their exact section boundaries still require seating plans.',
+      'Section rails, framed vomitories, and concourse openings are photo-calibrated procedural estimates.',
     ],
   },
 } satisfies StadiumConfig;

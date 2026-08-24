@@ -1,41 +1,92 @@
+import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
+import { BoxGeometry, MeshStandardMaterial, type InstancedMesh } from 'three';
+
 import type { StadiumConfig } from '../types/stadium.types';
+import { createVomitoryFeatureMatrices } from './createVomitoryFeatureMatrices';
 
 type TierConfig = StadiumConfig['tiers'][number];
 
 export function Vomitories({ tier }: { tier: TierConfig }) {
+  const panelRef = useRef<InstancedMesh>(null);
+  const floorRef = useRef<InstancedMesh>(null);
+  const frameRef = useRef<InstancedMesh>(null);
+  const signRef = useRef<InstancedMesh>(null);
+  const geometry = useMemo(() => new BoxGeometry(1, 1, 1), []);
+  const features = useMemo(() => createVomitoryFeatureMatrices(tier), [tier]);
+  const materials = useMemo(
+    () => ({
+      floor: new MeshStandardMaterial({
+        color: '#89948e',
+        roughness: 0.96,
+      }),
+      frame: new MeshStandardMaterial({
+        color: '#b8c0ba',
+        roughness: 0.93,
+      }),
+      panel: new MeshStandardMaterial({
+        color: '#416764',
+        emissive: '#1d4541',
+        emissiveIntensity: 0.34,
+        roughness: 0.82,
+      }),
+      sign: new MeshStandardMaterial({
+        color: '#74dea2',
+        emissive: '#43d58b',
+        emissiveIntensity: 0.72,
+        roughness: 0.5,
+      }),
+    }),
+    [],
+  );
+
+  useLayoutEffect(() => {
+    const groups = [
+      [panelRef.current, features.panels],
+      [floorRef.current, features.floors],
+      [frameRef.current, features.frames],
+      [signRef.current, features.signs],
+    ] as const;
+
+    groups.forEach(([mesh, matrices]) => {
+      if (!mesh) return;
+      matrices.forEach((matrix, instanceId) =>
+        mesh.setMatrixAt(instanceId, matrix),
+      );
+      mesh.instanceMatrix.needsUpdate = true;
+      mesh.computeBoundingSphere();
+    });
+  }, [features]);
+
+  useEffect(
+    () => () => {
+      geometry.dispose();
+      Object.values(materials).forEach((material) => material.dispose());
+    },
+    [geometry, materials],
+  );
+
   return (
     <group name={`${tier.id}-vomitories`}>
-      {Array.from({ length: tier.sectionCount }, (_, sectionIndex) => {
-        if (sectionIndex % tier.vomitoryEverySections !== 0) {
-          return null;
-        }
-
-        const angle = ((sectionIndex + 0.5) / tier.sectionCount) * Math.PI * 2;
-        const radiusX = tier.startRadiusX + tier.vomitoryRow * tier.rowDepth;
-        const radiusZ = tier.startRadiusZ + tier.vomitoryRow * tier.rowDepth;
-        const height =
-          tier.baseHeight +
-          tier.vomitoryRow * tier.rowHeight +
-          tier.vomitoryHeight / 2;
-
-        return (
-          <mesh
-            key={sectionIndex}
-            name={`${tier.id}-vomitory-${sectionIndex + 1}`}
-            position={[
-              Math.cos(angle) * radiusX,
-              height,
-              Math.sin(angle) * radiusZ,
-            ]}
-            rotation={[0, -angle + Math.PI / 2, 0]}
-          >
-            <boxGeometry
-              args={[tier.vomitoryWidth, tier.vomitoryHeight, 1.1]}
-            />
-            <meshStandardMaterial color="#101713" roughness={1} />
-          </mesh>
-        );
-      })}
+      <instancedMesh
+        ref={panelRef}
+        args={[geometry, materials.panel, features.panels.length]}
+        name={`${tier.id}-vomitory-interiors`}
+      />
+      <instancedMesh
+        ref={floorRef}
+        args={[geometry, materials.floor, features.floors.length]}
+        name={`${tier.id}-vomitory-floors`}
+      />
+      <instancedMesh
+        ref={frameRef}
+        args={[geometry, materials.frame, features.frames.length]}
+        name={`${tier.id}-vomitory-frames`}
+      />
+      <instancedMesh
+        ref={signRef}
+        args={[geometry, materials.sign, features.signs.length]}
+        name={`${tier.id}-vomitory-signs`}
+      />
     </group>
   );
 }

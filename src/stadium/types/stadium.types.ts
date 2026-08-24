@@ -54,8 +54,23 @@ export type StadiumConfig = {
     vomitoryRow: number;
     vomitoryWidth: number;
     vomitoryHeight: number;
+    vomitoryDepth: number;
+    vomitoryFrameThickness: number;
     seatlessSectionIndices: number[];
   }>;
+  bowlDetails: {
+    sectionBarrierHeight: number;
+    sectionBarrierMidRailRatio: number;
+    sectionBarrierRailRadius: number;
+    sectionBarrierPostEveryRows: number;
+    concourseWallInset: number;
+    concoursePortalWidth: number;
+    concoursePortalHeight: number;
+    concoursePortalArchRise: number;
+    concoursePortalDepth: number;
+    concourseSignWidth: number;
+    concourseSignHeight: number;
+  };
   roof: {
     innerRadiusX: number;
     innerRadiusZ: number;

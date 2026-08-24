@@ -3,7 +3,9 @@ import { DoubleSide } from 'three';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
 import { Aisles } from './Aisles';
+import { ConcourseRing } from './ConcourseRing';
 import { createEllipticalRingGeometry } from './createTierGeometry';
+import { SectionBarriers } from './SectionBarriers';
 import { StadiumTier } from './StadiumTier';
 import { Vomitories } from './Vomitories';
 
@@ -25,6 +27,9 @@ export function StadiumBowl() {
   );
   const upperTier = radesStadiumConfig.tiers.find(
     (tier) => tier.id === 'upper',
+  );
+  const lowerTier = radesStadiumConfig.tiers.find(
+    (tier) => tier.id === 'lower',
   );
   const upperSlabOccluder = useMemo(() => {
     if (!upperTier) return null;
@@ -52,6 +57,35 @@ export function StadiumBowl() {
 
   return (
     <group name="stadium-bowl">
+      {lowerTier && upperTier && (
+        <ConcourseRing
+          details={radesStadiumConfig.bowlDetails}
+          lowerTier={lowerTier}
+          upperTier={upperTier}
+        />
+      )}
+      {lowerTier && (
+        <mesh
+          name="lower-tier-front-wall"
+          position={[0, (lowerTier.baseHeight + lowerTier.rowHeight) / 2, 0]}
+          scale={[
+            lowerTier.startRadiusX,
+            lowerTier.baseHeight + lowerTier.rowHeight,
+            lowerTier.startRadiusZ,
+          ]}
+          userData={{
+            shadowOccluder: true,
+            occluderType: 'lower-tier-front-wall',
+          }}
+        >
+          <cylinderGeometry args={[1, 1, 1, 192, 1, true]} />
+          <meshStandardMaterial
+            color="#929c96"
+            roughness={0.97}
+            side={DoubleSide}
+          />
+        </mesh>
+      )}
       {radesStadiumConfig.tiers.map((tier, tierIndex) => {
         const outerRadiusX = tier.startRadiusX + tier.rowCount * tier.rowDepth;
         const outerRadiusZ = tier.startRadiusZ + tier.rowCount * tier.rowDepth;
@@ -61,6 +95,10 @@ export function StadiumBowl() {
           <group key={tier.id}>
             <StadiumTier tier={tier} />
             <Aisles tier={tier} />
+            <SectionBarriers
+              barrier={radesStadiumConfig.bowlDetails}
+              tier={tier}
+            />
             <Vomitories tier={tier} />
             <mesh geometry={walkwayGeometries[tierIndex]}>
               <meshStandardMaterial color="#7f8b85" roughness={0.96} />
@@ -78,7 +116,7 @@ export function StadiumBowl() {
               }}
             >
               <cylinderGeometry args={[1, 1, 1, 192, 1, true]} />
-              <meshStandardMaterial color="#414d47" roughness={0.98} side={2} />
+              <meshStandardMaterial color="#707a74" roughness={0.98} side={2} />
             </mesh>
           </group>
         );

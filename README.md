@@ -2,7 +2,7 @@
 
 Radès View is an interactive procedural 3D representation of Stade Olympique Hammadi-Agrebi in Radès, Tunisia. The long-term product will let spectators explore the stadium, preview an approximate first-person seat view, and understand geometric sun exposure during a match.
 
-This repository currently contains **Milestones 1–8**: the interactive procedural stadium, instanced seats, guided camera modes, structural occluders, astronomical sun direction, selected-seat shadow raycasts, five-minute exposure timelines, glare classification, and validated short-range weather forecasts. It is not a ticket-booking application, and it does not yet contain a stadium-wide heatmap.
+This repository contains **Milestones 1–9**: the interactive procedural stadium, instanced seats, guided camera modes, structural occluders, astronomical sun direction, selected-seat shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, and cached section/row sunlight heatmaps. It is not a ticket-booking application.
 
 ## Requirements
 
@@ -44,9 +44,14 @@ npx playwright install chromium
 - `src/stadium/config/radesStadiumConfig.ts` is the single typed source of stadium measurements.
 - `src/state` contains serializable interaction state only; Three.js objects stay in the scene layer.
 - `src/ui` contains accessible DOM controls outside the WebGL canvas.
+- `src/sunlight` separates astronomical direction, geometric occlusion, glare, timeline, cache, and heatmap classification concerns.
+- `src/weather` contains the dedicated Open-Meteo client, Zod contract, Query hook, and radiation-based assessment helpers.
+- `src/workers` runs representative heatmap raycasts away from the animation and interface thread.
 - `src/test` and `e2e` contain Vitest/Testing Library setup and Playwright smoke coverage.
 
-TanStack Query caches Open-Meteo requests, while Zod validates every response before it reaches the interface. Forecasts are only requested inside Open-Meteo's 16-day horizon; astronomical simulation remains available for long-range dates. GSAP, SunCalc, Luxon, and `three-mesh-bvh` support the camera, sunlight, time-zone, and planned heatmap paths.
+TanStack Query caches Open-Meteo requests, while Zod validates every response before it reaches the interface. Forecasts are only requested inside Open-Meteo's 16-day horizon; astronomical simulation remains available for long-range dates. GSAP handles reduced-motion-aware camera flights, SunCalc and Luxon handle astronomy and `Africa/Tunis` time, and `three-mesh-bvh` accelerates repeated rays against static complex occluders.
+
+Heatmaps use one representative seat per section or per row, run in a Web Worker only when event time, resolution, or the central configuration version changes, and cache results in local storage. They are deliberately labelled as representative estimates. Auto rendering quality caps device pixel ratio and selects simpler shared seat geometry on compact touch devices.
 
 ## Measurement status
 

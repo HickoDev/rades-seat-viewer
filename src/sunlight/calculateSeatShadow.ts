@@ -18,6 +18,7 @@ export function calculateSeatShadow(
     .clone()
     .addScaledVector(direction, rayOriginOffset);
   const raycaster = new Raycaster(origin, direction, 0, Infinity);
+  raycaster.firstHitOnly = true;
   const intersections = raycaster.intersectObjects(occluders, true);
 
   return intersections.length > 0 ? 'stadium-shadow' : 'direct-sun';

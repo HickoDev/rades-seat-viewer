@@ -20,7 +20,7 @@ export function RadesStadium() {
       name="rades-stadium"
       userData={{
         configVersion: radesStadiumConfig.version,
-        implementationStatus: 'pitch-and-track',
+        implementationStatus: 'procedural-stadium-complete',
       }}
     >
       <AthleticsTrack />

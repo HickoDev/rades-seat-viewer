@@ -5,30 +5,38 @@ import {
   Matrix4,
   type BufferGeometry,
   type InstancedMesh,
-  type MeshStandardMaterial,
+  type Material,
 } from 'three';
 
+import { getHeatmapGroupKey } from '../sunlight/sunlightHeatmap';
 import { useStadiumStore } from '../state/useStadiumStore';
 import type { SeatLayout } from './seat.types';
 
 type SeatPickerProps = {
   geometry: BufferGeometry;
   layout: SeatLayout;
-  material: MeshStandardMaterial;
+  material: Material;
 };
 
 const lowerSeatColor = new Color('#2978a8');
 const upperSeatColor = new Color('#376f91');
 const selectedSeatColor = new Color('#d9ff70');
+const heatmapColors = {
+  'mostly-sunny': new Color('#ffcb55'),
+  'partially-sunny': new Color('#d9a94a'),
+  'mostly-shaded': new Color('#4d927b'),
+  'fully-shaded': new Color('#344a58'),
+} as const;
 
 export function SeatPicker({ geometry, layout, material }: SeatPickerProps) {
   const meshRef = useRef<InstancedMesh>(null);
-  const previousSelectedInstance = useRef<number | null>(null);
   const selectedSectionId = useStadiumStore((state) => state.selectedSectionId);
   const selectedRow = useStadiumStore((state) => state.selectedRow);
   const selectedSeat = useStadiumStore((state) => state.selectedSeat);
   const selectSection = useStadiumStore((state) => state.selectSection);
   const selectSeat = useStadiumStore((state) => state.selectSeat);
+  const showSunHeatmap = useStadiumStore((state) => state.showSunHeatmap);
+  const sunHeatmapResult = useStadiumStore((state) => state.sunHeatmapResult);
   const instanceBySeatKey = useMemo(() => {
     const index = new Map<string, number>();
     layout.metadata.forEach((seat, instanceId) => {
@@ -39,6 +47,14 @@ export function SeatPicker({ geometry, layout, material }: SeatPickerProps) {
     });
     return index;
   }, [layout]);
+  const heatmapColorByGroup = useMemo(() => {
+    const colors = new Map<string, Color>();
+    if (!showSunHeatmap || !sunHeatmapResult) return colors;
+    sunHeatmapResult.cells.forEach((cell) => {
+      colors.set(cell.key, heatmapColors[cell.classification]);
+    });
+    return colors;
+  }, [showSunHeatmap, sunHeatmapResult]);
 
   useLayoutEffect(() => {
     const mesh = meshRef.current;
@@ -62,23 +78,34 @@ export function SeatPicker({ geometry, layout, material }: SeatPickerProps) {
     const mesh = meshRef.current;
     if (!mesh) return;
 
-    const previousId = previousSelectedInstance.current;
-    if (previousId !== null) {
-      const previousSeat = layout.metadata[previousId];
-      mesh.setColorAt(
-        previousId,
-        previousSeat.tierId === 'lower' ? lowerSeatColor : upperSeatColor,
+    layout.metadata.forEach((seat, instanceId) => {
+      const groupKey = getHeatmapGroupKey(
+        seat.sectionId,
+        seat.rowNumber,
+        sunHeatmapResult?.resolution ?? 'section',
       );
-    }
+      mesh.setColorAt(
+        instanceId,
+        heatmapColorByGroup.get(groupKey) ??
+          (seat.tierId === 'lower' ? lowerSeatColor : upperSeatColor),
+      );
+    });
 
     const key = `${selectedSectionId}:${selectedRow}:${selectedSeat}`;
     const nextId = instanceBySeatKey.get(key) ?? null;
     if (nextId !== null) {
       mesh.setColorAt(nextId, selectedSeatColor);
     }
-    previousSelectedInstance.current = nextId;
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-  }, [instanceBySeatKey, layout, selectedRow, selectedSeat, selectedSectionId]);
+  }, [
+    heatmapColorByGroup,
+    instanceBySeatKey,
+    layout,
+    selectedRow,
+    selectedSeat,
+    selectedSectionId,
+    sunHeatmapResult?.resolution,
+  ]);
 
   const handleClick = (event: ThreeEvent<MouseEvent>) => {
     if (event.instanceId === undefined) return;

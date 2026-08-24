@@ -6,19 +6,19 @@ import { createRoofGeometry } from './createRoofGeometry';
 
 export function StadiumRoof() {
   const roof = radesStadiumConfig.roof;
-  const geometry = useMemo(
-    () =>
-      createRoofGeometry({
-        innerRadiusX: roof.innerRadiusX,
-        innerRadiusZ: roof.innerRadiusZ,
-        outerRadiusX: roof.outerRadiusX,
-        outerRadiusZ: roof.outerRadiusZ,
-        innerHeight: roof.innerHeight,
-        outerHeight: roof.outerHeight,
-        thickness: roof.panelThickness,
-      }),
-    [roof],
-  );
+  const geometry = useMemo(() => {
+    const roofGeometry = createRoofGeometry({
+      innerRadiusX: roof.innerRadiusX,
+      innerRadiusZ: roof.innerRadiusZ,
+      outerRadiusX: roof.outerRadiusX,
+      outerRadiusZ: roof.outerRadiusZ,
+      innerHeight: roof.innerHeight,
+      outerHeight: roof.outerHeight,
+      thickness: roof.panelThickness,
+    });
+    roofGeometry.computeBoundsTree();
+    return roofGeometry;
+  }, [roof]);
   const material = useMemo(
     () =>
       new MeshStandardMaterial({
@@ -32,6 +32,7 @@ export function StadiumRoof() {
 
   useEffect(
     () => () => {
+      geometry.disposeBoundsTree();
       geometry.dispose();
       material.dispose();
     },

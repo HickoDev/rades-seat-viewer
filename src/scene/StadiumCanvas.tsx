@@ -5,6 +5,8 @@ import { ACESFilmicToneMapping, SRGBColorSpace } from 'three';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { RadesStadium } from '../stadium/RadesStadium';
 import { useStadiumStore } from '../state/useStadiumStore';
+import { useRenderQuality } from '../utils/useRenderQuality';
+import { LoadingScreen } from '../ui/LoadingScreen';
 import { CameraRig } from './CameraRig';
 import { Environment } from './Environment';
 import { PerformanceMonitor } from './PerformanceMonitor';
@@ -15,6 +17,7 @@ import { SunSimulation } from './SunSimulation';
 export function StadiumCanvas() {
   const siteRadius = radesStadiumConfig.roof.outerRadiusX;
   const cameraMode = useStadiumStore((state) => state.cameraMode);
+  const renderQuality = useRenderQuality();
   const instructions =
     cameraMode === 'seat'
       ? 'Drag to look · Escape to return'
@@ -25,20 +28,19 @@ export function StadiumCanvas() {
   return (
     <section className="stadium-viewport" aria-label="Interactive stadium view">
       <Canvas
+        key={renderQuality}
         camera={{
           far: siteRadius * 8,
           fov: 42,
           near: 0.1,
           position: [siteRadius * 0.9, siteRadius * 0.62, siteRadius * 1.05],
         }}
-        dpr={[1, 1.75]}
+        dpr={renderQuality === 'low' ? [0.75, 1] : [1, 1.75]}
         fallback={
-          <p className="canvas-fallback">
-            WebGL is required to display the stadium view.
-          </p>
+          <LoadingScreen message="WebGL is required to display the stadium view." />
         }
         gl={{
-          antialias: true,
+          antialias: renderQuality === 'high',
           powerPreference: 'high-performance',
         }}
         onCreated={({ gl }) => {
@@ -59,7 +61,7 @@ export function StadiumCanvas() {
       </Canvas>
 
       <div className="viewport-hud" aria-hidden="true">
-        <span className="viewport-hud__eyebrow">Foundation scene</span>
+        <span className="viewport-hud__eyebrow">{renderQuality} quality</span>
         <span>{instructions}</span>
       </div>
 

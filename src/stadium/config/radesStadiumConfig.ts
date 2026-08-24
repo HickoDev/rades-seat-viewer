@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'foundation-1',
+  version: 'rades-procedural-1',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',

@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { StadiumCanvas } from '../scene/StadiumCanvas';
 import { useStadiumStore } from '../state/useStadiumStore';
 import { StadiumSidebar } from '../ui/StadiumSidebar';
+import { MobileBottomSheet } from '../ui/MobileBottomSheet';
 
 export function App() {
   const returnToOverview = useStadiumStore((state) => state.returnToOverview);
@@ -20,7 +21,9 @@ export function App() {
 
   return (
     <main className="app-shell">
-      <StadiumSidebar />
+      <MobileBottomSheet>
+        <StadiumSidebar />
+      </MobileBottomSheet>
       <StadiumCanvas />
     </main>
   );

@@ -4,7 +4,9 @@ import { SectionSelector } from './SectionSelector';
 import { SeatInformation } from './SeatInformation';
 import { SeatSelector } from './SeatSelector';
 import { MatchTimeControls } from './MatchTimeControls';
+import { QualityControls } from './QualityControls';
 import { SunExposureTimeline } from './SunExposureTimeline';
+import { SunHeatmapPanel } from './SunHeatmapPanel';
 import { WeatherPanel } from './WeatherPanel';
 
 export function StadiumSidebar() {
@@ -75,6 +77,7 @@ export function StadiumSidebar() {
             {showDebugGuides ? 'On' : 'Off'}
           </span>
         </button>
+        <QualityControls />
       </section>
 
       <section className="control-section" aria-labelledby="simulation-title">
@@ -85,6 +88,7 @@ export function StadiumSidebar() {
         <MatchTimeControls />
         <SunExposureTimeline />
         <WeatherPanel />
+        <SunHeatmapPanel />
       </section>
 
       <footer className="sidebar-footer">

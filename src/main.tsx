@@ -3,7 +3,10 @@ import { createRoot } from 'react-dom/client';
 
 import { App } from './app/App';
 import { AppProviders } from './app/AppProviders';
+import { enableBvhRaycasting } from './utils/setupBvh';
 import './styles.css';
+
+enableBvhRaycasting();
 
 const rootElement = document.getElementById('root');
 

@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
+import { DoubleSide } from 'three';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
 import { Aisles } from './Aisles';
@@ -27,7 +28,7 @@ export function StadiumBowl() {
   );
   const upperSlabOccluder = useMemo(() => {
     if (!upperTier) return null;
-    return createEllipticalRingGeometry({
+    const geometry = createEllipticalRingGeometry({
       innerRadiusX: upperTier.startRadiusX,
       innerRadiusZ: upperTier.startRadiusZ,
       outerRadiusX:
@@ -36,7 +37,18 @@ export function StadiumBowl() {
         upperTier.startRadiusZ + upperTier.rowCount * upperTier.rowDepth,
       height: upperTier.baseHeight,
     });
+    geometry.computeBoundsTree();
+    return geometry;
   }, [upperTier]);
+
+  useEffect(
+    () => () => {
+      walkwayGeometries.forEach((geometry) => geometry.dispose());
+      upperSlabOccluder?.disposeBoundsTree();
+      upperSlabOccluder?.dispose();
+    },
+    [upperSlabOccluder, walkwayGeometries],
+  );
 
   return (
     <group name="stadium-bowl">
@@ -80,7 +92,11 @@ export function StadiumBowl() {
             occluderType: 'upper-tier-slab',
           }}
         >
-          <meshBasicMaterial colorWrite={false} depthWrite={false} />
+          <meshBasicMaterial
+            colorWrite={false}
+            depthWrite={false}
+            side={DoubleSide}
+          />
         </mesh>
       )}
     </group>

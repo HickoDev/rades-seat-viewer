@@ -1,24 +1,28 @@
 import { useEffect, useMemo } from 'react';
-import { MeshStandardMaterial } from 'three';
+import { MeshLambertMaterial, MeshStandardMaterial } from 'three';
 
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
+import { useRenderQuality } from '../utils/useRenderQuality';
 import { createSeatGeometry } from './createSeatGeometry';
 import { radesSeatLayout } from './seatMetadata';
 import { SeatPicker } from './SeatPicker';
 
 export function SeatInstances() {
+  const renderQuality = useRenderQuality();
   const geometry = useMemo(
-    () => createSeatGeometry(radesStadiumConfig.seats),
-    [],
+    () => createSeatGeometry(radesStadiumConfig.seats, renderQuality),
+    [renderQuality],
   );
   const material = useMemo(
     () =>
-      new MeshStandardMaterial({
-        color: '#ffffff',
-        metalness: 0.05,
-        roughness: 0.72,
-      }),
-    [],
+      renderQuality === 'low'
+        ? new MeshLambertMaterial({ color: '#ffffff' })
+        : new MeshStandardMaterial({
+            color: '#ffffff',
+            metalness: 0.05,
+            roughness: 0.72,
+          }),
+    [renderQuality],
   );
 
   useEffect(

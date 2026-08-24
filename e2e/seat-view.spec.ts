@@ -21,9 +21,21 @@ test('loads the foundation scene without runtime errors', async ({ page }) => {
   expect(runtimeErrors).toEqual([]);
 });
 
+test('keeps the control sheet available on a compact viewport', async ({
+  page,
+}) => {
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+  await expect(page.getByLabel('Interactive stadium view')).toBeVisible();
+  await expect(page.getByLabel('Choose a stadium section')).toBeVisible();
+  await expect(page.getByLabel('Rendering quality')).toBeVisible();
+});
+
 test('selects a section, row, and seat from accessible controls', async ({
   page,
 }) => {
+  test.setTimeout(120_000);
   await page.route('**/v1/forecast?**', async (route) => {
     const url = new URL(route.request().url());
     const day = url.searchParams.get('start_date') ?? '2026-08-24';
@@ -81,6 +93,16 @@ test('selects a section, row, and seat from accessible controls', async ({
     page.getByText('Kickoff forecast', { exact: true }),
   ).toBeVisible();
   await expect(page.getByText('31°C', { exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'Enable sunlight heatmap' }).click();
+  await expect(page.getByText(/64 representative groups/)).toBeVisible({
+    timeout: 20_000,
+  });
+  await page.getByLabel('Heatmap representative detail').selectOption('row');
+  await expect(page.getByText(/1696 representative groups/)).toBeVisible({
+    timeout: 25_000,
+  });
+  await page.getByLabel('Rendering quality').selectOption('low');
+  await expect(page.getByLabel('Rendering quality')).toHaveValue('low');
 
   await page.getByRole('button', { name: 'Back to stadium' }).click();
   await expect(page.getByText('overview', { exact: true })).toBeVisible();

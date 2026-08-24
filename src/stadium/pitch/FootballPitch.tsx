@@ -1,5 +1,6 @@
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
 import { Goals } from './Goals';
+import { Benches } from './Benches';
 import { PitchMarkings } from './PitchMarkings';
 
 export function FootballPitch() {
@@ -25,6 +26,7 @@ export function FootballPitch() {
 
       <PitchMarkings />
       <Goals />
+      <Benches />
     </group>
   );
 }

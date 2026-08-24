@@ -56,9 +56,25 @@ export type StadiumConfig = {
     outerRadiusZ: number;
     innerHeight: number;
     outerHeight: number;
+    panelThickness: number;
+    trussRadius: number;
   };
   structure: {
     frameCount: number;
+    exteriorRadiusOffset: number;
+    columnRadius: number;
+    facadeHeight: number;
+    rampCount: number;
+    rampWidth: number;
+    rampRun: number;
+    lightingMastCount: number;
+    lightingMastHeight: number;
+    scoreboardWidth: number;
+    scoreboardHeight: number;
+    scoreboardDepth: number;
+    benchLength: number;
+    benchDepth: number;
+    benchHeight: number;
   };
   seats: {
     spacing: number;

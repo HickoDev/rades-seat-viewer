@@ -25,7 +25,7 @@ export function StadiumSidebar() {
       <section className="intro-card" aria-labelledby="stadium-title">
         <div className="intro-card__tag">
           <span className="status-dot" aria-hidden="true" />
-          Procedural model · Seats online
+          Procedural model · Structure online
         </div>
         <h2 id="stadium-title">{radesStadiumConfig.identity.name}</h2>
         <p>

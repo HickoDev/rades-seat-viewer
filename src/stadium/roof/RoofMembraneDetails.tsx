@@ -16,7 +16,7 @@ export function RoofMembraneDetails() {
   const material = useMemo(
     () =>
       new MeshStandardMaterial({
-        color: '#f2ead4',
+        color: '#f7f4ec',
         metalness: 0.08,
         roughness: 0.7,
       }),
@@ -76,7 +76,7 @@ export function RoofMembraneDetails() {
           args={[1, 1, 1, roof.membraneBayCount * 4, 1, true]}
         />
         <meshStandardMaterial
-          color="#e5e4dc"
+          color="#f0f1ed"
           metalness={0.2}
           roughness={0.5}
           side={DoubleSide}

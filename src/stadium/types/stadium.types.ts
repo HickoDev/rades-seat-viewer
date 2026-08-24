@@ -2,6 +2,7 @@ export type VerificationStatus =
   | 'verified-from-project-brief'
   | 'verified-from-contractor'
   | 'confirmed-by-project-owner'
+  | 'calibrated-from-authorized-visual-reference'
   | 'calibrated-from-open-geodata'
   | 'corroborated-secondary-source'
   | 'estimate-requires-calibration';
@@ -97,6 +98,8 @@ export type StadiumConfig = {
     membraneBayCount: number;
     outerWaveHeight: number;
     outerWaveRadius: number;
+    innerWaveHeight: number;
+    membraneSag: number;
     innerTrussDepth: number;
     mastCount: number;
     mastHeight: number;
@@ -104,6 +107,7 @@ export type StadiumConfig = {
     mastBaseRadius: number;
     mastTopRadius: number;
     mastCableRadius: number;
+    mastBackstayOffset: number;
     floodlightCount: number;
     floodlightWidth: number;
     floodlightHeight: number;
@@ -120,7 +124,7 @@ export type StadiumConfig = {
     rampCount: number;
     rampWidth: number;
     rampTowerRadius: number;
-    rampTowerCenterX: number;
+    rampTowerCenterXs: number[];
     rampTowerCenterZ: number;
     rampTurns: number;
     rampGuardHeight: number;
@@ -128,6 +132,9 @@ export type StadiumConfig = {
     exteriorBraceBottomHeight: number;
     exteriorBraceTopHeight: number;
     exteriorBraceRadiusOffset: number;
+    exteriorBandBottomHeight: number;
+    exteriorBandHeight: number;
+    exteriorPatternCount: number;
     scoreboardWidth: number;
     scoreboardHeight: number;
     scoreboardDepth: number;
@@ -173,6 +180,14 @@ export type StadiumConfig = {
     flagpoleCount: number;
     flagpoleHeight: number;
     palmCount: number;
+  };
+  site: {
+    baseRadiusX: number;
+    baseRadiusZ: number;
+    promenadeOffset: number;
+    promenadeWidth: number;
+    landscapeWidth: number;
+    serviceRoadWidth: number;
   };
   seats: {
     spacing: number;

@@ -2,6 +2,7 @@ import { DoubleSide } from 'three';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
 import { ExteriorBracing } from './ExteriorBracing';
+import { ExteriorMosaicBand } from './ExteriorMosaicBand';
 import { MainEntranceFacade } from './MainEntranceFacade';
 
 export function Facade() {
@@ -11,24 +12,41 @@ export function Facade() {
 
   return (
     <group name="rades-exterior-facade">
-      {[structure.facadeHeight * 0.54, structure.facadeHeight * 0.66].map(
-        (height, index) => (
-          <mesh
-            key={height}
-            position={[0, height, 0]}
-            scale={[radiusX + 0.2, 0.52, radiusZ + 0.2]}
-          >
-            <cylinderGeometry
-              args={[1, 1, 1, structure.frameCount * 2, 1, true]}
-            />
-            <meshStandardMaterial
-              color={index === 0 ? '#d8b43f' : '#1d6da1'}
-              roughness={0.68}
-              side={DoubleSide}
-            />
-          </mesh>
-        ),
-      )}
+      <mesh
+        position={[
+          0,
+          structure.exteriorBandBottomHeight + structure.exteriorBandHeight / 2,
+          0,
+        ]}
+        scale={[radiusX, structure.exteriorBandHeight, radiusZ]}
+      >
+        <cylinderGeometry args={[1, 1, 1, structure.frameCount * 2, 1, true]} />
+        <meshStandardMaterial
+          color="#d8c985"
+          roughness={0.76}
+          side={DoubleSide}
+        />
+      </mesh>
+      {[
+        structure.exteriorBandBottomHeight,
+        structure.exteriorBandBottomHeight + structure.exteriorBandHeight,
+      ].map((height) => (
+        <mesh
+          key={height}
+          position={[0, height, 0]}
+          scale={[radiusX + 0.22, 0.36, radiusZ + 0.22]}
+        >
+          <cylinderGeometry
+            args={[1, 1, 1, structure.frameCount * 2, 1, true]}
+          />
+          <meshStandardMaterial
+            color="#2474a2"
+            roughness={0.68}
+            side={DoubleSide}
+          />
+        </mesh>
+      ))}
+      <ExteriorMosaicBand />
       <ExteriorBracing />
       <MainEntranceFacade />
     </group>

@@ -24,7 +24,7 @@ export function LightingStructures() {
     () =>
       mastPlacements.flatMap(({ angle, x, z }) => {
         const top = new Vector3(x, roof.mastHeight * 0.91, z);
-        return [-1, 0, 1].map((offset) => {
+        const roofStays = [-1, 0, 1].map((offset) => {
           const roofAngle = angle + (offset * Math.PI * 2) / roof.mastCount / 2;
           return createCylinderBetweenMatrix(
             top,
@@ -36,6 +36,21 @@ export function LightingStructures() {
             roof.mastCableRadius,
           );
         });
+        const groundAnchor = new Vector3(
+          Math.cos(angle) *
+            (roof.outerRadiusX + roof.mastBaseOffset + roof.mastBackstayOffset),
+          0.7,
+          Math.sin(angle) *
+            (roof.outerRadiusZ + roof.mastBaseOffset + roof.mastBackstayOffset),
+        );
+        return [
+          ...roofStays,
+          createCylinderBetweenMatrix(
+            top,
+            groundAnchor,
+            roof.mastCableRadius * 0.82,
+          ),
+        ];
       }),
     [mastPlacements, roof],
   );

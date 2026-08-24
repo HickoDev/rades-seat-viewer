@@ -18,13 +18,17 @@ The implementation uses the following features because they recur across photogr
 - a dark intermediate concourse articulated by repeated arched openings;
 - radial light-concrete aisles, metal barriers, and framed vomitories;
 - a long glazed honor/press frontage on one sideline;
-- a cream tensile roof with a scalloped outer edge and a dense white inner space truss;
+- a white tensile roof with visibly sagged radial membrane bays, a scalloped outer edge, and a dense white inner space truss;
 - tall external roof masts with cable stays and roof-edge floodlight arrays;
-- four detached circular spiral-ramp towers connected to the concourse, plus an open dark upper façade with repeated pale X-braces;
+- four detached circular spiral-ramp towers grouped as two pairs on the ceremonial long side and connected to the concourse, plus an open dark upper façade with repeated pale X-braces;
 - red athletics surfacing, a warm concrete service apron, paired segmented translucent-blue team shelters on the main-stand side, white goal nets, and event-dependent pitch-side advertising hoardings;
 - a cream ceremonial entrance with deep-blue arched glazing, blue trim, a yellow patterned band, a taller central gateway, flagpoles, palms, and a broad processional plaza.
 
 Advertising artwork changes by competition and sponsor. The application therefore uses neutral Radès/Tunisia match-day graphics instead of claiming that one photographed sponsor layout is permanent.
+
+## Authorized visual reference
+
+The project owner reports that 3D artist Hassene Alaya granted permission to use the publicly displayed model as a visual reference, provided its original model file is not used. This project therefore independently recreates observed forms with procedural TypeScript geometry. It does not download, import, extract, trace, redistribute, or include any mesh or texture from the reference model.
 
 ## Configurable estimates
 
@@ -33,6 +37,7 @@ No public architectural plan or survey was located for the bowl section, honor s
 ## Reference set
 
 - [SBF supporting-structure project](https://sbf.com.tn/en/the-supporting-structure-of-the-olympic-stadium/)
+- [Hassene Alaya public visual reference](https://sketchfab.com/3d-models/stade-olympique-de-rades-tunisie-b6284acc3aab43059cf3f9d2dd8e3794)
 - [Wikimedia Commons Radès stadium archive](https://commons.wikimedia.org/wiki/Category:Rad%C3%A8s_stadium)
 - [2017 interior photograph](https://commons.wikimedia.org/wiki/File:Stade_de_Rad%C3%A9s_2017_1.jpg)
 - [Europlan interior photographs](https://www.europlan-online.de/stade-olympique-de-rad%EF%BF%BDs/stadion-6370.html)

@@ -36,7 +36,7 @@ export function StadiumCanvas() {
           far: siteRadius * 8,
           fov: 42,
           near: 0.1,
-          position: [siteRadius * 0.9, siteRadius * 0.62, siteRadius * -1.05],
+          position: [siteRadius * 1.2, siteRadius * 1.55, siteRadius * 3.25],
         }}
         dpr={renderQuality === 'low' ? [0.75, 1] : [1, 1.75]}
         fallback={

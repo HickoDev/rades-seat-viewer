@@ -1,6 +1,7 @@
 import { useEffect, useMemo } from 'react';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import { createAccessRampPlacements } from './createAccessRampPlacements';
 import {
   createSpiralGuardGeometry,
   createSpiralRampGeometry,
@@ -31,17 +32,15 @@ export function AccessRamps() {
   }, [structure, targetHeight]);
   const placements = useMemo(
     () =>
-      ([-1, 1] as const)
-        .flatMap((xSide) =>
-          ([-1, 1] as const).map((zSide) => ({
-            x: xSide * structure.rampTowerCenterX,
-            z: zSide * structure.rampTowerCenterZ,
-          })),
-        )
-        .slice(0, structure.rampCount),
+      createAccessRampPlacements({
+        centerXs: structure.rampTowerCenterXs,
+        centerZ: structure.rampTowerCenterZ,
+        count: structure.rampCount,
+        entranceSide: radesStadiumConfig.exterior.mainEntranceSide,
+      }),
     [
+      structure.rampTowerCenterXs,
       structure.rampCount,
-      structure.rampTowerCenterX,
       structure.rampTowerCenterZ,
     ],
   );

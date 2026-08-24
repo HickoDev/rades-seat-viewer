@@ -11,11 +11,11 @@ export function getOverviewCameraPose(): CameraPose {
   const siteRadius = radesStadiumConfig.roof.outerRadiusX;
   return {
     position: new Vector3(
-      siteRadius * 0.9,
-      siteRadius * 0.62,
-      siteRadius * -1.05,
+      siteRadius * 1.2,
+      siteRadius * 1.55,
+      siteRadius * 3.25,
     ),
-    target: new Vector3(0, radesStadiumConfig.roof.innerHeight * 0.25, 0),
+    target: new Vector3(0, radesStadiumConfig.roof.innerHeight * 0.2, 0),
   };
 }
 

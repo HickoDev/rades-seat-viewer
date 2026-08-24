@@ -58,6 +58,9 @@ describe('radesStadiumConfig', () => {
   it('records the four photographed circular ramp towers as estimates', () => {
     expect(radesStadiumConfig.structure.rampCount).toBe(4);
     expect(radesStadiumConfig.structure.rampTowerRadius).toBeGreaterThan(8);
+    expect(radesStadiumConfig.structure.rampTowerCenterXs).toEqual([
+      -116, -86, 86, 116,
+    ]);
     expect(
       radesStadiumConfig.verification.values['structure.spiralRamps'],
     ).toBe('estimate-requires-calibration');

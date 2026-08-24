@@ -52,9 +52,9 @@ export function OverviewCamera() {
       enableDamping
       enablePan={false}
       makeDefault
-      maxDistance={cameraMode === 'overview' ? siteRadius * 2.4 : siteRadius}
+      maxDistance={cameraMode === 'overview' ? siteRadius * 4.3 : siteRadius}
       maxPolarAngle={Math.PI * 0.49}
-      minDistance={cameraMode === 'overview' ? siteRadius * 1.04 : 10}
+      minDistance={cameraMode === 'overview' ? siteRadius * 1.18 : 10}
       minPolarAngle={Math.PI * 0.12}
       target={currentTarget}
     />

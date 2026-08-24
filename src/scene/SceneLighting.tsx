@@ -5,10 +5,10 @@ export function SceneLighting() {
 
   return (
     <>
-      <hemisphereLight args={['#e6f4ff', '#756d60', 1.05]} />
+      <hemisphereLight args={['#eaf7ff', '#6f776d', 1.08]} />
       <directionalLight
-        color="#fff2d3"
-        intensity={1.85}
+        color="#fff9ed"
+        intensity={1.62}
         position={[lightDistance, lightDistance, lightDistance * 0.4]}
       />
     </>

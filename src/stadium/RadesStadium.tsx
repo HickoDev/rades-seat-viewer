@@ -7,6 +7,7 @@ import { AccessRamps } from './exterior/AccessRamps';
 import { ExteriorColumns } from './exterior/ExteriorColumns';
 import { EntrancePlaza } from './exterior/EntrancePlaza';
 import { Facade } from './exterior/Facade';
+import { StadiumSite } from './exterior/StadiumSite';
 import { StadiumBowl } from './bowl/StadiumBowl';
 import { FootballPitch } from './pitch/FootballPitch';
 import { AthleticsTrack } from './track/AthleticsTrack';
@@ -30,6 +31,7 @@ export function RadesStadium() {
         implementationStatus: 'procedural-stadium-complete',
       }}
     >
+      <StadiumSite />
       <StadiumApron />
       <AthleticsTrack />
       <FootballPitch />

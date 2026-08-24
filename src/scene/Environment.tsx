@@ -1,4 +1,4 @@
-import { Grid, Sky } from '@react-three/drei';
+import { Sky } from '@react-three/drei';
 
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 
@@ -10,7 +10,7 @@ export function Environment() {
       <color attach="background" args={['#a8c9d9']} />
       <fog
         attach="fog"
-        args={['#b7ced5', siteDiameter * 0.7, siteDiameter * 1.25]}
+        args={['#b7ced5', siteDiameter * 1.2, siteDiameter * 2.35]}
       />
       <Sky
         distance={siteDiameter * 4}
@@ -21,19 +21,14 @@ export function Environment() {
         sunPosition={[siteDiameter, siteDiameter * 0.62, siteDiameter * 0.28]}
         turbidity={3.2}
       />
-      <Grid
-        args={[siteDiameter, siteDiameter]}
-        cellColor="#839591"
-        cellSize={5}
-        cellThickness={0.45}
-        fadeDistance={siteDiameter * 0.48}
-        fadeStrength={1.5}
-        infiniteGrid
-        position={[0, -0.02, 0]}
-        sectionColor="#a8b5ae"
-        sectionSize={25}
-        sectionThickness={0.8}
-      />
+      <mesh
+        position={[0, -0.14, 0]}
+        rotation={[-Math.PI / 2, 0, 0]}
+        receiveShadow
+      >
+        <planeGeometry args={[siteDiameter * 12, siteDiameter * 12]} />
+        <meshStandardMaterial color="#7d8b73" roughness={1} />
+      </mesh>
     </>
   );
 }

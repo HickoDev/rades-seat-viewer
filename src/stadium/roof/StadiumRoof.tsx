@@ -18,6 +18,8 @@ export function StadiumRoof() {
       waveCount: roof.membraneBayCount,
       outerWaveHeight: roof.outerWaveHeight,
       outerWaveRadius: roof.outerWaveRadius,
+      innerWaveHeight: roof.innerWaveHeight,
+      membraneSag: roof.membraneSag,
     });
     roofGeometry.computeBoundsTree();
     return roofGeometry;
@@ -25,9 +27,9 @@ export function StadiumRoof() {
   const material = useMemo(
     () =>
       new MeshStandardMaterial({
-        color: '#ddd4bd',
+        color: '#f1eee4',
         metalness: 0.02,
-        roughness: 0.84,
+        roughness: 0.68,
         side: DoubleSide,
       }),
     [],

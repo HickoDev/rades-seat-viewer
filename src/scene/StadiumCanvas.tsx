@@ -4,6 +4,7 @@ import { ACESFilmicToneMapping, SRGBColorSpace } from 'three';
 
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { RadesStadium } from '../stadium/RadesStadium';
+import { useStadiumStore } from '../state/useStadiumStore';
 import { CameraRig } from './CameraRig';
 import { Environment } from './Environment';
 import { PerformanceMonitor } from './PerformanceMonitor';
@@ -12,6 +13,13 @@ import { SceneGuides } from './SceneGuides';
 
 export function StadiumCanvas() {
   const siteRadius = radesStadiumConfig.roof.outerRadiusX;
+  const cameraMode = useStadiumStore((state) => state.cameraMode);
+  const instructions =
+    cameraMode === 'seat'
+      ? 'Drag to look · Escape to return'
+      : cameraMode === 'section'
+        ? 'Section focus · Choose a row and seat'
+        : 'Drag to orbit · Scroll to zoom';
 
   return (
     <section className="stadium-viewport" aria-label="Interactive stadium view">
@@ -50,7 +58,7 @@ export function StadiumCanvas() {
 
       <div className="viewport-hud" aria-hidden="true">
         <span className="viewport-hud__eyebrow">Foundation scene</span>
-        <span>Drag to orbit · Scroll to zoom</span>
+        <span>{instructions}</span>
       </div>
 
       <div

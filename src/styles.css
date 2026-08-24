@@ -341,6 +341,25 @@ a:focus-visible {
   font-size: 11px;
 }
 
+.back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 11px 14px;
+  border: 1px solid rgba(197, 242, 104, 0.35);
+  border-radius: 11px;
+  color: #0b1912;
+  background: var(--lime);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.back-button:hover {
+  background: #d7ff83;
+}
+
 .planned-feature {
   display: grid;
   grid-template-columns: auto 1fr auto;

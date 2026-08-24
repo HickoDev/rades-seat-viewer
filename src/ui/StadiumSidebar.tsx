@@ -8,6 +8,7 @@ export function StadiumSidebar() {
   const cameraMode = useStadiumStore((state) => state.cameraMode);
   const showDebugGuides = useStadiumStore((state) => state.showDebugGuides);
   const toggleDebugGuides = useStadiumStore((state) => state.toggleDebugGuides);
+  const returnToOverview = useStadiumStore((state) => state.returnToOverview);
 
   return (
     <aside className="stadium-sidebar" aria-label="Stadium controls">
@@ -48,6 +49,16 @@ export function StadiumSidebar() {
         <SectionSelector />
         <SeatSelector />
         <SeatInformation />
+        {cameraMode !== 'overview' && (
+          <button
+            className="back-button"
+            type="button"
+            onClick={returnToOverview}
+          >
+            <span aria-hidden="true">←</span>
+            Back to stadium
+          </button>
+        )}
         <button
           className="mode-button"
           type="button"

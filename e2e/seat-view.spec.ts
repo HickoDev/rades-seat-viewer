@@ -24,6 +24,7 @@ test('loads the foundation scene without runtime errors', async ({ page }) => {
 test('selects a section, row, and seat from accessible controls', async ({
   page,
 }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.goto('/', { waitUntil: 'domcontentloaded' });
 
   await page.getByLabel('Choose a stadium section').selectOption('lower-01');
@@ -33,4 +34,10 @@ test('selects a section, row, and seat from accessible controls', async ({
   await expect(
     page.getByText('lower-01 · Row 5 · Seat 3', { exact: true }),
   ).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Back to stadium' }),
+  ).toBeVisible();
+
+  await page.getByRole('button', { name: 'Back to stadium' }).click();
+  await expect(page.getByText('overview', { exact: true })).toBeVisible();
 });

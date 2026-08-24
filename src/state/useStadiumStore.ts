@@ -12,10 +12,12 @@ export type StadiumState = {
   showSunSimulation: boolean;
   showWeather: boolean;
   showSunHeatmap: boolean;
+  showDebugGuides: boolean;
   selectSection: (sectionId: string) => void;
   selectSeat: (row: number, seat: number) => void;
   setMatchTime: (startIso: string, endIso: string) => void;
   returnToOverview: () => void;
+  toggleDebugGuides: () => void;
 };
 
 const initialState = {
@@ -28,6 +30,7 @@ const initialState = {
   showSunSimulation: false,
   showWeather: false,
   showSunHeatmap: false,
+  showDebugGuides: false,
 };
 
 export const useStadiumStore = create<StadiumState>((set) => ({
@@ -54,4 +57,6 @@ export const useStadiumStore = create<StadiumState>((set) => ({
       selectedRow: null,
       selectedSeat: null,
     }),
+  toggleDebugGuides: () =>
+    set((state) => ({ showDebugGuides: !state.showDebugGuides })),
 }));

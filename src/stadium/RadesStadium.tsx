@@ -1,8 +1,9 @@
 import { radesStadiumConfig } from './config/radesStadiumConfig';
+import { FootballPitch } from './pitch/FootballPitch';
+import { AthleticsTrack } from './track/AthleticsTrack';
 
 /**
- * Milestone 1 scene boundary. Procedural pitch, track, bowl, roof, exterior,
- * and seat modules will be composed inside this stable group in later work.
+ * Stable composition boundary for the independently generated stadium modules.
  */
 export function RadesStadium() {
   return (
@@ -10,8 +11,11 @@ export function RadesStadium() {
       name="rades-stadium"
       userData={{
         configVersion: radesStadiumConfig.version,
-        implementationStatus: 'foundation',
+        implementationStatus: 'pitch-and-track',
       }}
-    />
+    >
+      <AthleticsTrack />
+      <FootballPitch />
+    </group>
   );
 }

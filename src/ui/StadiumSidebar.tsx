@@ -3,6 +3,8 @@ import { useStadiumStore } from '../state/useStadiumStore';
 
 export function StadiumSidebar() {
   const cameraMode = useStadiumStore((state) => state.cameraMode);
+  const showDebugGuides = useStadiumStore((state) => state.showDebugGuides);
+  const toggleDebugGuides = useStadiumStore((state) => state.toggleDebugGuides);
 
   return (
     <aside className="stadium-sidebar" aria-label="Stadium controls">
@@ -19,7 +21,7 @@ export function StadiumSidebar() {
       <section className="intro-card" aria-labelledby="stadium-title">
         <div className="intro-card__tag">
           <span className="status-dot" aria-hidden="true" />
-          Procedural model · Foundation
+          Procedural model · Pitch &amp; track
         </div>
         <h2 id="stadium-title">{radesStadiumConfig.identity.name}</h2>
         <p>
@@ -46,6 +48,19 @@ export function StadiumSidebar() {
             <small>Available with the stadium bowl</small>
           </span>
           <span aria-hidden="true">→</span>
+        </button>
+        <button
+          className="mode-button"
+          type="button"
+          onClick={toggleDebugGuides}
+        >
+          <span>
+            <strong>Debug guides</strong>
+            <small>Scene axes and geographic orientation</small>
+          </span>
+          <span className={showDebugGuides ? 'mode-pill' : 'mode-state'}>
+            {showDebugGuides ? 'On' : 'Off'}
+          </span>
         </button>
       </section>
 
@@ -74,7 +89,8 @@ export function StadiumSidebar() {
         <p>
           Pitch 105 × 68 m · 64 structural frames
           <br />
-          Bowl, roof, coordinates, and north rotation require calibration.
+          Track, bowl, roof, coordinates, and north rotation require
+          calibration.
         </p>
       </footer>
     </aside>

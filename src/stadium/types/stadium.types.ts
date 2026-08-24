@@ -13,6 +13,18 @@ export type StadiumConfig = {
   pitch: {
     length: number;
     width: number;
+    lineWidth: number;
+    centerCircleRadius: number;
+    penaltyAreaLength: number;
+    penaltyAreaWidth: number;
+    goalAreaLength: number;
+    goalAreaWidth: number;
+    penaltySpotDistance: number;
+    cornerArcRadius: number;
+    goalWidth: number;
+    goalHeight: number;
+    goalDepth: number;
+    mowingStripeCount: number;
   };
   track: {
     laneCount: number;

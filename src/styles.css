@@ -254,6 +254,14 @@ a:focus-visible {
   text-transform: uppercase;
 }
 
+.mode-state {
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .planned-feature {
   display: grid;
   grid-template-columns: auto 1fr auto;

@@ -5,8 +5,11 @@ export default defineConfig({
   plugins: [react()],
   test: {
     environment: 'jsdom',
+    fileParallelism: false,
     globals: true,
     include: ['src/**/*.{test,spec}.{ts,tsx}'],
+    maxWorkers: 1,
+    pool: 'threads',
     setupFiles: ['./src/test/setup.ts'],
     css: true,
     coverage: {

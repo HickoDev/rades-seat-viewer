@@ -58,11 +58,11 @@ export function StadiumTier({ tier }: StadiumTierProps) {
   const materials = useMemo(
     () => ({
       primary: new MeshStandardMaterial({
-        color: '#718078',
+        color: '#aaa99f',
         roughness: 0.93,
       }),
       secondary: new MeshStandardMaterial({
-        color: '#67756e',
+        color: '#9fa199',
         roughness: 0.93,
       }),
       selected: new MeshStandardMaterial({

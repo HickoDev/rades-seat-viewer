@@ -40,10 +40,15 @@ export function SectionSelector() {
               const sectionId = getSectionId(tier.id, sectionIndex);
               const isVirageTerrace =
                 tier.seatlessSectionIndices.includes(sectionIndex);
+              const isHonorTribune =
+                radesStadiumConfig.grandstand.sectionIndices.includes(
+                  sectionIndex,
+                );
               return (
                 <option key={sectionId} value={sectionId}>
                   {tier.name} · Section {sectionIndex + 1}
                   {isVirageTerrace ? ' · Virage terrace' : ''}
+                  {isHonorTribune ? ' · Honor / press stand' : ''}
                 </option>
               );
             })}

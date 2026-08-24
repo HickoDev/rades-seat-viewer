@@ -1,4 +1,5 @@
 import { findViewingPosition } from '../seats/viewingPositions';
+import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { useStadiumStore } from '../state/useStadiumStore';
 
 export function SeatInformation() {
@@ -21,10 +22,20 @@ export function SeatInformation() {
     metadata.position[2],
   );
   const isTerrace = position.kind === 'terrace';
+  const sectionIndex = Number(metadata.sectionId.split('-')[1]) - 1;
+  const isHonorTribune =
+    !isTerrace &&
+    radesStadiumConfig.grandstand.sectionIndices.includes(sectionIndex);
 
   return (
     <div className="seat-information" aria-live="polite">
-      <span>{isTerrace ? 'Virage POV' : 'Selected seat'}</span>
+      <span>
+        {isTerrace
+          ? 'Virage POV'
+          : isHonorTribune
+            ? 'Honor stand view'
+            : 'Selected seat'}
+      </span>
       <strong>
         {metadata.sectionId} &middot; {isTerrace ? 'Terrace row' : 'Row'}{' '}
         {metadata.rowNumber} &middot; {isTerrace ? 'Position' : 'Seat'}{' '}

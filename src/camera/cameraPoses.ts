@@ -13,7 +13,7 @@ export function getOverviewCameraPose(): CameraPose {
     position: new Vector3(
       siteRadius * 0.9,
       siteRadius * 0.62,
-      siteRadius * 1.05,
+      siteRadius * -1.05,
     ),
     target: new Vector3(0, radesStadiumConfig.roof.innerHeight * 0.25, 0),
   };

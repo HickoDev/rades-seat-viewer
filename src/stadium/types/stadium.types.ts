@@ -38,9 +38,23 @@ export type StadiumConfig = {
     straightLength: number;
     innerCurveRadius: number;
   };
+  fieldFurniture: {
+    goalPostRadius: number;
+    goalNetGridSpacing: number;
+    goalNetTopDepth: number;
+    advertisingBoardHeight: number;
+    advertisingBoardDepth: number;
+    advertisingBoardSegmentLength: number;
+    advertisingBoardGap: number;
+    behindGoalOffset: number;
+    behindGoalRunLength: number;
+    sidelineOffset: number;
+    sidelineRunLength: number;
+  };
   tiers: Array<{
     id: string;
     name: string;
+    reportedCapacity: number;
     sectionCount: number;
     rowCount: number;
     startRadiusX: number;
@@ -80,6 +94,19 @@ export type StadiumConfig = {
     outerHeight: number;
     panelThickness: number;
     trussRadius: number;
+    membraneBayCount: number;
+    outerWaveHeight: number;
+    outerWaveRadius: number;
+    innerTrussDepth: number;
+    mastCount: number;
+    mastHeight: number;
+    mastBaseOffset: number;
+    mastBaseRadius: number;
+    mastTopRadius: number;
+    mastCableRadius: number;
+    floodlightCount: number;
+    floodlightWidth: number;
+    floodlightHeight: number;
   };
   structure: {
     frameCount: number;
@@ -91,14 +118,42 @@ export type StadiumConfig = {
     rampCount: number;
     rampWidth: number;
     rampRun: number;
-    lightingMastCount: number;
-    lightingMastHeight: number;
     scoreboardWidth: number;
     scoreboardHeight: number;
     scoreboardDepth: number;
+    scoreboardFlagPanelHeight: number;
     benchLength: number;
     benchDepth: number;
     benchHeight: number;
+    benchBayCount: number;
+    benchFrameThickness: number;
+  };
+  grandstand: {
+    side: -1 | 1;
+    officialCapacity: number;
+    pressDeskCount: number;
+    sectionIndices: number[];
+    width: number;
+    depth: number;
+    baseHeight: number;
+    height: number;
+    windowBayCount: number;
+    signBandHeight: number;
+    canopyDepth: number;
+    frontInset: number;
+  };
+  exterior: {
+    mainEntranceSide: -1 | 1;
+    mainEntranceWidth: number;
+    mainEntranceDepth: number;
+    wingHeight: number;
+    centralTowerWidth: number;
+    centralTowerHeight: number;
+    archedWindowCount: number;
+    archedWindowWidth: number;
+    archedWindowHeight: number;
+    blueTrimHeight: number;
+    yellowBandHeight: number;
   };
   seats: {
     spacing: number;

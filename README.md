@@ -2,7 +2,7 @@
 
 Radès View is an interactive procedural 3D representation of Stade Olympique Hammadi-Agrebi in Radès, Tunisia. The long-term product will let spectators explore the stadium, preview an approximate first-person seat view, and understand geometric sun exposure during a match.
 
-This repository contains **Milestones 1–12**: the interactive procedural stadium, source-informed Radès calibration, detailed section barriers and concourses, instanced seats, static instanced spectators and players, guided seat and virage-terrace POV modes, structural occluders, astronomical sun direction, selected-view shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, and cached section/row sunlight heatmaps. It is not a ticket-booking application.
+This repository contains **Milestones 1–13**: the interactive procedural stadium, source-informed Radès calibration, detailed section barriers and concourses, instanced seats, static instanced spectators and players, guided seat and virage-terrace POV modes, Radès-specific honor/press and ceremonial-entrance architecture, goal nets and match-day hoardings, structural occluders, astronomical sun direction, selected-view shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, and cached section/row sunlight heatmaps. It is not a ticket-booking application.
 
 ## Requirements
 
@@ -60,10 +60,12 @@ The model separates sourced facts from procedural estimates in the central typed
 
 - The 105 × 68 metre pitch and `Africa/Tunis` timezone remain explicit project requirements.
 - Stadium contractor SBF reports a 60,000 spectator capacity, a 13,000 m² covered enclosure, and 64 portal frames reaching 33 m. Capacity is not treated as a count of plastic seat instances.
+- Published facility summaries report a 7,000-place honor tribune and a press tribune with 300 desks. Those capacities are recorded separately from the photo-calibrated suite geometry.
 - The two virages are modeled as stepped terraces without individual chair instances, following project-owner calibration. Their exact angular boundaries still require seating plans.
 - The mapped stadium centre and pitch bearing are derived from OpenStreetMap geometry, not a land survey.
 - A ten-lane track is a corroborated secondary-source value. Track construction details, all bowl radii, roof radii, access ramps, and other uncertain dimensions remain configurable estimates.
 - Radès photo references show light-concrete radial aisles, edge barriers, framed tier vomitories, a pale illuminated concourse between tiers, continuous green infield, and a concrete service apron. The implementation reproduces those visual relationships procedurally without copying photographic assets.
+- The beige scalloped membrane, dense white inner truss, cable-stayed masts, end scoreboards, glazed honor frontage, and cream/blue/yellow main entrance are modeled as configurable visual estimates. See the [visual calibration record](docs/rades-visual-calibration.md).
 
 Section barriers stay on the edges of radial aisles rather than across them. This preserves the clear circulation channel: FIFA identifies radial gangways, lateral routes, and vomitories as part of stadium circulation and notes that route widths must be established by applicable safety methodology. Barrier sizes and portal spacing in this model remain calibration estimates rather than code-compliance claims.
 

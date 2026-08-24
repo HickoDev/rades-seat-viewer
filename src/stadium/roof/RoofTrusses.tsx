@@ -2,12 +2,11 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import {
   CylinderGeometry,
   MeshStandardMaterial,
-  Vector3,
   type InstancedMesh,
 } from 'three';
 
-import { createCylinderBetweenMatrix } from '../../utils/geometry';
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import { createRoofTrussMatrices } from './createRoofTrussMatrices';
 
 export function RoofTrusses() {
   const meshRef = useRef<InstancedMesh>(null);
@@ -16,29 +15,25 @@ export function RoofTrusses() {
   const material = useMemo(
     () =>
       new MeshStandardMaterial({
-        color: '#46544e',
-        metalness: 0.55,
-        roughness: 0.48,
+        color: '#dce2df',
+        metalness: 0.42,
+        roughness: 0.4,
       }),
     [],
   );
   const matrices = useMemo(
     () =>
-      Array.from({ length: structure.frameCount }, (_, frameIndex) => {
-        const angle = (frameIndex / structure.frameCount) * Math.PI * 2;
-        return createCylinderBetweenMatrix(
-          new Vector3(
-            Math.cos(angle) * roof.innerRadiusX,
-            roof.innerHeight - roof.panelThickness,
-            Math.sin(angle) * roof.innerRadiusZ,
-          ),
-          new Vector3(
-            Math.cos(angle) * roof.outerRadiusX,
-            roof.outerHeight - roof.panelThickness,
-            Math.sin(angle) * roof.outerRadiusZ,
-          ),
-          roof.trussRadius,
-        );
+      createRoofTrussMatrices({
+        frameCount: structure.frameCount,
+        innerRadiusX: roof.innerRadiusX,
+        innerRadiusZ: roof.innerRadiusZ,
+        outerRadiusX: roof.outerRadiusX,
+        outerRadiusZ: roof.outerRadiusZ,
+        innerHeight: roof.innerHeight,
+        outerHeight: roof.outerHeight,
+        panelThickness: roof.panelThickness,
+        innerTrussDepth: roof.innerTrussDepth,
+        trussRadius: roof.trussRadius,
       }),
     [roof, structure.frameCount],
   );
@@ -63,7 +58,7 @@ export function RoofTrusses() {
   return (
     <instancedMesh
       ref={meshRef}
-      args={[geometry, material, structure.frameCount]}
+      args={[geometry, material, matrices.length]}
       name="roof-trusses"
       userData={{ shadowOccluder: true, occluderType: 'roof-truss' }}
     />

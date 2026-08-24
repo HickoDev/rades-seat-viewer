@@ -5,6 +5,7 @@ import { radesStadiumConfig } from '../config/radesStadiumConfig';
 import { Aisles } from './Aisles';
 import { ConcourseRing } from './ConcourseRing';
 import { createEllipticalRingGeometry } from './createTierGeometry';
+import { HonorPressTribune } from './HonorPressTribune';
 import { SectionBarriers } from './SectionBarriers';
 import { StadiumTier } from './StadiumTier';
 import { Vomitories } from './Vomitories';
@@ -64,6 +65,7 @@ export function StadiumBowl() {
           upperTier={upperTier}
         />
       )}
+      <HonorPressTribune />
       {lowerTier && (
         <mesh
           name="lower-tier-front-wall"
@@ -116,7 +118,13 @@ export function StadiumBowl() {
               }}
             >
               <cylinderGeometry args={[1, 1, 1, 192, 1, true]} />
-              <meshStandardMaterial color="#707a74" roughness={0.98} side={2} />
+              <meshStandardMaterial
+                color="#c9c5b8"
+                emissive="#494840"
+                emissiveIntensity={0.08}
+                roughness={0.96}
+                side={2}
+              />
             </mesh>
           </group>
         );

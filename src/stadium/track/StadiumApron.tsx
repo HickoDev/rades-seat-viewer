@@ -27,7 +27,7 @@ export function StadiumApron() {
         receiveShadow
       >
         <circleGeometry args={[1, 192]} />
-        <meshStandardMaterial color="#8d9690" roughness={0.98} />
+        <meshStandardMaterial color="#aa9d84" roughness={0.98} />
       </mesh>
       <mesh
         geometry={infieldGeometry}

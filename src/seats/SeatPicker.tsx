@@ -18,8 +18,8 @@ type SeatPickerProps = {
   material: Material;
 };
 
-const lowerSeatColor = new Color('#2978a8');
-const upperSeatColor = new Color('#376f91');
+const lowerSeatColor = new Color('#56bfe0');
+const upperSeatColor = new Color('#3ba9d2');
 const selectedSeatColor = new Color('#d9ff70');
 const heatmapColors = {
   'mostly-sunny': new Color('#ffcb55'),

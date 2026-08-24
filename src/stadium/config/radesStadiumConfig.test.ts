@@ -38,4 +38,20 @@ describe('radesStadiumConfig', () => {
     expect(lowerTier.startRadiusX).toBeGreaterThan(trackEndX);
     expect(lowerTier.startRadiusZ).toBeGreaterThan(outerTrackRadius);
   });
+
+  it('records the reported honor and press tribune capacities separately', () => {
+    expect(
+      radesStadiumConfig.tiers.map((tier) => tier.reportedCapacity),
+    ).toEqual([32_000, 28_000]);
+    expect(radesStadiumConfig.grandstand).toMatchObject({
+      officialCapacity: 7_000,
+      pressDeskCount: 300,
+    });
+    expect(
+      radesStadiumConfig.verification.values['grandstand.officialCapacity'],
+    ).toBe('corroborated-secondary-source');
+    expect(
+      radesStadiumConfig.verification.values['grandstand.dimensions'],
+    ).toBe('estimate-requires-calibration');
+  });
 });

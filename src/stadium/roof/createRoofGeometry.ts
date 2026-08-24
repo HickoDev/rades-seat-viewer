@@ -9,6 +9,9 @@ export type RoofGeometryOptions = {
   outerHeight: number;
   thickness: number;
   segments?: number;
+  waveCount?: number;
+  outerWaveHeight?: number;
+  outerWaveRadius?: number;
 };
 
 export function createRoofGeometry({
@@ -20,6 +23,9 @@ export function createRoofGeometry({
   outerRadiusZ,
   segments = 256,
   thickness,
+  waveCount = 0,
+  outerWaveHeight = 0,
+  outerWaveRadius = 0,
 }: RoofGeometryOptions): BufferGeometry {
   const positions: number[] = [];
   const indices: number[] = [];
@@ -28,19 +34,23 @@ export function createRoofGeometry({
     const angle = (index / segments) * Math.PI * 2;
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);
+    const outerWave = waveCount > 0 ? Math.cos(angle * waveCount) : 0;
+    const wavedOuterRadiusX = outerRadiusX + outerWave * outerWaveRadius;
+    const wavedOuterRadiusZ = outerRadiusZ + outerWave * outerWaveRadius;
+    const wavedOuterHeight = outerHeight + outerWave * outerWaveHeight;
     positions.push(
       cos * innerRadiusX,
       innerHeight,
       sin * innerRadiusZ,
-      cos * outerRadiusX,
-      outerHeight,
-      sin * outerRadiusZ,
+      cos * wavedOuterRadiusX,
+      wavedOuterHeight,
+      sin * wavedOuterRadiusZ,
       cos * innerRadiusX,
       innerHeight - thickness,
       sin * innerRadiusZ,
-      cos * outerRadiusX,
-      outerHeight - thickness,
-      sin * outerRadiusZ,
+      cos * wavedOuterRadiusX,
+      wavedOuterHeight - thickness,
+      sin * wavedOuterRadiusZ,
     );
 
     if (index < segments) {

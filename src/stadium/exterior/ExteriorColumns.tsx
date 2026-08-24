@@ -46,7 +46,7 @@ export function ExteriorColumns() {
       userData={{ shadowOccluder: true, occluderType: 'major-column' }}
     >
       <cylinderGeometry args={[1, 1, 1, 10]} />
-      <meshStandardMaterial color="#9ba59f" roughness={0.82} />
+      <meshStandardMaterial color="#d3d5cd" roughness={0.82} />
     </instancedMesh>
   );
 }

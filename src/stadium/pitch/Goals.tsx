@@ -1,14 +1,32 @@
+import { useEffect, useMemo } from 'react';
+
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import { createGoalNetGeometry } from './createGoalNetGeometry';
 
 type GoalFrameProps = {
   side: -1 | 1;
 };
 
 function GoalFrame({ side }: GoalFrameProps) {
-  const pitch = radesStadiumConfig.pitch;
-  const postRadius = 0.06;
+  const { fieldFurniture, pitch } = radesStadiumConfig;
+  const postRadius = fieldFurniture.goalPostRadius;
   const goalX = side * (pitch.length / 2 + postRadius);
   const depthDirection = side;
+  const netGeometry = useMemo(
+    () =>
+      createGoalNetGeometry({
+        side,
+        goalLineX: pitch.length / 2 + postRadius,
+        width: pitch.goalWidth,
+        height: pitch.goalHeight,
+        groundDepth: pitch.goalDepth,
+        topDepth: fieldFurniture.goalNetTopDepth,
+        gridSpacing: fieldFurniture.goalNetGridSpacing,
+      }),
+    [fieldFurniture, pitch, postRadius, side],
+  );
+
+  useEffect(() => () => netGeometry.dispose(), [netGeometry]);
 
   return (
     <group name={side === -1 ? 'west-goal' : 'east-goal'}>
@@ -36,24 +54,35 @@ function GoalFrame({ side }: GoalFrameProps) {
         />
         <meshStandardMaterial color="#f6f5e8" roughness={0.48} />
       </mesh>
-
-      <mesh
-        position={[
-          goalX + depthDirection * pitch.goalDepth,
-          pitch.goalHeight / 2,
-          0,
-        ]}
-      >
-        <boxGeometry
-          args={[pitch.lineWidth, pitch.goalHeight, pitch.goalWidth]}
-        />
-        <meshBasicMaterial
-          color="#d8e5de"
+      {([-1, 1] as const).map((zSide) => (
+        <mesh
+          key={`support-${zSide}`}
+          position={[
+            goalX + (depthDirection * fieldFurniture.goalNetTopDepth) / 2,
+            pitch.goalHeight,
+            (zSide * pitch.goalWidth) / 2,
+          ]}
+          rotation={[0, 0, Math.PI / 2]}
+        >
+          <cylinderGeometry
+            args={[
+              postRadius * 0.58,
+              postRadius * 0.58,
+              fieldFurniture.goalNetTopDepth,
+              8,
+            ]}
+          />
+          <meshStandardMaterial color="#f6f5e8" roughness={0.5} />
+        </mesh>
+      ))}
+      <lineSegments geometry={netGeometry} name="goal-net">
+        <lineBasicMaterial
+          color="#f4f1df"
+          depthWrite={false}
+          opacity={0.78}
           transparent
-          opacity={0.12}
-          wireframe
         />
-      </mesh>
+      </lineSegments>
     </group>
   );
 }

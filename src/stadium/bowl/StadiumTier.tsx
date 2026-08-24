@@ -89,7 +89,10 @@ export function StadiumTier({ tier }: StadiumTierProps) {
               selectSection(sectionId);
             }}
             receiveShadow
-            userData={{ sectionId, tierId: tier.id }}
+            userData={{
+              sectionId,
+              tierId: tier.id,
+            }}
           />
         );
       })}

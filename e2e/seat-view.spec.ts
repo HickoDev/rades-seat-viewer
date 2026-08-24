@@ -38,6 +38,12 @@ test('selects a section, row, and seat from accessible controls', async ({
     page.getByRole('button', { name: 'Back to stadium' }),
   ).toBeVisible();
 
+  await page
+    .getByRole('button', { name: 'Use today at 16:00 as an example' })
+    .click();
+  await page.getByRole('button', { name: 'Enable sun simulation' }).click();
+  await expect(page.getByText('Peak glare', { exact: true })).toBeVisible();
+
   await page.getByRole('button', { name: 'Back to stadium' }).click();
   await expect(page.getByText('overview', { exact: true })).toBeVisible();
 });

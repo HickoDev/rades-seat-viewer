@@ -3,6 +3,8 @@ import { useStadiumStore } from '../state/useStadiumStore';
 import { SectionSelector } from './SectionSelector';
 import { SeatInformation } from './SeatInformation';
 import { SeatSelector } from './SeatSelector';
+import { MatchTimeControls } from './MatchTimeControls';
+import { SunExposureTimeline } from './SunExposureTimeline';
 
 export function StadiumSidebar() {
   const cameraMode = useStadiumStore((state) => state.cameraMode);
@@ -25,7 +27,7 @@ export function StadiumSidebar() {
       <section className="intro-card" aria-labelledby="stadium-title">
         <div className="intro-card__tag">
           <span className="status-dot" aria-hidden="true" />
-          Procedural model · Structure online
+          Procedural model · Sun simulation online
         </div>
         <h2 id="stadium-title">{radesStadiumConfig.identity.name}</h2>
         <p>
@@ -79,16 +81,8 @@ export function StadiumSidebar() {
           <span>02</span>
           <h2 id="simulation-title">Match conditions</h2>
         </div>
-        <div className="planned-feature">
-          <span className="planned-feature__icon" aria-hidden="true">
-            ☀
-          </span>
-          <div>
-            <strong>Sun &amp; shade</strong>
-            <p>Geometric simulation arrives after seat views.</p>
-          </div>
-          <span className="planned-feature__label">Planned</span>
-        </div>
+        <MatchTimeControls />
+        <SunExposureTimeline />
       </section>
 
       <footer className="sidebar-footer">

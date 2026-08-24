@@ -22,6 +22,21 @@ export function StadiumBowl() {
       }),
     [],
   );
+  const upperTier = radesStadiumConfig.tiers.find(
+    (tier) => tier.id === 'upper',
+  );
+  const upperSlabOccluder = useMemo(() => {
+    if (!upperTier) return null;
+    return createEllipticalRingGeometry({
+      innerRadiusX: upperTier.startRadiusX,
+      innerRadiusZ: upperTier.startRadiusZ,
+      outerRadiusX:
+        upperTier.startRadiusX + upperTier.rowCount * upperTier.rowDepth,
+      outerRadiusZ:
+        upperTier.startRadiusZ + upperTier.rowCount * upperTier.rowDepth,
+      height: upperTier.baseHeight,
+    });
+  }, [upperTier]);
 
   return (
     <group name="stadium-bowl">
@@ -45,6 +60,10 @@ export function StadiumBowl() {
                 tierHeight,
                 outerRadiusZ + tier.walkwayWidth,
               ]}
+              userData={{
+                shadowOccluder: true,
+                occluderType: 'large-structural-wall',
+              }}
             >
               <cylinderGeometry args={[1, 1, 1, 192, 1, true]} />
               <meshStandardMaterial color="#414d47" roughness={0.98} side={2} />
@@ -52,6 +71,18 @@ export function StadiumBowl() {
           </group>
         );
       })}
+      {upperSlabOccluder && (
+        <mesh
+          geometry={upperSlabOccluder}
+          name="upper-tier-shadow-proxy"
+          userData={{
+            shadowOccluder: true,
+            occluderType: 'upper-tier-slab',
+          }}
+        >
+          <meshBasicMaterial colorWrite={false} depthWrite={false} />
+        </mesh>
+      )}
     </group>
   );
 }

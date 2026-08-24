@@ -14,7 +14,6 @@ export function Facade() {
         structure.facadeHeight,
         roof.outerRadiusZ + structure.exteriorRadiusOffset * 0.7,
       ]}
-      userData={{ shadowOccluder: true, occluderType: 'large-structural-wall' }}
     >
       <cylinderGeometry args={[1, 1, 1, structure.frameCount, 1, true]} />
       <meshStandardMaterial

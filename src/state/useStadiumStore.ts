@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+import type { SunExposureSimulation } from '../sunlight/sunlight.types';
+
 export type CameraMode = 'overview' | 'section' | 'seat';
 
 export type StadiumState = {
@@ -13,12 +15,15 @@ export type StadiumState = {
   showWeather: boolean;
   showSunHeatmap: boolean;
   showDebugGuides: boolean;
+  sunExposureResult: SunExposureSimulation | null;
   selectSection: (sectionId: string) => void;
   selectRow: (row: number) => void;
   selectSeat: (row: number, seat: number) => void;
   setMatchTime: (startIso: string, endIso: string) => void;
   returnToOverview: () => void;
   toggleDebugGuides: () => void;
+  toggleSunSimulation: () => void;
+  setSunExposureResult: (result: SunExposureSimulation | null) => void;
 };
 
 const initialState = {
@@ -32,6 +37,7 @@ const initialState = {
   showWeather: false,
   showSunHeatmap: false,
   showDebugGuides: false,
+  sunExposureResult: null,
 };
 
 export const useStadiumStore = create<StadiumState>((set) => ({
@@ -62,4 +68,7 @@ export const useStadiumStore = create<StadiumState>((set) => ({
     }),
   toggleDebugGuides: () =>
     set((state) => ({ showDebugGuides: !state.showDebugGuides })),
+  toggleSunSimulation: () =>
+    set((state) => ({ showSunSimulation: !state.showSunSimulation })),
+  setSunExposureResult: (sunExposureResult) => set({ sunExposureResult }),
 }));

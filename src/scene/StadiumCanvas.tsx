@@ -10,6 +10,7 @@ import { Environment } from './Environment';
 import { PerformanceMonitor } from './PerformanceMonitor';
 import { SceneLighting } from './SceneLighting';
 import { SceneGuides } from './SceneGuides';
+import { SunSimulation } from './SunSimulation';
 
 export function StadiumCanvas() {
   const siteRadius = radesStadiumConfig.roof.outerRadiusX;
@@ -51,6 +52,7 @@ export function StadiumCanvas() {
           <Environment />
           <RadesStadium />
           <SceneGuides />
+          <SunSimulation />
         </Suspense>
         <CameraRig />
         <PerformanceMonitor />

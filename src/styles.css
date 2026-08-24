@@ -292,6 +292,55 @@ a:focus-visible {
   outline-offset: 2px;
 }
 
+.seat-selector {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 9px;
+}
+
+.seat-selector label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.seat-selector select {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  color: #eaf4ef;
+  background: #10231b;
+}
+
+.seat-selector select:focus-visible {
+  outline: 3px solid var(--lime);
+  outline-offset: 2px;
+}
+
+.seat-information {
+  display: grid;
+  gap: 4px;
+  padding: 13px 14px;
+  border: 1px solid rgba(197, 242, 104, 0.25);
+  border-radius: 12px;
+  background: rgba(197, 242, 104, 0.07);
+}
+
+.seat-information span,
+.seat-information small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
+.seat-information strong {
+  font-size: 11px;
+}
+
 .planned-feature {
   display: grid;
   grid-template-columns: auto 1fr auto;

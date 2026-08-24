@@ -60,6 +60,15 @@ export type StadiumConfig = {
   structure: {
     frameCount: number;
   };
+  seats: {
+    spacing: number;
+    width: number;
+    depth: number;
+    panHeight: number;
+    backHeight: number;
+    eyeHeight: number;
+    arcTableSamples: number;
+  };
   verification: {
     values: Record<string, VerificationStatus>;
     notes: string[];

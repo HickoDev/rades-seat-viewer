@@ -16,7 +16,7 @@ export function FootballPitch() {
       {Array.from({ length: pitch.mowingStripeCount }, (_, index) => (
         <mesh
           key={index}
-          position={[-pitch.length / 2 + stripeWidth * (index + 0.5), 0.056, 0]}
+          position={[-pitch.length / 2 + stripeWidth * (index + 0.5), 0.061, 0]}
         >
           <boxGeometry args={[stripeWidth, 0.01, pitch.width]} />
           <meshBasicMaterial color={index % 2 === 0 ? '#2f7049' : '#286542'} />

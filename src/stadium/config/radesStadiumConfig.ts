@@ -85,6 +85,15 @@ export const radesStadiumConfig = {
   structure: {
     frameCount: 64,
   },
+  seats: {
+    spacing: 0.56,
+    width: 0.46,
+    depth: 0.42,
+    panHeight: 0.45,
+    backHeight: 0.62,
+    eyeHeight: 1.2,
+    arcTableSamples: 1024,
+  },
   verification: {
     values: {
       'identity.latitude': 'estimate-requires-calibration',
@@ -97,6 +106,7 @@ export const radesStadiumConfig = {
       tiers: 'estimate-requires-calibration',
       roof: 'estimate-requires-calibration',
       'structure.frameCount': 'verified-from-project-brief',
+      seats: 'estimate-requires-calibration',
     },
     notes: [
       'Coordinates are approximate and require verification against an authoritative survey.',

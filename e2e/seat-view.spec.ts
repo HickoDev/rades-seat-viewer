@@ -20,3 +20,17 @@ test('loads the foundation scene without runtime errors', async ({ page }) => {
 
   expect(runtimeErrors).toEqual([]);
 });
+
+test('selects a section, row, and seat from accessible controls', async ({
+  page,
+}) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+
+  await page.getByLabel('Choose a stadium section').selectOption('lower-01');
+  await page.getByLabel('Choose a row', { exact: true }).selectOption('5');
+  await page.getByLabel('Choose a seat', { exact: true }).selectOption('3');
+
+  await expect(
+    page.getByText('lower-01 · Row 5 · Seat 3', { exact: true }),
+  ).toBeVisible();
+});

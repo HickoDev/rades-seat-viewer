@@ -14,6 +14,7 @@ export type StadiumState = {
   showSunHeatmap: boolean;
   showDebugGuides: boolean;
   selectSection: (sectionId: string) => void;
+  selectRow: (row: number) => void;
   selectSeat: (row: number, seat: number) => void;
   setMatchTime: (startIso: string, endIso: string) => void;
   returnToOverview: () => void;
@@ -48,6 +49,8 @@ export const useStadiumStore = create<StadiumState>((set) => ({
       selectedRow: row,
       selectedSeat: seat,
     }),
+  selectRow: (row) =>
+    set({ cameraMode: 'section', selectedRow: row, selectedSeat: null }),
   setMatchTime: (startIso, endIso) =>
     set({ matchStartIso: startIso, matchEndIso: endIso }),
   returnToOverview: () =>

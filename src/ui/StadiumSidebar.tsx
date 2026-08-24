@@ -1,6 +1,8 @@
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { useStadiumStore } from '../state/useStadiumStore';
 import { SectionSelector } from './SectionSelector';
+import { SeatInformation } from './SeatInformation';
+import { SeatSelector } from './SeatSelector';
 
 export function StadiumSidebar() {
   const cameraMode = useStadiumStore((state) => state.cameraMode);
@@ -22,7 +24,7 @@ export function StadiumSidebar() {
       <section className="intro-card" aria-labelledby="stadium-title">
         <div className="intro-card__tag">
           <span className="status-dot" aria-hidden="true" />
-          Procedural model · Bowl online
+          Procedural model · Seats online
         </div>
         <h2 id="stadium-title">{radesStadiumConfig.identity.name}</h2>
         <p>
@@ -44,6 +46,8 @@ export function StadiumSidebar() {
           <span className="mode-pill">{cameraMode}</span>
         </button>
         <SectionSelector />
+        <SeatSelector />
+        <SeatInformation />
         <button
           className="mode-button"
           type="button"

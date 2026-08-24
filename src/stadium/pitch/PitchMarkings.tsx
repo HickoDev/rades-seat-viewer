@@ -1,5 +1,7 @@
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
 
+const markingThickness = 0.01;
+
 type RectangleMarkingProps = {
   depth: number;
   width: number;
@@ -19,12 +21,12 @@ function RectangleMarking({
   return (
     <group>
       <mesh position={[sideX, 0, 0]}>
-        <boxGeometry args={[lineWidth, lineWidth, width]} />
+        <boxGeometry args={[lineWidth, markingThickness, width]} />
         <meshBasicMaterial color="#f4f3de" />
       </mesh>
       {[-1, 1].map((side) => (
         <mesh key={side} position={[(x + sideX) / 2, 0, (side * width) / 2]}>
-          <boxGeometry args={[depth, lineWidth, lineWidth]} />
+          <boxGeometry args={[depth, markingThickness, lineWidth]} />
           <meshBasicMaterial color="#f4f3de" />
         </mesh>
       ))}
@@ -36,7 +38,7 @@ export function PitchMarkings() {
   const pitch = radesStadiumConfig.pitch;
   const halfLength = pitch.length / 2;
   const halfWidth = pitch.width / 2;
-  const markingY = 0.061;
+  const markingY = 0.069;
 
   return (
     <group position={[0, markingY, 0]} name="pitch-markings">
@@ -63,7 +65,7 @@ export function PitchMarkings() {
         },
       ].map(({ position, size }, index) => (
         <mesh key={index} position={position}>
-          <boxGeometry args={[size[0], pitch.lineWidth, size[1]]} />
+          <boxGeometry args={[size[0], markingThickness, size[1]]} />
           <meshBasicMaterial color="#f4f3de" />
         </mesh>
       ))}
@@ -79,7 +81,7 @@ export function PitchMarkings() {
         <meshBasicMaterial color="#f4f3de" />
       </mesh>
       <mesh>
-        <cylinderGeometry args={[0.16, 0.16, pitch.lineWidth, 20]} />
+        <cylinderGeometry args={[0.16, 0.16, markingThickness, 20]} />
         <meshBasicMaterial color="#f4f3de" />
       </mesh>
 
@@ -103,7 +105,7 @@ export function PitchMarkings() {
               x={goalLineX}
             />
             <mesh position={[penaltySpotX, 0, 0]}>
-              <cylinderGeometry args={[0.16, 0.16, pitch.lineWidth, 20]} />
+              <cylinderGeometry args={[0.16, 0.16, markingThickness, 20]} />
               <meshBasicMaterial color="#f4f3de" />
             </mesh>
           </group>

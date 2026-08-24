@@ -116,6 +116,13 @@ export function MainEntranceFacade() {
       ))}
       <mesh
         geometry={centralArchGeometry}
+        position={[0, 0, frontZ + side * 0.2]}
+        scale={[1.13, 1.08, 1]}
+      >
+        <meshStandardMaterial color="#d6cdbd" roughness={0.86} />
+      </mesh>
+      <mesh
+        geometry={centralArchGeometry}
         position={[0, 0, frontZ + side * 0.24]}
       >
         <meshStandardMaterial
@@ -125,6 +132,18 @@ export function MainEntranceFacade() {
           metalness={0.24}
           roughness={0.28}
           side={DoubleSide}
+        />
+      </mesh>
+      <mesh
+        position={[0, exterior.centralTowerHeight * 0.82, frontZ + side * 0.25]}
+      >
+        <boxGeometry args={[exterior.centralTowerWidth * 0.62, 2.7, 0.12]} />
+        <meshStandardMaterial
+          color="#8ab8ca"
+          emissive="#214d65"
+          emissiveIntensity={0.12}
+          metalness={0.16}
+          roughness={0.28}
         />
       </mesh>
 

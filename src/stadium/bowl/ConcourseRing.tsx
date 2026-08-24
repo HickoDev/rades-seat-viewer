@@ -68,9 +68,9 @@ export function ConcourseRing({
   const portalMaterial = useMemo(
     () =>
       new MeshStandardMaterial({
-        color: '#172021',
-        emissive: '#0a1112',
-        emissiveIntensity: 0.08,
+        color: '#4c5a58',
+        emissive: '#263d3b',
+        emissiveIntensity: 0.2,
         roughness: 0.82,
       }),
     [],

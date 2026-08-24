@@ -58,96 +58,11 @@ export function StructuralFrames() {
   );
 
   return (
-    <group name="structural-frames">
-      <instancedMesh
-        ref={meshRef}
-        args={[geometry, material, structure.frameCount]}
-        userData={{ shadowOccluder: true, occluderType: 'structural-frame' }}
-      />
-      {([-1, 1] as const).map((side) => (
-        <group
-          key={side}
-          name={`scoreboard-${side}`}
-          position={[
-            side * (roof.innerRadiusX - structure.scoreboardDepth),
-            roof.innerHeight - structure.scoreboardHeight,
-            0,
-          ]}
-          rotation={[0, side === -1 ? Math.PI / 2 : -Math.PI / 2, 0]}
-        >
-          <mesh userData={{ shadowOccluder: true, occluderType: 'scoreboard' }}>
-            <boxGeometry
-              args={[
-                structure.scoreboardWidth + 0.8,
-                structure.scoreboardHeight + 0.8,
-                structure.scoreboardDepth,
-              ]}
-            />
-            <meshStandardMaterial
-              color="#d7d8ce"
-              metalness={0.34}
-              roughness={0.58}
-            />
-          </mesh>
-          <mesh position={[0, 0, structure.scoreboardDepth / 2 + 0.025]}>
-            <boxGeometry
-              args={[
-                structure.scoreboardWidth,
-                structure.scoreboardHeight,
-                0.05,
-              ]}
-            />
-            <meshStandardMaterial
-              color="#101313"
-              emissive="#16252a"
-              emissiveIntensity={0.16}
-              roughness={0.34}
-            />
-          </mesh>
-          <mesh
-            position={[
-              0,
-              -(
-                structure.scoreboardHeight + structure.scoreboardFlagPanelHeight
-              ) /
-                2 -
-                0.45,
-              0,
-            ]}
-          >
-            <boxGeometry
-              args={[
-                structure.scoreboardWidth * 0.58,
-                structure.scoreboardFlagPanelHeight,
-                structure.scoreboardDepth * 0.42,
-              ]}
-            />
-            <meshStandardMaterial color="#bd1e2d" roughness={0.8} />
-          </mesh>
-          <mesh
-            position={[
-              0,
-              -(
-                structure.scoreboardHeight + structure.scoreboardFlagPanelHeight
-              ) /
-                2 -
-                0.45,
-              structure.scoreboardDepth * 0.23,
-            ]}
-            rotation={[Math.PI / 2, 0, 0]}
-          >
-            <cylinderGeometry
-              args={[
-                structure.scoreboardFlagPanelHeight * 0.23,
-                structure.scoreboardFlagPanelHeight * 0.23,
-                0.055,
-                32,
-              ]}
-            />
-            <meshStandardMaterial color="#f4eee2" roughness={0.76} />
-          </mesh>
-        </group>
-      ))}
-    </group>
+    <instancedMesh
+      ref={meshRef}
+      args={[geometry, material, structure.frameCount]}
+      name="structural-frames"
+      userData={{ shadowOccluder: true, occluderType: 'structural-frame' }}
+    />
   );
 }

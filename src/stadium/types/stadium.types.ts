@@ -107,6 +107,8 @@ export type StadiumConfig = {
     floodlightCount: number;
     floodlightWidth: number;
     floodlightHeight: number;
+    membraneSeamRadius: number;
+    innerFasciaHeight: number;
   };
   structure: {
     frameCount: number;
@@ -117,11 +119,19 @@ export type StadiumConfig = {
     facadeHeight: number;
     rampCount: number;
     rampWidth: number;
-    rampRun: number;
+    rampTowerRadius: number;
+    rampTowerCenterX: number;
+    rampTowerCenterZ: number;
+    rampTurns: number;
+    rampGuardHeight: number;
+    exteriorBraceBayCount: number;
+    exteriorBraceBottomHeight: number;
+    exteriorBraceTopHeight: number;
+    exteriorBraceRadiusOffset: number;
     scoreboardWidth: number;
     scoreboardHeight: number;
     scoreboardDepth: number;
-    scoreboardFlagPanelHeight: number;
+    scoreboardSupportDrop: number;
     benchLength: number;
     benchDepth: number;
     benchHeight: number;
@@ -142,8 +152,9 @@ export type StadiumConfig = {
     height: number;
     windowBayCount: number;
     signBandHeight: number;
-    canopyDepth: number;
     frontInset: number;
+    balconyDepth: number;
+    balconyRailHeight: number;
   };
   exterior: {
     mainEntranceSide: -1 | 1;
@@ -157,6 +168,11 @@ export type StadiumConfig = {
     archedWindowHeight: number;
     blueTrimHeight: number;
     yellowBandHeight: number;
+    plazaWidth: number;
+    plazaDepth: number;
+    flagpoleCount: number;
+    flagpoleHeight: number;
+    palmCount: number;
   };
   seats: {
     spacing: number;
@@ -166,6 +182,11 @@ export type StadiumConfig = {
     backHeight: number;
     eyeHeight: number;
     arcTableSamples: number;
+    lowerPrimaryColor: string;
+    lowerAccentColor: string;
+    upperPrimaryColor: string;
+    upperAccentColor: string;
+    accentRowInterval: number;
   };
   occupants: {
     playerCount: number;

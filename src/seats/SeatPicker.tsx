@@ -10,6 +10,7 @@ import {
 
 import { getHeatmapGroupKey } from '../sunlight/sunlightHeatmap';
 import { useStadiumStore } from '../state/useStadiumStore';
+import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import type { SeatLayout } from './seat.types';
 
 type SeatPickerProps = {
@@ -18,8 +19,10 @@ type SeatPickerProps = {
   material: Material;
 };
 
-const lowerSeatColor = new Color('#56bfe0');
-const upperSeatColor = new Color('#3ba9d2');
+const lowerSeatColor = new Color(radesStadiumConfig.seats.lowerPrimaryColor);
+const lowerAccentColor = new Color(radesStadiumConfig.seats.lowerAccentColor);
+const upperSeatColor = new Color(radesStadiumConfig.seats.upperPrimaryColor);
+const upperAccentColor = new Color(radesStadiumConfig.seats.upperAccentColor);
 const selectedSeatColor = new Color('#d9ff70');
 const heatmapColors = {
   'mostly-sunny': new Color('#ffcb55'),
@@ -27,6 +30,19 @@ const heatmapColors = {
   'mostly-shaded': new Color('#4d927b'),
   'fully-shaded': new Color('#344a58'),
 } as const;
+
+function getDefaultSeatColor(seat: SeatLayout['metadata'][number]): Color {
+  const accented =
+    Math.floor(
+      (seat.rowNumber - 1) / radesStadiumConfig.seats.accentRowInterval,
+    ) %
+      2 ===
+    1;
+  if (seat.tierId === 'lower') {
+    return accented ? lowerAccentColor : lowerSeatColor;
+  }
+  return accented ? upperAccentColor : upperSeatColor;
+}
 
 export function SeatPicker({ geometry, layout, material }: SeatPickerProps) {
   const meshRef = useRef<InstancedMesh>(null);
@@ -64,10 +80,7 @@ export function SeatPicker({ geometry, layout, material }: SeatPickerProps) {
     layout.metadata.forEach((seat, instanceId) => {
       matrix.fromArray(layout.matrices, instanceId * 16);
       mesh.setMatrixAt(instanceId, matrix);
-      mesh.setColorAt(
-        instanceId,
-        seat.tierId === 'lower' ? lowerSeatColor : upperSeatColor,
-      );
+      mesh.setColorAt(instanceId, getDefaultSeatColor(seat));
     });
     mesh.instanceMatrix.needsUpdate = true;
     if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
@@ -86,8 +99,7 @@ export function SeatPicker({ geometry, layout, material }: SeatPickerProps) {
       );
       mesh.setColorAt(
         instanceId,
-        heatmapColorByGroup.get(groupKey) ??
-          (seat.tierId === 'lower' ? lowerSeatColor : upperSeatColor),
+        heatmapColorByGroup.get(groupKey) ?? getDefaultSeatColor(seat),
       );
     });
 

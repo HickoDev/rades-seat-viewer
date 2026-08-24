@@ -6,6 +6,7 @@ import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { RadesStadium } from '../stadium/RadesStadium';
 import { useStadiumStore } from '../state/useStadiumStore';
 import { useRenderQuality } from '../utils/useRenderQuality';
+import { useReducedMotion } from '../utils/useReducedMotion';
 import { LoadingScreen } from '../ui/LoadingScreen';
 import { CameraRig } from './CameraRig';
 import { Environment } from './Environment';
@@ -18,6 +19,7 @@ export function StadiumCanvas() {
   const siteRadius = radesStadiumConfig.roof.outerRadiusX;
   const cameraMode = useStadiumStore((state) => state.cameraMode);
   const renderQuality = useRenderQuality();
+  const prefersReducedMotion = useReducedMotion();
   const instructions =
     cameraMode === 'seat'
       ? 'Drag to look · Escape to return'
@@ -29,6 +31,7 @@ export function StadiumCanvas() {
     <section className="stadium-viewport" aria-label="Interactive stadium view">
       <Canvas
         key={renderQuality}
+        frameloop={prefersReducedMotion ? 'demand' : 'always'}
         camera={{
           far: siteRadius * 8,
           fov: 42,

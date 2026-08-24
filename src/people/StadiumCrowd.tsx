@@ -27,6 +27,7 @@ import {
 } from './crowdLayout';
 import {
   createPersonBodyGeometry,
+  createPersonHairGeometry,
   createPersonHeadGeometry,
 } from './createPersonGeometry';
 
@@ -46,6 +47,12 @@ const skinColors = [
   new Color('#8b5439'),
   new Color('#623c2c'),
 ];
+const hairColors = [
+  new Color('#15120f'),
+  new Color('#302218'),
+  new Color('#4a3324'),
+  new Color('#0d0d0c'),
+];
 const hiddenScale = new Vector3(0, 0, 0);
 const unitScale = new Vector3(1, 1, 1);
 const upAxis = new Vector3(0, 1, 0);
@@ -62,8 +69,10 @@ function placementKey(member: CrowdMember): string {
 export function StadiumCrowd() {
   const staticBodyRef = useRef<InstancedMesh>(null);
   const staticHeadRef = useRef<InstancedMesh>(null);
+  const staticHairRef = useRef<InstancedMesh>(null);
   const animatedBodyRef = useRef<InstancedMesh>(null);
   const animatedHeadRef = useRef<InstancedMesh>(null);
+  const animatedHairRef = useRef<InstancedMesh>(null);
   const hiddenLocationRef = useRef<InstanceLocation | null>(null);
   const lastAnimationUpdateRef = useRef(-1);
   const elapsedRef = useRef(0);
@@ -106,17 +115,19 @@ export function StadiumCrowd() {
     return index;
   }, [animatedMembers, staticMembers]);
   const bodyGeometry = useMemo(
-    () => createPersonBodyGeometry('seated', occupants.seatedPersonHeight),
+    () =>
+      createPersonBodyGeometry('seated', occupants.seatedPersonHeight, 'low'),
     [occupants.seatedPersonHeight],
   );
   const headGeometry = useMemo(
     () =>
-      createPersonHeadGeometry(
-        'seated',
-        occupants.seatedPersonHeight,
-        renderQuality,
-      ),
-    [occupants.seatedPersonHeight, renderQuality],
+      createPersonHeadGeometry('seated', occupants.seatedPersonHeight, 'low'),
+    [occupants.seatedPersonHeight],
+  );
+  const hairGeometry = useMemo(
+    () =>
+      createPersonHairGeometry('seated', occupants.seatedPersonHeight, 'low'),
+    [occupants.seatedPersonHeight],
   );
   const bodyMaterial = useMemo(
     () =>
@@ -129,6 +140,13 @@ export function StadiumCrowd() {
     () =>
       renderQuality === 'high'
         ? new MeshStandardMaterial({ color: '#ffffff', roughness: 0.96 })
+        : new MeshLambertMaterial({ color: '#ffffff' }),
+    [renderQuality],
+  );
+  const hairMaterial = useMemo(
+    () =>
+      renderQuality === 'high'
+        ? new MeshStandardMaterial({ color: '#ffffff', roughness: 0.98 })
         : new MeshLambertMaterial({ color: '#ffffff' }),
     [renderQuality],
   );
@@ -145,6 +163,7 @@ export function StadiumCrowd() {
     (elapsedSeconds: number) => {
       const body = animatedBodyRef.current;
       const head = animatedHeadRef.current;
+      const hair = animatedHairRef.current;
       if (!body || !head) return;
 
       animatedMembers.forEach((member, instanceId) => {
@@ -176,9 +195,11 @@ export function StadiumCrowd() {
         );
         body.setMatrixAt(instanceId, transforms.matrix);
         head.setMatrixAt(instanceId, transforms.matrix);
+        hair?.setMatrixAt(instanceId, transforms.matrix);
       });
       body.instanceMatrix.needsUpdate = true;
       head.instanceMatrix.needsUpdate = true;
+      if (hair) hair.instanceMatrix.needsUpdate = true;
     },
     [
       animatedMembers,
@@ -191,8 +212,10 @@ export function StadiumCrowd() {
   useLayoutEffect(() => {
     const staticBody = staticBodyRef.current;
     const staticHead = staticHeadRef.current;
+    const staticHair = staticHairRef.current;
     const animatedBody = animatedBodyRef.current;
     const animatedHead = animatedHeadRef.current;
+    const animatedHair = animatedHairRef.current;
     if (!staticBody || !staticHead || !animatedBody || !animatedHead) return;
 
     const matrix = new Matrix4();
@@ -203,11 +226,16 @@ export function StadiumCrowd() {
       );
       staticBody.setMatrixAt(instanceId, matrix);
       staticHead.setMatrixAt(instanceId, matrix);
+      staticHair?.setMatrixAt(instanceId, matrix);
       staticBody.setColorAt(
         instanceId,
         clothingColors[member.clothingColorIndex],
       );
       staticHead.setColorAt(instanceId, skinColors[member.skinColorIndex]);
+      staticHair?.setColorAt(
+        instanceId,
+        hairColors[member.skinColorIndex % hairColors.length],
+      );
     });
     animatedMembers.forEach((member, instanceId) => {
       animatedBody.setColorAt(
@@ -215,10 +243,22 @@ export function StadiumCrowd() {
         clothingColors[member.clothingColorIndex],
       );
       animatedHead.setColorAt(instanceId, skinColors[member.skinColorIndex]);
+      animatedHair?.setColorAt(
+        instanceId,
+        hairColors[member.skinColorIndex % hairColors.length],
+      );
     });
     updateAnimatedMatrices(0);
 
-    [staticBody, staticHead, animatedBody, animatedHead].forEach((mesh) => {
+    [
+      staticBody,
+      staticHead,
+      staticHair,
+      animatedBody,
+      animatedHead,
+      animatedHair,
+    ].forEach((mesh) => {
+      if (!mesh) return;
       mesh.instanceMatrix.needsUpdate = true;
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
       mesh.computeBoundingSphere();
@@ -229,6 +269,7 @@ export function StadiumCrowd() {
   useEffect(() => {
     const staticBody = staticBodyRef.current;
     const staticHead = staticHeadRef.current;
+    const staticHair = staticHairRef.current;
     if (!staticBody || !staticHead) return;
 
     const matrix = new Matrix4();
@@ -242,6 +283,7 @@ export function StadiumCrowd() {
         );
         staticBody.setMatrixAt(previous.instanceId, matrix);
         staticHead.setMatrixAt(previous.instanceId, matrix);
+        staticHair?.setMatrixAt(previous.instanceId, matrix);
       }
     }
 
@@ -261,10 +303,12 @@ export function StadiumCrowd() {
         matrix.scale(hiddenScale);
         staticBody.setMatrixAt(nextHidden.instanceId, matrix);
         staticHead.setMatrixAt(nextHidden.instanceId, matrix);
+        staticHair?.setMatrixAt(nextHidden.instanceId, matrix);
       }
     }
     staticBody.instanceMatrix.needsUpdate = true;
     staticHead.instanceMatrix.needsUpdate = true;
+    if (staticHair) staticHair.instanceMatrix.needsUpdate = true;
     updateAnimatedMatrices(elapsedRef.current);
   }, [
     cameraMode,
@@ -290,10 +334,19 @@ export function StadiumCrowd() {
     () => () => {
       bodyGeometry.dispose();
       headGeometry.dispose();
+      hairGeometry.dispose();
       bodyMaterial.dispose();
       headMaterial.dispose();
+      hairMaterial.dispose();
     },
-    [bodyGeometry, bodyMaterial, headGeometry, headMaterial],
+    [
+      bodyGeometry,
+      bodyMaterial,
+      hairGeometry,
+      hairMaterial,
+      headGeometry,
+      headMaterial,
+    ],
   );
 
   return (
@@ -318,6 +371,15 @@ export function StadiumCrowd() {
         raycast={ignoreRaycast}
         receiveShadow={false}
       />
+      {renderQuality === 'high' && (
+        <instancedMesh
+          ref={staticHairRef}
+          args={[hairGeometry, hairMaterial, staticMembers.length]}
+          castShadow={false}
+          raycast={ignoreRaycast}
+          receiveShadow={false}
+        />
+      )}
       <instancedMesh
         ref={animatedBodyRef}
         args={[bodyGeometry, bodyMaterial, animatedMembers.length]}
@@ -334,6 +396,16 @@ export function StadiumCrowd() {
         raycast={ignoreRaycast}
         receiveShadow={false}
       />
+      {renderQuality === 'high' && (
+        <instancedMesh
+          ref={animatedHairRef}
+          args={[hairGeometry, hairMaterial, animatedMembers.length]}
+          castShadow={false}
+          frustumCulled={false}
+          raycast={ignoreRaycast}
+          receiveShadow={false}
+        />
+      )}
     </group>
   );
 }

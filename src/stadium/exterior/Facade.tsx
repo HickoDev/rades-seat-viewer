@@ -1,6 +1,7 @@
 import { DoubleSide } from 'three';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import { ExteriorBracing } from './ExteriorBracing';
 import { MainEntranceFacade } from './MainEntranceFacade';
 
 export function Facade() {
@@ -10,7 +11,7 @@ export function Facade() {
 
   return (
     <group name="rades-exterior-facade">
-      {[structure.facadeHeight * 0.54, structure.facadeHeight * 0.78].map(
+      {[structure.facadeHeight * 0.54, structure.facadeHeight * 0.66].map(
         (height, index) => (
           <mesh
             key={height}
@@ -28,6 +29,7 @@ export function Facade() {
           </mesh>
         ),
       )}
+      <ExteriorBracing />
       <MainEntranceFacade />
     </group>
   );

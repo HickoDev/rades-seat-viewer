@@ -36,6 +36,7 @@ test('selects a section, row, and seat from accessible controls', async ({
   page,
 }) => {
   test.setTimeout(180_000);
+  await page.setViewportSize({ width: 800, height: 900 });
   await page.route('**/v1/forecast?**', async (route) => {
     const url = new URL(route.request().url());
     const day = url.searchParams.get('start_date') ?? '2026-08-24';

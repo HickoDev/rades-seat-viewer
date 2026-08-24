@@ -54,4 +54,12 @@ describe('radesStadiumConfig', () => {
       radesStadiumConfig.verification.values['grandstand.dimensions'],
     ).toBe('estimate-requires-calibration');
   });
+
+  it('records the four photographed circular ramp towers as estimates', () => {
+    expect(radesStadiumConfig.structure.rampCount).toBe(4);
+    expect(radesStadiumConfig.structure.rampTowerRadius).toBeGreaterThan(8);
+    expect(
+      radesStadiumConfig.verification.values['structure.spiralRamps'],
+    ).toBe('estimate-requires-calibration');
+  });
 });

@@ -15,6 +15,7 @@ import { useReducedMotion } from '../utils/useReducedMotion';
 import { useRenderQuality } from '../utils/useRenderQuality';
 import {
   createPersonBodyGeometry,
+  createPersonHairGeometry,
   createPersonHeadGeometry,
 } from './createPersonGeometry';
 import {
@@ -32,6 +33,11 @@ const playerSkinColors = [
   new Color('#c6845d'),
   new Color('#925a3d'),
 ];
+const playerHairColors = [
+  new Color('#171310'),
+  new Color('#35251c'),
+  new Color('#0d0d0c'),
+];
 const upAxis = new Vector3(0, 1, 0);
 const unitScale = new Vector3(1, 1, 1);
 const ignoreRaycast = () => undefined;
@@ -39,18 +45,33 @@ const ignoreRaycast = () => undefined;
 export function MatchPlayers() {
   const bodyRef = useRef<InstancedMesh>(null);
   const headRef = useRef<InstancedMesh>(null);
+  const hairRef = useRef<InstancedMesh>(null);
   const ballRef = useRef<Mesh>(null);
   const renderQuality = useRenderQuality();
   const prefersReducedMotion = useReducedMotion();
   const { occupants, pitch } = radesStadiumConfig;
   const players = useMemo(() => createMatchPlayerLayout(pitch), [pitch]);
   const bodyGeometry = useMemo(
-    () => createPersonBodyGeometry('athletic', occupants.standingPlayerHeight),
-    [occupants.standingPlayerHeight],
+    () =>
+      createPersonBodyGeometry(
+        'athletic',
+        occupants.standingPlayerHeight,
+        renderQuality,
+      ),
+    [occupants.standingPlayerHeight, renderQuality],
   );
   const headGeometry = useMemo(
     () =>
       createPersonHeadGeometry(
+        'athletic',
+        occupants.standingPlayerHeight,
+        renderQuality,
+      ),
+    [occupants.standingPlayerHeight, renderQuality],
+  );
+  const hairGeometry = useMemo(
+    () =>
+      createPersonHairGeometry(
         'athletic',
         occupants.standingPlayerHeight,
         renderQuality,
@@ -73,6 +94,14 @@ export function MatchPlayers() {
       }),
     [],
   );
+  const hairMaterial = useMemo(
+    () =>
+      new MeshStandardMaterial({
+        color: '#ffffff',
+        roughness: 0.98,
+      }),
+    [],
+  );
   const transforms = useMemo(
     () => ({
       matrix: new Matrix4(),
@@ -85,7 +114,8 @@ export function MatchPlayers() {
   const updatePlayers = (elapsedSeconds: number) => {
     const body = bodyRef.current;
     const head = headRef.current;
-    if (!body || !head) return;
+    const hair = hairRef.current;
+    if (!body || !head || !hair) return;
 
     const ballPosition = calculateBallPosition(elapsedSeconds, pitch);
     players.forEach((player, instanceId) => {
@@ -104,9 +134,11 @@ export function MatchPlayers() {
       );
       body.setMatrixAt(instanceId, transforms.matrix);
       head.setMatrixAt(instanceId, transforms.matrix);
+      hair.setMatrixAt(instanceId, transforms.matrix);
     });
     body.instanceMatrix.needsUpdate = true;
     head.instanceMatrix.needsUpdate = true;
+    hair.instanceMatrix.needsUpdate = true;
 
     if (ballRef.current) {
       ballRef.current.position.set(...ballPosition);
@@ -118,7 +150,8 @@ export function MatchPlayers() {
   useLayoutEffect(() => {
     const body = bodyRef.current;
     const head = headRef.current;
-    if (!body || !head) return;
+    const hair = hairRef.current;
+    if (!body || !head || !hair) return;
 
     players.forEach((player, instanceId) => {
       body.setColorAt(
@@ -135,12 +168,18 @@ export function MatchPlayers() {
         instanceId,
         playerSkinColors[instanceId % playerSkinColors.length],
       );
+      hair.setColorAt(
+        instanceId,
+        playerHairColors[instanceId % playerHairColors.length],
+      );
     });
     if (body.instanceColor) body.instanceColor.needsUpdate = true;
     if (head.instanceColor) head.instanceColor.needsUpdate = true;
+    if (hair.instanceColor) hair.instanceColor.needsUpdate = true;
     updatePlayers(0);
     body.computeBoundingSphere();
     head.computeBoundingSphere();
+    hair.computeBoundingSphere();
   });
 
   useFrame((state) => {
@@ -152,10 +191,19 @@ export function MatchPlayers() {
     () => () => {
       bodyGeometry.dispose();
       headGeometry.dispose();
+      hairGeometry.dispose();
       bodyMaterial.dispose();
       headMaterial.dispose();
+      hairMaterial.dispose();
     },
-    [bodyGeometry, bodyMaterial, headGeometry, headMaterial],
+    [
+      bodyGeometry,
+      bodyMaterial,
+      hairGeometry,
+      hairMaterial,
+      headGeometry,
+      headMaterial,
+    ],
   );
 
   return (
@@ -170,6 +218,13 @@ export function MatchPlayers() {
       <instancedMesh
         ref={headRef}
         args={[headGeometry, headMaterial, players.length]}
+        castShadow={renderQuality === 'high'}
+        frustumCulled={false}
+        raycast={ignoreRaycast}
+      />
+      <instancedMesh
+        ref={hairRef}
+        args={[hairGeometry, hairMaterial, players.length]}
         castShadow={renderQuality === 'high'}
         frustumCulled={false}
         raycast={ignoreRaycast}

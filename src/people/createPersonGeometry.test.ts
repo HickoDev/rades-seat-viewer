@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   createPersonBodyGeometry,
+  createPersonHairGeometry,
   createPersonHeadGeometry,
   type PersonPose,
 } from './createPersonGeometry';
@@ -26,11 +27,20 @@ describe('createPersonGeometry', () => {
     const low = createPersonHeadGeometry('standing', 1.78, 'low');
     const high = createPersonHeadGeometry('standing', 1.78, 'high');
 
-    expect(low.boundingSphere?.center.y).toBeGreaterThan(1.5);
+    expect(low.boundingBox?.max.y).toBeGreaterThan(1.7);
+    expect(low.boundingBox?.min.y).toBeGreaterThan(0.75);
     expect(high.getAttribute('position').count).toBeGreaterThan(
       low.getAttribute('position').count,
     );
     low.dispose();
     high.dispose();
+  });
+
+  it('creates a separate fitted hair cap without primitive spheres', () => {
+    const hair = createPersonHairGeometry('athletic', 1.78, 'high');
+
+    expect(hair.boundingBox?.min.y).toBeGreaterThan(1.6);
+    expect(hair.getAttribute('position').count).toBeGreaterThan(40);
+    hair.dispose();
   });
 });

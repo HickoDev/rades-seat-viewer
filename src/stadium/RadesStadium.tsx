@@ -5,6 +5,7 @@ import { TechnicalAreaPeople } from '../people/TechnicalAreaPeople';
 import { SeatInstances } from '../seats/SeatInstances';
 import { AccessRamps } from './exterior/AccessRamps';
 import { ExteriorColumns } from './exterior/ExteriorColumns';
+import { EntrancePlaza } from './exterior/EntrancePlaza';
 import { Facade } from './exterior/Facade';
 import { StadiumBowl } from './bowl/StadiumBowl';
 import { FootballPitch } from './pitch/FootballPitch';
@@ -12,6 +13,8 @@ import { AthleticsTrack } from './track/AthleticsTrack';
 import { StadiumApron } from './track/StadiumApron';
 import { LightingStructures } from './roof/LightingStructures';
 import { RoofTrusses } from './roof/RoofTrusses';
+import { RoofMembraneDetails } from './roof/RoofMembraneDetails';
+import { Scoreboards } from './roof/Scoreboards';
 import { StadiumRoof } from './roof/StadiumRoof';
 import { StructuralFrames } from './roof/StructuralFrames';
 
@@ -36,11 +39,14 @@ export function RadesStadium() {
       <SeatInstances />
       <StadiumCrowd />
       <StadiumRoof />
+      <RoofMembraneDetails />
       <RoofTrusses />
       <StructuralFrames />
+      <Scoreboards />
       <Facade />
       <ExteriorColumns />
       <AccessRamps />
+      <EntrancePlaza />
       <LightingStructures />
     </group>
   );

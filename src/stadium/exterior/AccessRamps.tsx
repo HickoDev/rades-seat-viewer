@@ -1,58 +1,120 @@
-import { useLayoutEffect, useMemo, useRef } from 'react';
-import { Object3D, Vector3, type InstancedMesh } from 'three';
+import { useEffect, useMemo } from 'react';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import {
+  createSpiralGuardGeometry,
+  createSpiralRampGeometry,
+} from './createSpiralRampGeometry';
 
 export function AccessRamps() {
-  const meshRef = useRef<InstancedMesh>(null);
-  const { roof, structure, tiers } = radesStadiumConfig;
-  const lowerConcourseHeight =
+  const { structure, tiers } = radesStadiumConfig;
+  const targetHeight =
     tiers[0].baseHeight + tiers[0].rowCount * tiers[0].rowHeight;
-  const matrices = useMemo(
+  const rampGeometry = useMemo(
     () =>
-      Array.from({ length: structure.rampCount }, (_, rampIndex) => {
-        const angle = (rampIndex / structure.rampCount) * Math.PI * 2;
-        const outward = new Vector3(Math.cos(angle), 0, Math.sin(angle));
-        const end = new Vector3(
-          Math.cos(angle) *
-            (roof.outerRadiusX + structure.exteriorRadiusOffset),
-          lowerConcourseHeight,
-          Math.sin(angle) *
-            (roof.outerRadiusZ + structure.exteriorRadiusOffset),
-        );
-        const start = end
-          .clone()
-          .addScaledVector(outward, structure.rampRun)
-          .setY(0.4);
-        const midpoint = start.clone().add(end).multiplyScalar(0.5);
-        const object = new Object3D();
-        object.position.copy(midpoint);
-        object.lookAt(end);
-        object.scale.set(structure.rampWidth, 0.45, start.distanceTo(end));
-        object.updateMatrix();
-        return object.matrix.clone();
+      createSpiralRampGeometry({
+        outerRadius: structure.rampTowerRadius,
+        width: structure.rampWidth,
+        height: targetHeight,
+        turns: structure.rampTurns,
       }),
-    [lowerConcourseHeight, roof, structure],
+    [structure, targetHeight],
+  );
+  const guardGeometry = useMemo(() => {
+    const geometry = createSpiralGuardGeometry({
+      outerRadius: structure.rampTowerRadius + 0.04,
+      height: targetHeight,
+      turns: structure.rampTurns,
+      guardHeight: structure.rampGuardHeight,
+    });
+    return geometry;
+  }, [structure, targetHeight]);
+  const placements = useMemo(
+    () =>
+      ([-1, 1] as const)
+        .flatMap((xSide) =>
+          ([-1, 1] as const).map((zSide) => ({
+            x: xSide * structure.rampTowerCenterX,
+            z: zSide * structure.rampTowerCenterZ,
+          })),
+        )
+        .slice(0, structure.rampCount),
+    [
+      structure.rampCount,
+      structure.rampTowerCenterX,
+      structure.rampTowerCenterZ,
+    ],
   );
 
-  useLayoutEffect(() => {
-    if (!meshRef.current) return;
-    matrices.forEach((matrix, index) =>
-      meshRef.current?.setMatrixAt(index, matrix),
-    );
-    meshRef.current.instanceMatrix.needsUpdate = true;
-    meshRef.current.computeBoundingSphere();
-  }, [matrices]);
+  useEffect(
+    () => () => {
+      rampGeometry.dispose();
+      guardGeometry.dispose();
+    },
+    [guardGeometry, rampGeometry],
+  );
 
   return (
-    <instancedMesh
-      ref={meshRef}
-      args={[undefined, undefined, structure.rampCount]}
-      name="major-access-ramps"
-      userData={{ shadowOccluder: true, occluderType: 'access-ramp' }}
+    <group
+      name="four-circular-access-ramp-towers"
+      userData={{ dimensionsAreEstimates: true }}
     >
-      <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color="#66736c" roughness={0.96} />
-    </instancedMesh>
+      {placements.map(({ x, z }, towerIndex) => {
+        const rotationY = Math.atan2(-x, -z);
+        return (
+          <group
+            key={`${x}:${z}`}
+            name={`spiral-ramp-tower-${towerIndex + 1}`}
+            position={[x, 0.38, z]}
+            rotation={[0, rotationY, 0]}
+          >
+            <mesh
+              geometry={rampGeometry}
+              receiveShadow
+              userData={{
+                shadowOccluder: true,
+                occluderType: 'access-ramp',
+              }}
+            >
+              <meshStandardMaterial color="#b9b7ae" roughness={0.94} />
+            </mesh>
+            <mesh geometry={guardGeometry}>
+              <meshStandardMaterial
+                color="#e2dfd2"
+                metalness={0.05}
+                roughness={0.86}
+                side={2}
+              />
+            </mesh>
+            <mesh position={[0, targetHeight / 2, 0]}>
+              <cylinderGeometry args={[2.45, 2.7, targetHeight, 24]} />
+              <meshStandardMaterial color="#d2d2ca" roughness={0.9} />
+            </mesh>
+            {Array.from({ length: 4 }, (_, levelIndex) => (
+              <mesh
+                key={levelIndex}
+                position={[0, ((levelIndex + 1) * targetHeight) / 4, 0]}
+                rotation={[Math.PI / 2, 0, 0]}
+              >
+                <torusGeometry
+                  args={[structure.rampTowerRadius - 0.42, 0.25, 6, 48]}
+                />
+                <meshStandardMaterial color="#eeeadd" roughness={0.82} />
+              </mesh>
+            ))}
+            <mesh
+              position={[
+                0,
+                targetHeight - 0.18,
+                structure.rampTowerRadius + 4.4,
+              ]}
+            >
+              <boxGeometry args={[structure.rampWidth, 0.42, 8.8]} />
+              <meshStandardMaterial color="#b4b4ac" roughness={0.92} />
+            </mesh>
+          </group>
+        );
+      })}
+    </group>
   );
 }

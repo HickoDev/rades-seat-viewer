@@ -89,6 +89,15 @@ export function HonorPressTribune() {
       }),
     [],
   );
+  const railMaterial = useMemo(
+    () =>
+      new MeshStandardMaterial({
+        color: '#d9e0de',
+        metalness: 0.56,
+        roughness: 0.38,
+      }),
+    [],
+  );
   const signResource = useMemo(() => createTribuneSignMaterial(), []);
 
   useEffect(
@@ -97,10 +106,18 @@ export function HonorPressTribune() {
       frameMaterial.dispose();
       glassMaterial.dispose();
       woodMaterial.dispose();
+      railMaterial.dispose();
       signResource.material.dispose();
       signResource.texture.dispose();
     },
-    [frameMaterial, glassMaterial, shellMaterial, signResource, woodMaterial],
+    [
+      frameMaterial,
+      glassMaterial,
+      railMaterial,
+      shellMaterial,
+      signResource,
+      woodMaterial,
+    ],
   );
 
   return (
@@ -159,6 +176,20 @@ export function HonorPressTribune() {
         ),
       )}
 
+      {[0.34, 0.67].map((heightRatio) => (
+        <mesh
+          key={heightRatio}
+          material={frameMaterial}
+          position={[
+            0,
+            grandstand.baseHeight + windowHeight * heightRatio,
+            frontZ - side * 0.1,
+          ]}
+        >
+          <boxGeometry args={[grandstand.width, 0.1, 0.13]} />
+        </mesh>
+      ))}
+
       <mesh
         material={signResource.material}
         position={[
@@ -179,13 +210,39 @@ export function HonorPressTribune() {
         position={[
           0,
           grandstand.baseHeight - 0.08,
-          frontZ - (side * grandstand.canopyDepth) / 2,
+          frontZ - (side * grandstand.balconyDepth) / 2,
         ]}
       >
-        <boxGeometry
-          args={[grandstand.width * 0.42, 0.18, grandstand.canopyDepth]}
-        />
+        <boxGeometry args={[grandstand.width, 0.18, grandstand.balconyDepth]} />
       </mesh>
+      <mesh
+        material={railMaterial}
+        position={[
+          0,
+          grandstand.baseHeight + grandstand.balconyRailHeight,
+          frontZ - side * grandstand.balconyDepth,
+        ]}
+      >
+        <boxGeometry args={[grandstand.width, 0.08, 0.08]} />
+      </mesh>
+      {Array.from(
+        { length: grandstand.windowBayCount + 1 },
+        (_, frameIndex) => (
+          <mesh
+            key={`balcony-${frameIndex}`}
+            material={railMaterial}
+            position={[
+              -grandstand.width / 2 + windowWidth * frameIndex,
+              grandstand.baseHeight + grandstand.balconyRailHeight / 2,
+              frontZ - side * grandstand.balconyDepth,
+            ]}
+          >
+            <cylinderGeometry
+              args={[0.035, 0.035, grandstand.balconyRailHeight, 6]}
+            />
+          </mesh>
+        ),
+      )}
     </group>
   );
 }

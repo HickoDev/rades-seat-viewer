@@ -107,7 +107,7 @@ export const radesStadiumConfig = {
   tiers: [
     {
       id: 'lower',
-      name: 'Enceinte inférieure',
+      name: 'Niveau inférieur',
       historicalReportedCapacity: 32_000,
       sectionCount: 32,
       rowCount: 28,
@@ -171,7 +171,7 @@ export const radesStadiumConfig = {
     },
     {
       id: 'upper',
-      name: 'Enceinte supérieure',
+      name: 'Niveau supérieur',
       historicalReportedCapacity: 28_000,
       sectionCount: 32,
       rowCount: 25,
@@ -421,6 +421,7 @@ export const radesStadiumConfig = {
       tiers: 'estimate-requires-calibration',
       'tiers.historicalReportedCapacities': 'corroborated-secondary-source',
       bowlDetails: 'estimate-requires-calibration',
+      'bowlDetails.publicZoneNames': 'confirmed-by-project-owner',
       'bowlDetails.interiorVisualForm':
         'calibrated-from-authorized-visual-reference',
       roof: 'estimate-requires-calibration',
@@ -476,6 +477,7 @@ export const radesStadiumConfig = {
       'Upper-virage sections remain physically modeled but are marked closed to visitors; they are excluded from public POV selection, crowds, and visitor-facing simulations.',
       'The membrane, inner truss, fascia, lighting supports, and static shadow meshes now share the rounded-stadium plan visible in the supplied interior reference; the yellow scoreboard housings and diagonal hangers are visual estimates.',
       'Repeated arched concourse bays, a continuous multi-level main-stand facade, and a blue VIP chair block are visually calibrated from the supplied interior model and remain unsurveyed.',
+      'Public stand terminology follows Radès ticket categories: Enceinte inférieure and Enceinte supérieure occupy the main-stand side outside the official Tribune block, while Pelouse occupies the opposite long side. The two geometric tier names remain neutral.',
     ],
   },
 } satisfies StadiumConfig;

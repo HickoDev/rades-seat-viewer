@@ -1,4 +1,5 @@
 import { getSectionId } from '../stadium/bowl/sectionIds';
+import { getInteriorSectionZone } from '../stadium/bowl/sectionZones';
 import type { StadiumConfig } from '../stadium/types/stadium.types';
 import { classifyHeatmapExposure } from '../sunlight/sunlightHeatmap';
 import type {
@@ -12,6 +13,7 @@ export type ExposureMapSection = {
   id: string;
   tierId: string;
   tierName: string;
+  zoneLabel: string;
   sectionNumber: number;
   visitorClosed: boolean;
   classification: HeatmapClassification | null;
@@ -23,7 +25,7 @@ export type ExposureMapSection = {
 
 export function buildExposureMapSections(
   cells: SunHeatmapCell[],
-  tiers: StadiumConfig['tiers'],
+  config: Pick<StadiumConfig, 'tiers' | 'grandstand'>,
 ): ExposureMapSection[] {
   const cellsBySection = new Map<string, SunHeatmapCell[]>();
 
@@ -33,7 +35,7 @@ export function buildExposureMapSections(
     cellsBySection.set(cell.sectionId, existing);
   });
 
-  return tiers.flatMap((tier) =>
+  return config.tiers.flatMap((tier) =>
     Array.from({ length: tier.sectionCount }, (_, sectionIndex) => {
       const id = getSectionId(tier.id, sectionIndex);
       const samples = [...(cellsBySection.get(id) ?? [])].sort(
@@ -52,11 +54,17 @@ export function buildExposureMapSections(
         ? samples.reduce((sum, sample) => sum + sample.exposedPercent, 0) /
           sampleCount
         : 0;
+      const zone = getInteriorSectionZone(
+        tier,
+        sectionIndex,
+        config.grandstand,
+      );
 
       return {
         id,
         tierId: tier.id,
         tierName: tier.name,
+        zoneLabel: zone.label,
         sectionNumber: sectionIndex + 1,
         visitorClosed:
           tier.closedToVisitorsSectionIndices.includes(sectionIndex),

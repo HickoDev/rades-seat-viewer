@@ -109,6 +109,18 @@ test('keeps upper virage sections closed to public selection', async ({
   await expect(upperVirageOptions).toHaveCount(1);
   await expect(upperVirageOptions).toHaveAttribute('disabled', '');
   await expect(lowerVirageOptions).not.toHaveAttribute('disabled', '');
+  await expect(page.locator('option[value="lower-05"]')).toContainText(
+    'Enceinte inférieure',
+  );
+  await expect(page.locator('option[value="upper-12"]')).toContainText(
+    'Enceinte supérieure',
+  );
+  await expect(page.locator('option[value="lower-21"]')).toContainText(
+    'Pelouse',
+  );
+  await expect(page.locator('option[value="upper-28"]')).toContainText(
+    'Pelouse',
+  );
 });
 
 test('uses the selected Tunis time for day, twilight, and night lighting', async ({

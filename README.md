@@ -72,6 +72,7 @@ The model separates sourced facts from procedural estimates in the central typed
 - Stadium contractor SBF historically reports 60,000 places, a 13,000 m² covered enclosure, and 64 portal frames reaching 33 m. This is not presented as the current usable capacity or as a count of plastic chair instances.
 - Published facility summaries report a 7,000-place honor tribune and a press tribune with 300 desks. Those capacities are recorded separately from the photo-calibrated suite geometry.
 - The lower virages are modeled as stepped terraces without individual chair instances, following project-owner calibration. Upper-virage chairs remain visible but those sections are closed to visitor POV selection. Exact angular boundaries still require seating plans.
+- Public labels no longer call an entire ring “Enceinte.” The main-stand side is divided into Enceinte inférieure and Enceinte supérieure around the official Tribune block; the opposite long stand is Pelouse. Geometric tiers are neutrally named Niveau inférieur and Niveau supérieur.
 - The stadium centre and baseline pitch bearing come from OpenStreetMap geometry, not a land survey. The rendered geographic orientation applies the project-owner requested 180-degree reversal consistently to sunlight, exposure raycasts, heatmaps, and true north.
 - The supplied exact-model reference is represented with an eight-lane oval and a straight-side jump facility. Track construction details, all bowl radii, roof radii, access ramps, and other uncertain dimensions remain configurable estimates pending survey data.
 - Radès photo and authorized-render references show light-concrete radial aisles, edge barriers, recessed tier vomitories, arched concourse bays between tiers, warm field-event aprons inside the track bends, and a continuous trackside safety rail. Vomitories clear both chairs and tier concrete and continue toward the rear concourse. The four lower virage separations are open, barrier-lined structural cuts rather than stairs or access ramps.
@@ -94,6 +95,7 @@ Calibration references:
 - [2017 interior photograph showing aisles, vomitories, and the concourse](https://commons.wikimedia.org/wiki/File:Stade_de_Rad%C3%A9s_2017_1.jpg)
 - [Mosaïque FM interior photograph showing the Radès technical-area shelters](https://www.mosaiquefm.net/fr/football/1138703/est-zamalek-les-virages-du-stade-de-rades-ouverts)
 - [Webdo report and photograph of the extended player tunnel](https://www.webdo.tn/fr/actualite/sport/stade-hamadi-agrebi-de-rades-le-tunnel-menant-aux-vestiaires-rallonge/202187/)
+- [Radès ticket categories listing Pelouse, Enceinte supérieure, Enceinte inférieure, and Tribune](https://www.tuniscope.com/article/397947/actualites/sport/ca-cab-detail-de-la-vente-des-billets-121714)
 - [FIFA stadium-bowl circulation guidance](https://publications.fifa.com/de/football-stadiums-guidelines/general-process-guidelines/design/stadium-bowl/)
 - [SGSA Guide to Safety at Sports Grounds overview](https://sgsa.org.uk/document/greenguide/)
 

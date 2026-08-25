@@ -20,12 +20,26 @@ describe('getInteriorSectionZone', () => {
     );
   });
 
-  it('identifies the honor and opposite stands independently', () => {
+  it('identifies the official, enceinte, and opposite pelouse areas', () => {
     expect(getInteriorSectionZone(lowerTier, 7, grandstand).id).toBe(
       'honor-press',
     );
+    expect(getInteriorSectionZone(lowerTier, 4, grandstand)).toMatchObject({
+      id: 'enceinte',
+      label: 'Enceinte inférieure',
+    });
+    expect(getInteriorSectionZone(upperTier, 11, grandstand)).toMatchObject({
+      id: 'enceinte',
+      label: 'Enceinte supérieure',
+    });
     expect(getInteriorSectionZone(lowerTier, 23, grandstand).id).toBe(
-      'opposite-stand',
+      'pelouse',
+    );
+    expect(getInteriorSectionZone(lowerTier, 20, grandstand).label).toBe(
+      'Pelouse',
+    );
+    expect(getInteriorSectionZone(upperTier, 27, grandstand).label).toBe(
+      'Pelouse',
     );
   });
 

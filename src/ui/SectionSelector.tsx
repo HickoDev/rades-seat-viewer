@@ -49,7 +49,9 @@ export function SectionSelector() {
               ).includes(sectionIndex);
               return (
                 <option key={sectionId} disabled={isClosed} value={sectionId}>
-                  {tier.name} · {zone.label} · Section {sectionIndex + 1}
+                  {zone.label}
+                  {zone.id === 'enceinte' ? '' : ` · ${tier.name}`} · Section{' '}
+                  {sectionIndex + 1}
                 </option>
               );
             })}

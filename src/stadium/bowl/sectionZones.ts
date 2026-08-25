@@ -9,8 +9,8 @@ export type InteriorSectionZone = {
     | 'virage-two'
     | 'closed-upper-virage'
     | 'honor-press'
-    | 'opposite-stand'
-    | 'lateral-corner';
+    | 'enceinte'
+    | 'pelouse';
   label: string;
   viewingArea: 'terrace' | 'seated' | 'official' | 'closed';
 };
@@ -52,22 +52,21 @@ export function getInteriorSectionZone(
     };
   }
 
-  const oppositeIndices = new Set(
-    grandstand.sectionIndices.map(
-      (index) => (index + tier.sectionCount / 2) % tier.sectionCount,
-    ),
-  );
-  if (oppositeIndices.has(sectionIndex)) {
+  const sectionCenterAngle =
+    ((sectionIndex + 0.5) / tier.sectionCount) * Math.PI * 2;
+  const isOnEnceinteSide = Math.sin(sectionCenterAngle) * grandstand.side > 0;
+  if (isOnEnceinteSide) {
     return {
-      id: 'opposite-stand',
-      label: 'Tribune opposée',
+      id: 'enceinte',
+      label:
+        tier.id === 'upper' ? 'Enceinte supérieure' : 'Enceinte inférieure',
       viewingArea: 'seated',
     };
   }
 
   return {
-    id: 'lateral-corner',
-    label: 'Tribune latérale / angle',
+    id: 'pelouse',
+    label: 'Pelouse',
     viewingArea: 'seated',
   };
 }

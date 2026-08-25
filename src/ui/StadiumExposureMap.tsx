@@ -32,11 +32,11 @@ function formatMinutes(minutes: number) {
 function getSectionDescription(section: ExposureMapSection) {
   if (!section.classification) {
     return section.visitorClosed
-      ? `${section.tierName}, section ${section.sectionNumber}: closed to visitors; no public exposure sample.`
-      : `${section.tierName}, section ${section.sectionNumber}: no representative exposure sample.`;
+      ? `${section.zoneLabel}, ${section.tierName}, section ${section.sectionNumber}: closed to visitors; no public exposure sample.`
+      : `${section.zoneLabel}, ${section.tierName}, section ${section.sectionNumber}: no representative exposure sample.`;
   }
 
-  return `${section.tierName}, section ${section.sectionNumber}: ${classificationLabels[section.classification]}, ${Math.round(section.exposedPercent)} percent exposed.`;
+  return `${section.zoneLabel}, ${section.tierName}, section ${section.sectionNumber}: ${classificationLabels[section.classification]}, ${Math.round(section.exposedPercent)} percent exposed.`;
 }
 
 type StadiumExposureMapProps = {
@@ -52,7 +52,7 @@ export function StadiumExposureMap({
 }: StadiumExposureMapProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const sections = useMemo(
-    () => buildExposureMapSections(result.cells, radesStadiumConfig.tiers),
+    () => buildExposureMapSections(result.cells, radesStadiumConfig),
     [result.cells],
   );
   const firstMappedSection = sections.find(
@@ -255,7 +255,9 @@ export function StadiumExposureMap({
         <aside className="exposure-map-detail" aria-live="polite">
           {selectedSection && (
             <>
-              <p>{selectedSection.tierName}</p>
+              <p>
+                {selectedSection.zoneLabel} · {selectedSection.tierName}
+              </p>
               <h3>Section {selectedSection.sectionNumber}</h3>
               {selectedSection.classification ? (
                 <>

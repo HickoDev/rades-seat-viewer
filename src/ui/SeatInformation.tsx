@@ -1,4 +1,5 @@
 import { findViewingPosition } from '../seats/viewingPositions';
+import { getInteriorSectionZone } from '../stadium/bowl/sectionZones';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { useStadiumStore } from '../state/useStadiumStore';
 
@@ -23,6 +24,12 @@ export function SeatInformation() {
   );
   const isTerrace = position.kind === 'terrace';
   const sectionIndex = Number(metadata.sectionId.split('-')[1]) - 1;
+  const tier = radesStadiumConfig.tiers.find(
+    (candidate) => candidate.id === metadata.tierId,
+  );
+  const zone = tier
+    ? getInteriorSectionZone(tier, sectionIndex, radesStadiumConfig.grandstand)
+    : null;
   const isHonorTribune =
     !isTerrace &&
     radesStadiumConfig.grandstand.sectionIndices.includes(sectionIndex);
@@ -34,7 +41,7 @@ export function SeatInformation() {
           ? 'Virage POV'
           : isHonorTribune
             ? 'Honor stand view'
-            : 'Selected seat'}
+            : (zone?.label ?? 'Selected seat')}
       </span>
       <strong>
         {metadata.sectionId} &middot; {isTerrace ? 'Terrace row' : 'Row'}{' '}

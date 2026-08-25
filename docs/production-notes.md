@@ -50,6 +50,8 @@ The README currently uses `docs/assets/demo-preview.svg` as a production-styled 
 
 `src/stadium/config/radesStadiumConfig.ts` remains the only source for stadium measurements and verification labels. The 105 × 68 m pitch, Africa/Tunis timezone, coordinates, and recorded 64 structural frames are separated from photo-calibrated estimates. The project-owner-requested 180-degree orientation reversal is applied consistently to visible sunlight, raycasts, top-view north, and cached heatmaps.
 
+Public-facing stand names follow Radès ticket terminology rather than treating each complete geometric tier as one category: the main-stand side uses Enceinte inférieure or Enceinte supérieure, the opposite long side is Pelouse, the central official block remains Tribune d'honneur / Presse, and the two ends remain Virage. The configuration tier names are therefore neutral Niveau inférieur and Niveau supérieur.
+
 Do not describe this model as an exact digital twin. Roof, bowl, access, shadow boundaries, and several internal/external dimensions still require architectural or survey data. Open-Meteo weather is requested only inside its reliable forecast window; long-range events retain astronomy without fabricated weather.
 
 ## Accessibility and failure behavior

@@ -30,7 +30,7 @@ describe('stadium exposure map model', () => {
   it('aggregates row samples into every configured top-view section', () => {
     const sections = buildExposureMapSections(
       [createCell(1, 80, 20), createCell(2, 20, 80)],
-      radesStadiumConfig.tiers,
+      radesStadiumConfig,
     );
     const section = sections.find((candidate) => candidate.id === 'lower-01');
 
@@ -45,6 +45,7 @@ describe('stadium exposure map model', () => {
       directSunMinutes: 50,
       shadedMinutes: 50,
       exposedPercent: 50,
+      zoneLabel: 'Virage 1 · Terrasse debout',
     });
     expect(section?.samples.map((sample) => sample.rowNumber)).toEqual([1, 2]);
   });

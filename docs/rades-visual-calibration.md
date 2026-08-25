@@ -37,6 +37,10 @@ The owner-supplied interior and aerial renders used in the August 2026 calibrati
 
 No public architectural plan or survey was located for the bowl section, honor suite envelope, roof opening, façade bays, advertising-board offsets, spiral ramps, entrance landscaping, field-event apron, safety rail, tunnel width, or technical-area shelters. Their dimensions live in `radesStadiumConfig.ts` and are explicitly classified as estimates or authorized-reference calibrations. Roof waves and seams, underside color, truss depth, mast positions, concourse bays, window counts, ramp turns, cross-brace spacing, ceremonial entrance dimensions, player-route endpoints, and dugout position were calibrated visually against the sources below. Crowd and player motion is illustrative rather than a reconstruction of a particular match.
 
+## Repeatable interior validation views
+
+The interface exposes named comparison cameras for the lower and upper main stand, honor balcony, both virages, a corner junction, the opposite upper stand, a behind-goal pitch-level view, and the player entrance. These viewpoints are fixed procedural inspection positions rather than spectator seats. They make successive visual comparisons repeatable without claiming surveyed camera coordinates.
+
 ## Reference set
 
 - [SBF supporting-structure project](https://sbf.com.tn/en/the-supporting-structure-of-the-olympic-stadium/)

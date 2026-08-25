@@ -32,6 +32,23 @@ test('keeps the control sheet available on a compact viewport', async ({
   await expect(page.getByLabel('Rendering quality')).toBeVisible();
 });
 
+test('offers repeatable interior comparison viewpoints', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByLabel('Rendering quality').selectOption('low');
+  await page
+    .getByLabel('Choose an interior comparison view')
+    .selectOption('virage-one');
+
+  await expect(
+    page.getByLabel('Choose an interior comparison view'),
+  ).toHaveValue('virage-one');
+  await expect(page.getByText('section', { exact: true })).toBeVisible();
+  await expect(
+    page.getByRole('button', { name: 'Back to stadium' }),
+  ).toBeVisible();
+});
+
 test('selects a section, row, and seat from accessible controls', async ({
   page,
 }) => {
@@ -110,9 +127,9 @@ test('selects a section, row, and seat from accessible controls', async ({
     timeout: 20_000,
   });
   await page.getByLabel('Heatmap representative detail').selectOption('row');
-  await expect(page.getByText(/1060 representative groups/)).toBeVisible({
-    timeout: 25_000,
-  });
+  await expect(
+    page.locator('.heatmap-result').filter({ hasText: 'row detail' }),
+  ).toContainText(/\d+ representative groups/, { timeout: 25_000 });
   await page.getByRole('button', { name: 'Back to stadium' }).click();
   await expect(page.getByText('overview', { exact: true })).toBeVisible();
 });

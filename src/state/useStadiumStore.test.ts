@@ -26,4 +26,15 @@ describe('stadium selection state', () => {
       selectedViewKind: 'seat',
     });
   });
+
+  it('opens a serializable interior comparison camera', () => {
+    useStadiumStore.getState().selectCalibrationView('honor-balcony');
+
+    expect(useStadiumStore.getState()).toMatchObject({
+      cameraMode: 'section',
+      calibrationViewId: 'honor-balcony',
+      selectedSectionId: null,
+      selectedViewKind: null,
+    });
+  });
 });

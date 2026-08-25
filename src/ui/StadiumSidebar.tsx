@@ -5,6 +5,7 @@ import { SeatInformation } from './SeatInformation';
 import { SeatSelector } from './SeatSelector';
 import { MatchTimeControls } from './MatchTimeControls';
 import { QualityControls } from './QualityControls';
+import { InteriorViewSelector } from './InteriorViewSelector';
 import { SunExposureTimeline } from './SunExposureTimeline';
 import { SunHeatmapPanel } from './SunHeatmapPanel';
 import { WeatherPanel } from './WeatherPanel';
@@ -52,6 +53,7 @@ export function StadiumSidebar() {
           <span className="mode-pill">{cameraMode}</span>
         </button>
         <SectionSelector />
+        <InteriorViewSelector />
         <SeatSelector />
         <SeatInformation />
         {cameraMode !== 'overview' && (

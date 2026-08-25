@@ -7,12 +7,14 @@ import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { useStadiumStore } from '../state/useStadiumStore';
 import { useReducedMotion } from '../utils/useReducedMotion';
 import { getOverviewCameraPose, getSectionCameraPose } from './cameraPoses';
+import { getInteriorCalibrationCameraPose } from './interiorCalibrationViews';
 import { flyCamera } from './cameraTransitions';
 
 export function OverviewCamera() {
   const camera = useThree((state) => state.camera);
   const cameraMode = useStadiumStore((state) => state.cameraMode);
   const selectedSectionId = useStadiumStore((state) => state.selectedSectionId);
+  const calibrationViewId = useStadiumStore((state) => state.calibrationViewId);
   const reducedMotion = useReducedMotion();
   const controlsRef = useRef<OrbitControlsImpl>(null);
   const currentTarget = useMemo(
@@ -23,8 +25,9 @@ export function OverviewCamera() {
 
   useEffect(() => {
     if (cameraMode === 'seat') return;
-    const pose =
-      cameraMode === 'section' && selectedSectionId
+    const pose = calibrationViewId
+      ? getInteriorCalibrationCameraPose(calibrationViewId)
+      : cameraMode === 'section' && selectedSectionId
         ? getSectionCameraPose(selectedSectionId)
         : getOverviewCameraPose();
     const transition = flyCamera({
@@ -44,7 +47,14 @@ export function OverviewCamera() {
     return () => {
       transition.kill();
     };
-  }, [camera, cameraMode, currentTarget, reducedMotion, selectedSectionId]);
+  }, [
+    calibrationViewId,
+    camera,
+    cameraMode,
+    currentTarget,
+    reducedMotion,
+    selectedSectionId,
+  ]);
 
   if (cameraMode === 'seat') return null;
 

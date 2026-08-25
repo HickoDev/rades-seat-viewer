@@ -6,6 +6,7 @@ import type {
   SunHeatmapResult,
 } from '../sunlight/sunlightHeatmap.types';
 import type { ViewingPositionKind } from '../seats/viewingPositions';
+import type { InteriorCalibrationViewId } from '../camera/interiorCalibrationViews';
 
 export type CameraMode = 'overview' | 'section' | 'seat';
 export type QualityMode = 'auto' | 'low' | 'high';
@@ -16,6 +17,7 @@ export type StadiumState = {
   selectedRow: number | null;
   selectedSeat: number | null;
   selectedViewKind: ViewingPositionKind | null;
+  calibrationViewId: InteriorCalibrationViewId | null;
   matchStartIso: string | null;
   matchEndIso: string | null;
   showSunSimulation: boolean;
@@ -34,6 +36,7 @@ export type StadiumState = {
     row: number,
     position: number,
   ) => void;
+  selectCalibrationView: (viewId: InteriorCalibrationViewId) => void;
   setMatchTime: (startIso: string, endIso: string) => void;
   returnToOverview: () => void;
   toggleDebugGuides: () => void;
@@ -52,6 +55,7 @@ const initialState = {
   selectedRow: null,
   selectedSeat: null,
   selectedViewKind: null,
+  calibrationViewId: null,
   matchStartIso: null,
   matchEndIso: null,
   showSunSimulation: false,
@@ -73,6 +77,7 @@ export const useStadiumStore = create<StadiumState>((set) => ({
       selectedRow: null,
       selectedSeat: null,
       selectedViewKind: null,
+      calibrationViewId: null,
     }),
   selectSeat: (row, seat) =>
     set({
@@ -80,6 +85,7 @@ export const useStadiumStore = create<StadiumState>((set) => ({
       selectedRow: row,
       selectedSeat: seat,
       selectedViewKind: 'seat',
+      calibrationViewId: null,
     }),
   selectRow: (row) =>
     set({
@@ -87,6 +93,7 @@ export const useStadiumStore = create<StadiumState>((set) => ({
       selectedRow: row,
       selectedSeat: null,
       selectedViewKind: null,
+      calibrationViewId: null,
     }),
   selectTerracePosition: (sectionId, row, position) =>
     set({
@@ -95,6 +102,16 @@ export const useStadiumStore = create<StadiumState>((set) => ({
       selectedRow: row,
       selectedSeat: position,
       selectedViewKind: 'terrace',
+      calibrationViewId: null,
+    }),
+  selectCalibrationView: (calibrationViewId) =>
+    set({
+      cameraMode: 'section',
+      calibrationViewId,
+      selectedSectionId: null,
+      selectedRow: null,
+      selectedSeat: null,
+      selectedViewKind: null,
     }),
   setMatchTime: (startIso, endIso) =>
     set({
@@ -109,6 +126,7 @@ export const useStadiumStore = create<StadiumState>((set) => ({
       selectedRow: null,
       selectedSeat: null,
       selectedViewKind: null,
+      calibrationViewId: null,
     }),
   toggleDebugGuides: () =>
     set((state) => ({ showDebugGuides: !state.showDebugGuides })),

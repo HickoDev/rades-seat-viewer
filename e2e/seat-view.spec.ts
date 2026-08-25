@@ -60,6 +60,18 @@ test('loads the setup flow and foundation scene without runtime errors', async (
   await expect(
     page.getByText('Stadium exposure map', { exact: true }),
   ).toBeVisible();
+  await expect(page.getByRole('link', { name: /Play games/i })).toHaveAttribute(
+    'href',
+    'https://hickodev.itch.io/',
+  );
+  await expect(page.getByRole('link', { name: /github/i })).toHaveAttribute(
+    'href',
+    'https://github.com/HickoDev',
+  );
+  await expect(page.getByRole('link', { name: /instagram/i })).toHaveAttribute(
+    'href',
+    'https://www.instagram.com/alidridi_9/?hl=en',
+  );
 
   expect(runtimeErrors).toEqual([]);
 });

@@ -4,13 +4,15 @@ Radès View is an interactive procedural 3D representation of Stade Olympique Ha
 
 **Live website:** [rades-seat-viewer.vercel.app](https://rades-seat-viewer.vercel.app)
 
+**Creator:** [Play HickoDev games](https://hickodev.itch.io/) · [GitHub](https://github.com/HickoDev) · [Instagram](https://www.instagram.com/alidridi_9/?hl=en)
+
 ## Product preview
 
 [![Open the Radès View live demo](docs/assets/demo-preview.svg)](https://rades-seat-viewer.vercel.app)
 
 The poster opens the live product today. The reserved repository upload target for the final walkthrough is `docs/assets/rades-view-demo.mp4`; see the [production notes](docs/production-notes.md#demo-video-preview) before adding a large media file.
 
-This repository contains **Milestones 1–17**: the interactive procedural stadium, source-informed Radès calibration, detailed section barriers and concourses, rounded instanced seats, organic low-poly spectators and a 22-player match scene, populated photo-calibrated technical areas, a covered 30-metre player route with a main-stand opening, guided seat and virage-terrace POV modes, four spiral ramp towers, open exterior cross-bracing, Radès-specific honor/press and ceremonial-entrance architecture, detailed tensile-roof seams, suspended scoreboards, goal nets and match-day hoardings, structural occluders, astronomical sun direction, selected-view shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, cached section/row sunlight heatmaps, an accessible 2D exposure plan, and a production hardening pass. It is not a ticket-booking application.
+This repository contains **Milestones 1–17**: the interactive procedural stadium, source-informed Radès calibration, detailed section barriers and concourses, rounded instanced seats, organic low-poly spectators and a 22-player match scene, populated photo-calibrated technical areas, a covered 30-metre player route with a main-stand opening, guided seat and virage-terrace POV modes, four spiral ramp towers, open exterior cross-bracing, Radès-specific honor/press and ceremonial-entrance architecture, detailed tensile-roof seams, suspended scoreboards, goal nets and synchronized creator-campaign hoardings, structural occluders, astronomical sun direction, selected-view shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, cached section/row sunlight heatmaps, an accessible 2D exposure plan, and a production hardening pass. It is not a ticket-booking application.
 
 ## Requirements
 

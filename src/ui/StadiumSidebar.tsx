@@ -1,4 +1,5 @@
 import { useStadiumStore } from '../state/useStadiumStore';
+import { CreatorLinks } from './CreatorLinks';
 import { InteriorViewSelector } from './InteriorViewSelector';
 import { MatchTimeControls } from './MatchTimeControls';
 import { QualityControls } from './QualityControls';
@@ -121,6 +122,7 @@ export function StadiumSidebar() {
       </details>
 
       <footer className="sidebar-footer">
+        <CreatorLinks />
         <strong>Procedural approximation</strong>
         <p>
           Sun position is geographic. Stadium dimensions and shadow boundaries

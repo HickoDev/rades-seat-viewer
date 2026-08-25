@@ -1,4 +1,5 @@
-import { useEffect, useMemo } from 'react';
+import type { ThreeEvent } from '@react-three/fiber';
+import { useEffect, useMemo, useState } from 'react';
 import {
   BoxGeometry,
   CanvasTexture,
@@ -6,39 +7,74 @@ import {
   SRGBColorSpace,
 } from 'three';
 
+import { useReducedMotion } from '../../utils/useReducedMotion';
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import {
+  advertisingCampaigns,
+  advertisingRotationIntervalMs,
+  type AdvertisingCampaign,
+} from './advertisingCampaigns';
 
-const boardDesigns = [
-  { background: '#183f82', accent: '#58c9e8', label: 'RADÈS' },
-  { background: '#5b287c', accent: '#e7b94d', label: 'TUNISIA' },
-  { background: '#0e6b81', accent: '#f2f5ef', label: 'HAMMADI AGREBI' },
-];
-
-function createBoardMaterial(design: (typeof boardDesigns)[number]) {
+function createBoardMaterial(design: AdvertisingCampaign, index: number) {
   const canvas = document.createElement('canvas');
-  canvas.width = 1024;
-  canvas.height = 192;
+  canvas.width = 1280;
+  canvas.height = 240;
   const context = canvas.getContext('2d');
   if (!context) throw new Error('Unable to create advertising-board texture.');
 
   context.fillStyle = design.background;
   context.fillRect(0, 0, canvas.width, canvas.height);
+
+  context.globalAlpha = 0.14;
+  context.fillStyle = design.foreground;
+  for (let x = 0; x < canvas.width; x += 16) {
+    context.fillRect(x, 0, 1, canvas.height);
+  }
+  context.globalAlpha = 1;
+
   context.fillStyle = design.accent;
-  context.fillRect(0, 0, 22, canvas.height);
-  context.fillRect(canvas.width - 22, 0, 22, canvas.height);
-  context.font = `700 ${design.label.length > 10 ? 80 : 108}px Arial`;
+  context.fillRect(0, 0, 24, canvas.height);
+  context.fillRect(48, 42, 104, 156);
+
+  context.fillStyle = design.background;
+  context.font = '900 47px Arial, sans-serif';
   context.textAlign = 'center';
   context.textBaseline = 'middle';
-  context.fillText(design.label, canvas.width / 2, canvas.height / 2 + 4);
+  context.fillText('HD', 100, 120);
+
+  context.textAlign = 'left';
+  context.fillStyle = design.accent;
+  context.font = '800 23px Arial, sans-serif';
+  context.fillText(design.eyebrow, 190, 48);
+
+  context.fillStyle = design.foreground;
+  context.font = '900 61px Arial, sans-serif';
+  context.fillText(design.headline, 190, 115);
+
+  context.globalAlpha = 0.82;
+  context.font = '700 28px Arial, sans-serif';
+  context.fillText(design.address, 190, 179);
+  context.globalAlpha = 1;
+
+  context.strokeStyle = design.accent;
+  context.lineWidth = 3;
+  context.strokeRect(1090, 72, 132, 96);
+  context.fillStyle = design.foreground;
+  context.font = '900 25px Arial, sans-serif';
+  context.textAlign = 'center';
+  context.fillText(`0${index + 1}`, 1156, 105);
+  context.font = '800 19px Arial, sans-serif';
+  context.fillText('VISIT', 1156, 139);
 
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;
-  texture.anisotropy = 4;
+  texture.anisotropy = 8;
   const material = new MeshStandardMaterial({
     map: texture,
     emissive: design.background,
-    emissiveIntensity: 0.08,
-    roughness: 0.72,
+    emissiveMap: texture,
+    emissiveIntensity: 0.32,
+    roughness: 0.58,
   });
   return { material, texture };
 }
@@ -62,6 +98,8 @@ function createRunPositions(
 
 export function AdvertisingBoards() {
   const { fieldFurniture, grandstand, pitch } = radesStadiumConfig;
+  const prefersReducedMotion = useReducedMotion();
+  const [activeCampaignIndex, setActiveCampaignIndex] = useState(0);
   const geometry = useMemo(
     () =>
       new BoxGeometry(
@@ -72,8 +110,32 @@ export function AdvertisingBoards() {
     [fieldFurniture],
   );
   const resources = useMemo(
-    () => boardDesigns.map((design) => createBoardMaterial(design)),
+    () =>
+      advertisingCampaigns.map((design, index) =>
+        createBoardMaterial(design, index),
+      ),
     [],
+  );
+  const edgeMaterial = useMemo(
+    () =>
+      new MeshStandardMaterial({
+        color: '#17191b',
+        metalness: 0.38,
+        roughness: 0.5,
+      }),
+    [],
+  );
+  const materialSets = useMemo(
+    () =>
+      resources.map(({ material }) => [
+        edgeMaterial,
+        edgeMaterial,
+        edgeMaterial,
+        edgeMaterial,
+        material,
+        material,
+      ]),
+    [edgeMaterial, resources],
   );
   const behindGoalPositions = useMemo(
     () =>
@@ -97,22 +159,66 @@ export function AdvertisingBoards() {
   useEffect(
     () => () => {
       geometry.dispose();
+      edgeMaterial.dispose();
       resources.forEach(({ material, texture }) => {
         material.dispose();
         texture.dispose();
       });
     },
-    [geometry, resources],
+    [edgeMaterial, geometry, resources],
   );
 
+  useEffect(() => {
+    if (prefersReducedMotion) return;
+
+    const interval = window.setInterval(() => {
+      setActiveCampaignIndex(
+        (currentIndex) => (currentIndex + 1) % advertisingCampaigns.length,
+      );
+    }, advertisingRotationIntervalMs);
+
+    return () => window.clearInterval(interval);
+  }, [prefersReducedMotion]);
+
+  useEffect(
+    () => () => {
+      document.body.style.cursor = '';
+    },
+    [],
+  );
+
+  const activeCampaign = advertisingCampaigns[activeCampaignIndex];
+  const activeMaterials = materialSets[activeCampaignIndex];
+  const openCampaign = (event: ThreeEvent<MouseEvent>) => {
+    event.stopPropagation();
+    window.open(activeCampaign.href, '_blank', 'noopener,noreferrer');
+  };
+  const showLinkCursor = (event: ThreeEvent<PointerEvent>) => {
+    event.stopPropagation();
+    document.body.style.cursor = 'pointer';
+  };
+  const restoreCursor = (event: ThreeEvent<PointerEvent>) => {
+    event.stopPropagation();
+    document.body.style.cursor = '';
+  };
+
   return (
-    <group name="pitch-side-advertising-hoardings">
+    <group
+      name="pitch-side-advertising-hoardings"
+      userData={{
+        activeCampaign: activeCampaign.id,
+        campaignHref: activeCampaign.href,
+      }}
+    >
       {([-1, 1] as const).flatMap((side) =>
         behindGoalPositions.map((offset, index) => (
           <mesh
             key={`goal-${side}-${index}`}
             geometry={geometry}
-            material={resources[index % resources.length].material}
+            material={activeMaterials}
+            onClick={openCampaign}
+            onPointerOut={restoreCursor}
+            onPointerOver={showLinkCursor}
             position={[
               side * (pitch.length / 2 + fieldFurniture.behindGoalOffset),
               fieldFurniture.advertisingBoardHeight / 2,
@@ -135,7 +241,10 @@ export function AdvertisingBoards() {
             <mesh
               key={`sideline-${side}-${index}`}
               geometry={geometry}
-              material={resources[(index + 1) % resources.length].material}
+              material={activeMaterials}
+              onClick={openCampaign}
+              onPointerOut={restoreCursor}
+              onPointerOver={showLinkCursor}
               position={[
                 offset,
                 fieldFurniture.advertisingBoardHeight / 2,

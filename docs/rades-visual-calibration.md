@@ -25,7 +25,7 @@ The implementation uses the following features because they recur across photogr
 - a central main-stand player entrance aligned between the two shelters, with the retractable white covered route reported as approximately 30 metres long in January 2023;
 - a cream ceremonial entrance with deep-blue arched glazing, blue trim, a yellow patterned band, a taller central gateway, flagpoles, palms, and a broad processional plaza.
 
-Advertising artwork changes by competition and sponsor. The application therefore uses neutral Radès/Tunisia match-day graphics instead of claiming that one photographed sponsor layout is permanent.
+Advertising artwork changes by competition and sponsor. The pitch-side boards therefore run a clearly authored HickoDev creator campaign rather than claiming that one photographed sponsor layout is permanent. The synchronized rotation opens with the itch.io games portfolio, followed by GitHub and Instagram; reduced-motion users retain the first frame.
 
 ## Authorized visual reference
 

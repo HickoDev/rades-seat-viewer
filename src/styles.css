@@ -882,6 +882,83 @@ summary:focus-visible {
   line-height: 1.55;
 }
 
+.creator-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.creator-link {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 9px 10px;
+  border: 1px solid #bdb6ab;
+  color: #30393d;
+  background: #f8f5ee;
+  text-decoration: none;
+}
+
+.creator-link--primary {
+  grid-column: 1 / -1;
+  padding: 11px 12px;
+  border-color: #24211e;
+  color: #fff7e8;
+  background: #24211e;
+}
+
+.creator-link > span,
+.creator-link strong,
+.creator-link small {
+  display: block;
+  min-width: 0;
+}
+
+.creator-link strong {
+  color: inherit;
+  font-size: 9px;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.creator-link small {
+  margin-top: 3px;
+  overflow: hidden;
+  color: #72797b;
+  font-size: 7px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.creator-link--primary small {
+  color: #c9c0b2;
+}
+
+.creator-link b {
+  flex: 0 0 auto;
+  color: #a54836;
+  font-size: 13px;
+}
+
+.creator-link--primary b {
+  color: #fa5c5c;
+}
+
+.creator-link:hover {
+  border-color: #a54836;
+  color: #84382b;
+  background: #ffffff;
+}
+
+.creator-link--primary:hover {
+  border-color: #a54836;
+  color: #ffffff;
+  background: #151311;
+}
+
 .stadium-viewport {
   position: relative;
   min-width: 0;

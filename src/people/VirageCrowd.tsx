@@ -7,7 +7,10 @@ import {
   type InstancedMesh,
 } from 'three';
 
-import { isTerraceSection } from '../seats/viewingPositions';
+import {
+  isTerraceSection,
+  isVisitorClosedSection,
+} from '../seats/viewingPositions';
 import { useStadiumStore } from '../state/useStadiumStore';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { useRenderQuality } from '../utils/useRenderQuality';
@@ -66,7 +69,11 @@ export function VirageCrowd() {
         radesCrowdPlacementLayout.metadata,
         occupancy,
         0,
-      ).filter((member) => isTerraceSection(member.placement.sectionId)),
+      ).filter(
+        (member) =>
+          isTerraceSection(member.placement.sectionId) &&
+          !isVisitorClosedSection(member.placement.sectionId),
+      ),
     [occupancy],
   );
   const instanceByPlacement = useMemo(

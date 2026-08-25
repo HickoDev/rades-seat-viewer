@@ -49,6 +49,19 @@ test('offers repeatable interior comparison viewpoints', async ({ page }) => {
   ).toBeVisible();
 });
 
+test('keeps upper virage sections closed to public selection', async ({
+  page,
+}) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByLabel('Rendering quality').selectOption('low');
+
+  const upperVirageOptions = page.locator('option[value="upper-01"]');
+  const lowerVirageOptions = page.locator('option[value="lower-01"]');
+  await expect(upperVirageOptions).toHaveCount(1);
+  await expect(upperVirageOptions).toHaveAttribute('disabled', '');
+  await expect(lowerVirageOptions).not.toHaveAttribute('disabled', '');
+});
+
 test('selects a section, row, and seat from accessible controls', async ({
   page,
 }) => {

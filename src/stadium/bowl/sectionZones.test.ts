@@ -5,6 +5,7 @@ import { getInteriorSectionZone } from './sectionZones';
 
 describe('getInteriorSectionZone', () => {
   const lowerTier = radesStadiumConfig.tiers[0];
+  const upperTier = radesStadiumConfig.tiers[1];
   const grandstand = radesStadiumConfig.grandstand;
 
   it('distinguishes the two chairless virages from seated sections', () => {
@@ -26,5 +27,15 @@ describe('getInteriorSectionZone', () => {
     expect(getInteriorSectionZone(lowerTier, 23, grandstand).id).toBe(
       'opposite-stand',
     );
+  });
+
+  it('marks the upper virages as closed rather than public terraces', () => {
+    expect(getInteriorSectionZone(upperTier, 0, grandstand)).toMatchObject({
+      id: 'closed-upper-virage',
+      viewingArea: 'closed',
+    });
+    expect(
+      getInteriorSectionZone(upperTier, 7, grandstand).viewingArea,
+    ).not.toBe('closed');
   });
 });

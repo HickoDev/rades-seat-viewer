@@ -7,11 +7,12 @@ export type InteriorSectionZone = {
   id:
     | 'virage-one'
     | 'virage-two'
+    | 'closed-upper-virage'
     | 'honor-press'
     | 'opposite-stand'
     | 'lateral-corner';
   label: string;
-  viewingArea: 'terrace' | 'seated' | 'official';
+  viewingArea: 'terrace' | 'seated' | 'official' | 'closed';
 };
 
 export function getInteriorSectionZone(
@@ -19,6 +20,13 @@ export function getInteriorSectionZone(
   sectionIndex: number,
   grandstand: GrandstandConfig,
 ): InteriorSectionZone {
+  if (tier.closedToVisitorsSectionIndices.includes(sectionIndex)) {
+    return {
+      id: 'closed-upper-virage',
+      label: 'Upper virage - closed to visitors',
+      viewingArea: 'closed',
+    };
+  }
   const isTerrace = tier.seatlessSectionIndices.includes(sectionIndex);
   if (isTerrace) {
     const inFirstVirage =

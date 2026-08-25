@@ -17,7 +17,10 @@ import {
 } from 'three';
 
 import { useStadiumStore } from '../state/useStadiumStore';
-import { isTerraceSection } from '../seats/viewingPositions';
+import {
+  isTerraceSection,
+  isVisitorClosedSection,
+} from '../seats/viewingPositions';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { useReducedMotion } from '../utils/useReducedMotion';
 import { useRenderQuality } from '../utils/useRenderQuality';
@@ -94,7 +97,11 @@ export function StadiumCrowd() {
         radesCrowdPlacementLayout.metadata,
         occupancy,
         occupants.crowdAnimatedFraction,
-      ).filter((member) => !isTerraceSection(member.placement.sectionId)),
+      ).filter(
+        (member) =>
+          !isTerraceSection(member.placement.sectionId) &&
+          !isVisitorClosedSection(member.placement.sectionId),
+      ),
     [occupancy, occupants.crowdAnimatedFraction],
   );
   const staticMembers = useMemo(

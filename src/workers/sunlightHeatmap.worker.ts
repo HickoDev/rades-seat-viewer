@@ -17,6 +17,7 @@ import { radesSeatLayout } from '../seats/seatMetadata';
 import type { SeatMetadata } from '../seats/seat.types';
 import { createEllipticalRingGeometry } from '../stadium/bowl/createTierGeometry';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
+import { getSectionId } from '../stadium/bowl/sectionIds';
 import { createRoofGeometry } from '../stadium/roof/createRoofGeometry';
 import { enableBvhRaycasting } from '../utils/setupBvh';
 import { calculateSeatShadow } from '../sunlight/calculateSeatShadow';
@@ -118,7 +119,15 @@ function createStaticOccluders(): Object3D[] {
 
 function getRepresentativeSeats(resolution: HeatmapResolution) {
   const groups = new Map<string, SeatMetadata[]>();
+  const closedSectionIds = new Set(
+    radesStadiumConfig.tiers.flatMap((tier) =>
+      tier.closedToVisitorsSectionIndices.map((sectionIndex) =>
+        getSectionId(tier.id, sectionIndex),
+      ),
+    ),
+  );
   radesSeatLayout.metadata.forEach((seat) => {
+    if (closedSectionIds.has(seat.sectionId)) return;
     const key = getHeatmapGroupKey(seat.sectionId, seat.rowNumber, resolution);
     const group = groups.get(key);
     if (group) group.push(seat);

@@ -5,6 +5,7 @@ import {
   findRepresentativeTerracePosition,
   findViewingPosition,
   isTerraceSection,
+  isVisitorClosedSection,
 } from './viewingPositions';
 
 describe('stadium viewing positions', () => {
@@ -35,5 +36,13 @@ describe('stadium viewing positions', () => {
     expect(isTerraceSection('upper-32')).toBe(true);
     expect(isTerraceSection('lower-05')).toBe(false);
     expect(findRepresentativeTerracePosition('lower-05')).toBeNull();
+  });
+
+  it('keeps the lower virage POV open and closes the upper virage', () => {
+    expect(isVisitorClosedSection('lower-01')).toBe(false);
+    expect(isVisitorClosedSection('upper-01')).toBe(true);
+    expect(findRepresentativeTerracePosition('lower-01')).not.toBeNull();
+    expect(findRepresentativeTerracePosition('upper-01')).toBeNull();
+    expect(findViewingPosition('upper-01', 1, 1, 'terrace')).toBeNull();
   });
 });

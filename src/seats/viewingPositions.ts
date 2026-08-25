@@ -29,8 +29,20 @@ const terraceSectionIds = new Set(
   ),
 );
 
+const visitorClosedSectionIds = new Set(
+  radesStadiumConfig.tiers.flatMap((tier) =>
+    tier.closedToVisitorsSectionIndices.map((sectionIndex) =>
+      getSectionId(tier.id, sectionIndex),
+    ),
+  ),
+);
+
 export function isTerraceSection(sectionId: string | null): boolean {
   return sectionId !== null && terraceSectionIds.has(sectionId);
+}
+
+export function isVisitorClosedSection(sectionId: string | null): boolean {
+  return sectionId !== null && visitorClosedSectionIds.has(sectionId);
 }
 
 export function findViewingPosition(
@@ -40,6 +52,7 @@ export function findViewingPosition(
   requestedKind: ViewingPositionKind | null = null,
 ): ViewingPosition | null {
   if (!sectionId || rowNumber === null || positionNumber === null) return null;
+  if (isVisitorClosedSection(sectionId)) return null;
 
   const kind =
     requestedKind ?? (isTerraceSection(sectionId) ? 'terrace' : 'seat');
@@ -59,7 +72,9 @@ export function findViewingPosition(
 export function findRepresentativeTerracePosition(
   sectionId: string,
 ): SeatMetadata | null {
-  if (!isTerraceSection(sectionId)) return null;
+  if (!isTerraceSection(sectionId) || isVisitorClosedSection(sectionId)) {
+    return null;
+  }
 
   const sectionPositions = radesViewingPositionLayout.metadata.filter(
     (position) => position.sectionId === sectionId,

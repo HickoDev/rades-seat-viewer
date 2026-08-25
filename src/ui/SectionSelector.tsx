@@ -44,8 +44,11 @@ export function SectionSelector() {
                 sectionIndex,
                 radesStadiumConfig.grandstand,
               );
+              const isClosed = (
+                tier.closedToVisitorsSectionIndices as readonly number[]
+              ).includes(sectionIndex);
               return (
-                <option key={sectionId} value={sectionId}>
+                <option key={sectionId} disabled={isClosed} value={sectionId}>
                   {tier.name} · {zone.label} · Section {sectionIndex + 1}
                 </option>
               );

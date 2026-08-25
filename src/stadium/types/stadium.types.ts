@@ -109,6 +109,7 @@ export type StadiumConfig = {
       frameThickness?: number;
     }>;
     seatlessSectionIndices: number[];
+    closedToVisitorsSectionIndices: number[];
   }>;
   bowlDetails: {
     sectionBarrierHeight: number;

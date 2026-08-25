@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-17',
+  version: 'rades-procedural-18',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -157,6 +157,7 @@ export const radesStadiumConfig = {
       ],
       // Curved terraces behind both goals; angular boundaries need plans.
       seatlessSectionIndices: [0, 1, 2, 13, 14, 15, 16, 17, 18, 29, 30, 31],
+      closedToVisitorsSectionIndices: [],
     },
     {
       id: 'upper',
@@ -194,6 +195,11 @@ export const radesStadiumConfig = {
         { sectionIndex: 24, row: 7, width: 4.8, height: 3.2 },
       ],
       seatlessSectionIndices: [0, 1, 2, 13, 14, 15, 16, 17, 18, 29, 30, 31],
+      // The upper virage remains part of the physical bowl but is not offered
+      // as a public viewing location in the current operating layout.
+      closedToVisitorsSectionIndices: [
+        0, 1, 2, 13, 14, 15, 16, 17, 18, 29, 30, 31,
+      ],
     },
   ],
   bowlDetails: {
@@ -444,6 +450,7 @@ export const radesStadiumConfig = {
       'The inner roof now includes an estimated maintenance catwalk, clustered floodlight banks, and scoreboard service decks visible from spectator viewpoints.',
       'The bowl, seating rows, walkways, and front safety rail now follow a rounded-stadium capsule perimeter with flat long sides instead of a continuous mathematical ellipse.',
       'Four full-depth lower-tier corridors separate the two virages from the lateral stands; the ramp widths and portal dimensions are calibrated from the supplied reference model and remain unsurveyed.',
+      'Upper-virage sections remain physically modeled but are marked closed to visitors; they are excluded from public POV selection, crowds, and visitor-facing simulations.',
     ],
   },
 } satisfies StadiumConfig;

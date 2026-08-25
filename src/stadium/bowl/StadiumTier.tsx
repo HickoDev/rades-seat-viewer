@@ -82,6 +82,12 @@ export function StadiumTier({ tier }: StadiumTierProps) {
         color: '#9fa199',
         roughness: 0.93,
       }),
+      closed: new MeshStandardMaterial({
+        color: '#587a7c',
+        emissive: '#172b2e',
+        emissiveIntensity: 0.08,
+        roughness: 0.95,
+      }),
       selected: new MeshStandardMaterial({
         color: '#bfe961',
         emissive: '#263b12',
@@ -106,6 +112,8 @@ export function StadiumTier({ tier }: StadiumTierProps) {
         const sectionId = getSectionId(tier.id, sectionIndex);
         const isSelected = selectedSectionId === sectionId;
         const isTerrace = tier.seatlessSectionIndices.includes(sectionIndex);
+        const isClosedToVisitors =
+          tier.closedToVisitorsSectionIndices.includes(sectionIndex);
         const zone = getInteriorSectionZone(
           tier,
           sectionIndex,
@@ -119,13 +127,16 @@ export function StadiumTier({ tier }: StadiumTierProps) {
             material={
               isSelected
                 ? materials.selected
-                : sectionIndex % 2 === 0
-                  ? materials.primary
-                  : materials.secondary
+                : isClosedToVisitors
+                  ? materials.closed
+                  : sectionIndex % 2 === 0
+                    ? materials.primary
+                    : materials.secondary
             }
             name={`section-${sectionId}`}
             onClick={(event) => {
               event.stopPropagation();
+              if (isClosedToVisitors) return;
               const terracePosition = isTerrace
                 ? findRepresentativeTerracePosition(sectionId)
                 : null;
@@ -145,7 +156,10 @@ export function StadiumTier({ tier }: StadiumTierProps) {
               tierId: tier.id,
               sectionZoneId: zone.id,
               sectionLabel: zone.label,
-              viewingArea: isTerrace ? 'terrace' : 'seated',
+              viewingArea: zone.viewingArea,
+              accessStatus: isClosedToVisitors
+                ? 'closed-to-visitors'
+                : 'open-to-visitors',
             }}
           />
         );

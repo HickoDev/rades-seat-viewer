@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
+import { isVisitorClosedSection } from '../seats/viewingPositions';
 import { generateCrowdMembers, radesCrowdPlacementLayout } from './crowdLayout';
 
 describe('generateCrowdMembers', () => {
@@ -23,6 +24,19 @@ describe('generateCrowdMembers', () => {
 
     expect(
       crowd.some((member) => member.placement.sectionId === virageSectionId),
+    ).toBe(true);
+  });
+
+  it('excludes closed upper-virage placements from the public crowd', () => {
+    const publicCrowd = generateCrowdMembers(
+      radesCrowdPlacementLayout.metadata,
+      1,
+    ).filter((member) => !isVisitorClosedSection(member.placement.sectionId));
+
+    expect(
+      publicCrowd.every(
+        (member) => !isVisitorClosedSection(member.placement.sectionId),
+      ),
     ).toBe(true);
   });
 

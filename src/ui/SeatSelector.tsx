@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { radesSeatLayout } from '../seats/seatMetadata';
+import { isVisitorClosedSection } from '../seats/viewingPositions';
 import { useStadiumStore } from '../state/useStadiumStore';
 
 export function SeatSelector() {
@@ -32,6 +33,14 @@ export function SeatSelector() {
 
   if (!selectedSectionId) {
     return null;
+  }
+
+  if (isVisitorClosedSection(selectedSectionId)) {
+    return (
+      <p className="seat-selector__terrace" role="status">
+        Upper virage - closed to visitors.
+      </p>
+    );
   }
 
   if (seatsForSection.length === 0) {

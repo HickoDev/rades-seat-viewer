@@ -11,6 +11,8 @@ export type TierAccessOpening = {
   frameThickness: number;
 };
 
+export type TierMajorCutout = TierConfig['majorCutouts'][number];
+
 function normalizeBoundaryIndex(tier: TierConfig, boundaryIndex: number) {
   return (
     ((boundaryIndex % tier.sectionCount) + tier.sectionCount) %
@@ -20,10 +22,26 @@ function normalizeBoundaryIndex(tier: TierConfig, boundaryIndex: number) {
 
 export function getTierAisleWidth(tier: TierConfig, boundaryIndex: number) {
   const normalizedIndex = normalizeBoundaryIndex(tier, boundaryIndex);
+  const majorCutout = tier.majorCutouts.find(
+    (cutout) => cutout.boundaryIndex === normalizedIndex,
+  );
+  if (majorCutout) return majorCutout.width;
   return (
     tier.aisleWidthOverrides.find(
       (override) => override.boundaryIndex === normalizedIndex,
     )?.width ?? tier.aisleWidth
+  );
+}
+
+export function getTierMajorCutout(
+  tier: TierConfig,
+  boundaryIndex: number,
+): TierMajorCutout | null {
+  const normalizedIndex = normalizeBoundaryIndex(tier, boundaryIndex);
+  return (
+    tier.majorCutouts.find(
+      (cutout) => cutout.boundaryIndex === normalizedIndex,
+    ) ?? null
   );
 }
 

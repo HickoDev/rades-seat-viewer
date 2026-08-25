@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-16',
+  version: 'rades-procedural-17',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -110,6 +110,38 @@ export const radesStadiumConfig = {
         { boundaryIndex: 20, width: 2.5 },
         { boundaryIndex: 28, width: 2.5 },
       ],
+      // Four full-depth separation corridors between the end virages and
+      // lateral stands. Their dimensions remain visual estimates.
+      majorCutouts: [
+        {
+          id: 'north-east-virage-access',
+          boundaryIndex: 3,
+          width: 11,
+          accessWidth: 6.4,
+          wallHeight: 1.55,
+        },
+        {
+          id: 'north-west-virage-access',
+          boundaryIndex: 13,
+          width: 11,
+          accessWidth: 6.4,
+          wallHeight: 1.55,
+        },
+        {
+          id: 'south-west-virage-access',
+          boundaryIndex: 19,
+          width: 11,
+          accessWidth: 6.4,
+          wallHeight: 1.55,
+        },
+        {
+          id: 'south-east-virage-access',
+          boundaryIndex: 29,
+          width: 11,
+          accessWidth: 6.4,
+          wallHeight: 1.55,
+        },
+      ],
       walkwayWidth: 2.4,
       vomitorySectionIndices: [1, 4, 6, 9, 12, 14, 17, 20, 22, 25, 28, 30],
       vomitoryRow: 11,
@@ -145,6 +177,7 @@ export const radesStadiumConfig = {
         { boundaryIndex: 20, width: 2.7 },
         { boundaryIndex: 28, width: 2.7 },
       ],
+      majorCutouts: [],
       walkwayWidth: 2.8,
       vomitorySectionIndices: [
         0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30,
@@ -410,6 +443,7 @@ export const radesStadiumConfig = {
       'Seat colors use broad section and row blocks rather than a fine checkerboard, while chairless virages use separate standing spectator instances.',
       'The inner roof now includes an estimated maintenance catwalk, clustered floodlight banks, and scoreboard service decks visible from spectator viewpoints.',
       'The bowl, seating rows, walkways, and front safety rail now follow a rounded-stadium capsule perimeter with flat long sides instead of a continuous mathematical ellipse.',
+      'Four full-depth lower-tier corridors separate the two virages from the lateral stands; the ramp widths and portal dimensions are calibrated from the supplied reference model and remain unsurveyed.',
     ],
   },
 } satisfies StadiumConfig;

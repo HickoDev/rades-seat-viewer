@@ -4,7 +4,7 @@ import { MeshStandardMaterial } from 'three';
 import type { StadiumConfig } from '../types/stadium.types';
 import { getStadiumPerimeterAngleForDistance } from '../geometry/stadiumPerimeter';
 import { createTierGeometry } from './createTierGeometry';
-import { getTierAisleWidth } from './tierAccess';
+import { getTierAisleWidth, getTierMajorCutout } from './tierAccess';
 
 type TierConfig = StadiumConfig['tiers'][number];
 
@@ -17,6 +17,7 @@ export function Aisles({ tier }: { tier: TierConfig }) {
   const geometries = useMemo(
     () =>
       Array.from({ length: tier.sectionCount }, (_, sectionIndex) => {
+        if (getTierMajorCutout(tier, sectionIndex)) return null;
         const boundary = sectionIndex * sectionAngle;
         const aisleAngle = getStadiumPerimeterAngleForDistance(
           getTierAisleWidth(tier, sectionIndex),
@@ -34,7 +35,7 @@ export function Aisles({ tier }: { tier: TierConfig }) {
           rowHeight: tier.rowHeight,
           angularSegments: 2,
         });
-      }),
+      }).filter((geometry) => geometry !== null),
     [sectionAngle, tier],
   );
 

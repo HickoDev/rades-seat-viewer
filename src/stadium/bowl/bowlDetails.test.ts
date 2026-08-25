@@ -5,7 +5,11 @@ import { createConcourseFeatureMatrices } from './createConcourseFeatureMatrices
 import { createSectionDividerPanelGeometry } from './createSectionDividerPanelGeometry';
 import { createSectionBarrierMatrices } from './createSectionBarrierMatrices';
 import { createVomitoryFeatureMatrices } from './createVomitoryFeatureMatrices';
-import { getTierAccessOpening, getTierAisleWidth } from './tierAccess';
+import {
+  getTierAccessOpening,
+  getTierAisleWidth,
+  getTierMajorCutout,
+} from './tierAccess';
 
 const lowerTier = radesStadiumConfig.tiers[0];
 const upperTier = radesStadiumConfig.tiers[1];
@@ -53,6 +57,19 @@ describe('procedural bowl details', () => {
     expect(getTierAisleWidth(lowerTier, lowerTier.sectionCount + 4)).toBe(
       getTierAisleWidth(lowerTier, 4),
     );
+  });
+
+  it('reserves four full-depth lower-tier cuts beside the virages', () => {
+    expect(lowerTier.majorCutouts).toHaveLength(4);
+    lowerTier.majorCutouts.forEach((cutout) => {
+      expect(getTierMajorCutout(lowerTier, cutout.boundaryIndex)).toEqual(
+        cutout,
+      );
+      expect(getTierAisleWidth(lowerTier, cutout.boundaryIndex)).toBe(
+        cutout.width,
+      );
+    });
+    expect(upperTier.majorCutouts).toHaveLength(0);
   });
 
   it('fills the tier break with repeated framed concourse portals and lights', () => {

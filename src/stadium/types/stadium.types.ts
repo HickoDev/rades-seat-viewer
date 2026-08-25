@@ -86,6 +86,13 @@ export type StadiumConfig = {
       boundaryIndex: number;
       width: number;
     }>;
+    majorCutouts: Array<{
+      id: string;
+      boundaryIndex: number;
+      width: number;
+      accessWidth: number;
+      wallHeight: number;
+    }>;
     walkwayWidth: number;
     vomitorySectionIndices: number[];
     vomitoryRow: number;

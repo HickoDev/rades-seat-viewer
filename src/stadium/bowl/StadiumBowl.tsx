@@ -8,6 +8,7 @@ import { Aisles } from './Aisles';
 import { ConcourseRing } from './ConcourseRing';
 import { createEllipticalRingGeometry } from './createTierGeometry';
 import { HonorPressTribune } from './HonorPressTribune';
+import { MajorBowlAccess } from './MajorBowlAccess';
 import { SectionBarriers } from './SectionBarriers';
 import { StadiumTier } from './StadiumTier';
 import { Vomitories } from './Vomitories';
@@ -134,6 +135,7 @@ export function StadiumBowl() {
               tier={tier}
             />
             <Vomitories tier={tier} />
+            {tier.majorCutouts.length > 0 && <MajorBowlAccess tier={tier} />}
             <mesh geometry={walkwayGeometries[tierIndex]}>
               <meshStandardMaterial color="#7f8b85" roughness={0.96} />
             </mesh>

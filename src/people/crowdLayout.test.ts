@@ -54,6 +54,22 @@ describe('generateCrowdMembers', () => {
     expect(animated.every((member) => member.motionStrength > 0)).toBe(true);
   });
 
+  it('filters placements before constructing crowd members and preserves source indices', () => {
+    const placements = radesCrowdPlacementLayout.metadata.slice(0, 120);
+    const crowd = generateCrowdMembers(
+      placements,
+      1,
+      0.06,
+      (_placement, placementIndex) => placementIndex % 2 === 0,
+    );
+
+    expect(crowd).toHaveLength(60);
+    expect(crowd.every((member) => member.placementIndex % 2 === 0)).toBe(true);
+    expect(crowd.map((member) => member.placementIndex).slice(0, 3)).toEqual([
+      0, 2, 4,
+    ]);
+  });
+
   it('creates bounded, staggered supporter bounces across the virage', () => {
     const members = generateCrowdMembers(
       radesCrowdPlacementLayout.metadata.slice(0, 10_000),

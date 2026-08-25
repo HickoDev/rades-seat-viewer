@@ -1,0 +1,9 @@
+{
+  "name": "Radès View",
+  "short_name": "Radès View",
+  "description": "Interactive stadium views and sunlight simulation for Stade Olympique Hammadi-Agrebi.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#d8d3c9",
+  "theme_color": "#a54836"
+}

@@ -43,7 +43,7 @@ test('loads the setup flow and foundation scene without runtime errors', async (
     if (message.type() === 'error') runtimeErrors.push(message.text());
   });
 
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('/?quality=low', { waitUntil: 'domcontentloaded' });
   await expect(
     page.getByRole('heading', { name: 'When is the match?' }),
   ).toBeVisible();
@@ -68,7 +68,7 @@ test('keeps the control sheet available on a compact viewport', async ({
   page,
 }) => {
   await page.setViewportSize({ width: 390, height: 844 });
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('/?quality=low', { waitUntil: 'domcontentloaded' });
   await configureMatch(page);
 
   await expect(page.getByLabel('Interactive stadium view')).toBeVisible();
@@ -79,8 +79,11 @@ test('keeps the control sheet available on a compact viewport', async ({
 });
 
 test('offers repeatable interior comparison viewpoints', async ({ page }) => {
+  // A complete high-detail scene from the preceding browser cases can leave
+  // headless Chromium reclaiming GPU resources while this case starts.
+  test.setTimeout(120_000);
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('/?quality=low', { waitUntil: 'domcontentloaded' });
   await configureMatch(page);
   await useLowQuality(page);
   await page
@@ -98,7 +101,7 @@ test('offers repeatable interior comparison viewpoints', async ({ page }) => {
 test('keeps upper virage sections closed to public selection', async ({
   page,
 }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('/?quality=low', { waitUntil: 'domcontentloaded' });
   await configureMatch(page);
 
   const upperVirageOptions = page.locator('option[value="upper-01"]');
@@ -111,7 +114,7 @@ test('keeps upper virage sections closed to public selection', async ({
 test('uses the selected Tunis time for day, twilight, and night lighting', async ({
   page,
 }) => {
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('/?quality=low', { waitUntil: 'domcontentloaded' });
   await configureMatch(page, '2026-08-26T22:00', '2026-08-26T23:30');
   await useLowQuality(page);
 
@@ -160,7 +163,7 @@ test('automatically shows weather, exposure, and heatmap after seat selection', 
     });
   });
   await page.emulateMedia({ reducedMotion: 'reduce' });
-  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.goto('/?quality=low', { waitUntil: 'domcontentloaded' });
   await configureMatch(page);
   await useLowQuality(page);
 
@@ -186,6 +189,23 @@ test('automatically shows weather, exposure, and heatmap after seat selection', 
   await expect(page.getByText(/40 mapped groups/)).toBeVisible({
     timeout: 25_000,
   });
+  await expect(
+    page.getByText(/spectator clothing colors stay unchanged/i),
+  ).toBeVisible();
+
+  await page
+    .getByRole('button', { name: 'Open top-view exposure plan' })
+    .click();
+  await expect(
+    page.getByRole('heading', { name: 'Stadium exposure plan' }),
+  ).toBeVisible();
+  await expect(page.locator('.exposure-map-zone')).toHaveCount(64);
+  await page.locator('[data-section-id="lower-05"]').click();
+  await expect(page.locator('.exposure-map-detail')).toContainText('Section 5');
+  await page.getByRole('button', { name: 'Close exposure map' }).click();
+  await expect(
+    page.getByRole('heading', { name: 'Stadium exposure plan' }),
+  ).not.toBeVisible();
 
   await page.getByText('Map settings', { exact: true }).click();
   await page.getByLabel('Heatmap representative detail').selectOption('row');

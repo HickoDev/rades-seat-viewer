@@ -12,6 +12,16 @@ import type { InteriorCalibrationViewId } from '../camera/interiorCalibrationVie
 export type CameraMode = 'overview' | 'section' | 'seat';
 export type QualityMode = 'auto' | 'low' | 'high';
 
+function getInitialQualityMode(): QualityMode {
+  if (typeof window === 'undefined') return 'auto';
+  const requestedQuality = new URLSearchParams(window.location.search).get(
+    'quality',
+  );
+  return requestedQuality === 'low' || requestedQuality === 'high'
+    ? requestedQuality
+    : 'auto';
+}
+
 export type StadiumState = {
   cameraMode: CameraMode;
   selectedSectionId: string | null;
@@ -76,7 +86,7 @@ const initialState = {
   heatmapResolution: 'section' as const,
   heatmapTimeMode: 'instant' as const,
   sunHeatmapResult: null,
-  qualityMode: 'auto' as const,
+  qualityMode: getInitialQualityMode(),
 };
 
 export const useStadiumStore = create<StadiumState>((set) => ({

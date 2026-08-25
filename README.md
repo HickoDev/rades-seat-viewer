@@ -2,7 +2,15 @@
 
 Radès View is an interactive procedural 3D representation of Stade Olympique Hammadi-Agrebi in Radès, Tunisia. The long-term product will let spectators explore the stadium, preview an approximate first-person seat view, and understand geometric sun exposure during a match.
 
-This repository contains **Milestones 1–16**: the interactive procedural stadium, source-informed Radès calibration, detailed section barriers and concourses, rounded instanced seats, organic low-poly spectators and a 22-player match scene, populated photo-calibrated technical areas, a covered 30-metre player route with a main-stand opening, guided seat and virage-terrace POV modes, four spiral ramp towers, open exterior cross-bracing, Radès-specific honor/press and ceremonial-entrance architecture, detailed tensile-roof seams, suspended scoreboards, goal nets and match-day hoardings, structural occluders, astronomical sun direction, selected-view shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, and cached section/row sunlight heatmaps. It is not a ticket-booking application.
+**Live website:** [rades-seat-viewer.vercel.app](https://rades-seat-viewer.vercel.app)
+
+## Product preview
+
+[![Open the Radès View live demo](docs/assets/demo-preview.svg)](https://rades-seat-viewer.vercel.app)
+
+The poster opens the live product today. The reserved repository upload target for the final walkthrough is `docs/assets/rades-view-demo.mp4`; see the [production notes](docs/production-notes.md#demo-video-preview) before adding a large media file.
+
+This repository contains **Milestones 1–17**: the interactive procedural stadium, source-informed Radès calibration, detailed section barriers and concourses, rounded instanced seats, organic low-poly spectators and a 22-player match scene, populated photo-calibrated technical areas, a covered 30-metre player route with a main-stand opening, guided seat and virage-terrace POV modes, four spiral ramp towers, open exterior cross-bracing, Radès-specific honor/press and ceremonial-entrance architecture, detailed tensile-roof seams, suspended scoreboards, goal nets and match-day hoardings, structural occluders, astronomical sun direction, selected-view shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, cached section/row sunlight heatmaps, an accessible 2D exposure plan, and a production hardening pass. It is not a ticket-booking application.
 
 ## Requirements
 
@@ -52,7 +60,9 @@ npx playwright install chromium
 
 TanStack Query caches Open-Meteo requests, while Zod validates every response before it reaches the interface. Forecasts are only requested inside Open-Meteo's 16-day horizon; astronomical simulation remains available for long-range dates. GSAP handles reduced-motion-aware camera flights, SunCalc and Luxon handle astronomy and `Africa/Tunis` time, and `three-mesh-bvh` accelerates repeated rays against static complex occluders.
 
-Heatmaps use one representative seat per section or per row, run in a Web Worker only when event time, resolution, or the central configuration version changes, and cache results in local storage. They are deliberately labelled as representative estimates. Auto rendering quality caps device pixel ratio and selects simpler shared seat and spectator geometry plus a lower crowd occupancy on compact touch devices. People use independent lathed anatomical profiles, capsule limbs, hands, necks, and separate hair geometry instead of box-and-sphere silhouettes. Only a deterministic six-percent crowd sample receives subtle throttled idle motion, while the 22 players follow bounded formation-aware routes around a moving ball. Reduced-motion preferences freeze both systems, and all people remain excluded from sunlight-occluder raycasts.
+Heatmaps use one representative seat per section or per row, run in a Web Worker only when event time, resolution, or the central configuration version changes, and cache results in local storage. They are deliberately labelled as representative estimates and appear in a dedicated clickable 2D plan; permanent chair and spectator-clothing colors never change with exposure. Auto rendering quality caps device pixel ratio and selects simpler shared seat and spectator geometry plus a lower crowd occupancy on compact touch devices. People use independent lathed anatomical profiles, capsule limbs, hands, necks, and separate hair geometry instead of box-and-sphere silhouettes. A restrained seated-crowd sample receives subtle idle motion, virage supporters use staggered bounce motion, and the 22 players follow a coordinated dribble/pass route around a moving ball. Reduced-motion preferences freeze those systems, and all people remain excluded from sunlight-occluder raycasts.
+
+The initial match form is deliberately separated from the deferred 3D experience, so Three.js, the generated stadium, and crowd metadata load only after the user continues to seat selection. See [production notes](docs/production-notes.md) for deployment, caching, bundle boundaries, heatmap semantics, accessibility, demo-media instructions, and the release checklist.
 
 ## Measurement and calibration status
 

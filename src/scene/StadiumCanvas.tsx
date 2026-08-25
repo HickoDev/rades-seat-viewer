@@ -7,6 +7,7 @@ import { RadesStadium } from '../stadium/RadesStadium';
 import { useStadiumStore } from '../state/useStadiumStore';
 import { useRenderQuality } from '../utils/useRenderQuality';
 import { useReducedMotion } from '../utils/useReducedMotion';
+import { enableBvhRaycasting } from '../utils/setupBvh';
 import { LoadingScreen } from '../ui/LoadingScreen';
 import { CurrentExposureBadge } from '../ui/CurrentExposureBadge';
 import { CameraRig } from './CameraRig';
@@ -17,6 +18,8 @@ import { SceneLighting } from './SceneLighting';
 import { SceneGuides } from './SceneGuides';
 import { StadiumFloodlights } from './StadiumFloodlights';
 import { SunSimulation } from './SunSimulation';
+
+enableBvhRaycasting();
 
 export function StadiumCanvas() {
   const northIndicatorRef = useRef<HTMLDivElement>(null);

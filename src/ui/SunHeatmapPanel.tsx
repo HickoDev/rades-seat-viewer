@@ -1,3 +1,5 @@
+import { useState } from 'react';
+
 import { countHeatmapClasses } from '../sunlight/sunlightHeatmap';
 import type {
   HeatmapResolution,
@@ -5,6 +7,7 @@ import type {
 } from '../sunlight/sunlightHeatmap.types';
 import { useSunlightHeatmap } from '../sunlight/useSunlightHeatmap';
 import { useStadiumStore } from '../state/useStadiumStore';
+import { StadiumExposureMap } from './StadiumExposureMap';
 
 const matchLabels = {
   'mostly-sunny': 'Mostly sunny',
@@ -21,6 +24,7 @@ const instantLabels = {
 } as const;
 
 export function SunHeatmapPanel() {
+  const [mapOpen, setMapOpen] = useState(false);
   const matchStartIso = useStadiumStore((state) => state.matchStartIso);
   const resolution = useStadiumStore((state) => state.heatmapResolution);
   const timeMode = useStadiumStore((state) => state.heatmapTimeMode);
@@ -44,7 +48,7 @@ export function SunHeatmapPanel() {
           </span>
           <div>
             <strong>Stadium exposure map</strong>
-            <small>Shown on spectator clothing</small>
+            <small>Open the dedicated 2D top view</small>
           </div>
         </div>
         <span className="automatic-badge">Automatic</span>
@@ -110,12 +114,27 @@ export function SunHeatmapPanel() {
               </li>
             ))}
           </ul>
+          <button
+            className="heatmap-open-map"
+            type="button"
+            onClick={() => setMapOpen(true)}
+          >
+            <span>Open top-view exposure plan</span>
+            <span aria-hidden="true">↗</span>
+          </button>
           <small>
-            Chair colors stay unchanged; exposure color on spectator clothing
-            remains visible in occupied stands. Labels—not color alone—carry the
-            meaning. This is sunlight exposure, not measured temperature.
+            Chair and spectator clothing colors stay unchanged. The plan uses
+            labels—not color alone—and shows sunlight exposure, not measured
+            temperature.
           </small>
         </div>
+      )}
+      {result && (
+        <StadiumExposureMap
+          open={mapOpen}
+          result={result}
+          onClose={() => setMapOpen(false)}
+        />
       )}
     </div>
   );

@@ -33,6 +33,10 @@ export function generateCrowdMembers(
   placements: SeatMetadata[],
   occupancy: number,
   animatedFraction = 0.06,
+  includePlacement: (
+    placement: SeatMetadata,
+    placementIndex: number,
+  ) => boolean = () => true,
 ): CrowdMember[] {
   const threshold = Math.round(Math.min(Math.max(occupancy, 0), 1) * 10_000);
   const animatedThreshold = Math.round(
@@ -41,6 +45,7 @@ export function generateCrowdMembers(
   const members: CrowdMember[] = [];
 
   placements.forEach((placement, placementIndex) => {
+    if (!includePlacement(placement, placementIndex)) return;
     const hash = stableHash(placement.id);
     if (hash % 10_000 >= threshold) return;
 

@@ -1,13 +1,34 @@
-import { useEffect } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 
-import { StadiumCanvas } from '../scene/StadiumCanvas';
 import { useStadiumStore } from '../state/useStadiumStore';
-import { StadiumSidebar } from '../ui/StadiumSidebar';
+import { LoadingScreen } from '../ui/LoadingScreen';
 import { MatchSetupDialog } from '../ui/MatchSetupDialog';
-import { MobileBottomSheet } from '../ui/MobileBottomSheet';
+
+const StadiumExperience = lazy(async () => {
+  const module = await import('./StadiumExperience');
+  return { default: module.StadiumExperience };
+});
+
+function StadiumLoadingState({ waitingForMatch = false }) {
+  return (
+    <section
+      className="stadium-viewport stadium-viewport--loading"
+      aria-label="Interactive stadium view"
+    >
+      <LoadingScreen
+        message={
+          waitingForMatch
+            ? 'Choose a match time to prepare the stadium.'
+            : 'Loading the procedural stadium…'
+        }
+      />
+    </section>
+  );
+}
 
 export function App() {
   const returnToOverview = useStadiumStore((state) => state.returnToOverview);
+  const matchStartIso = useStadiumStore((state) => state.matchStartIso);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -23,10 +44,13 @@ export function App() {
   return (
     <main className="app-shell">
       <MatchSetupDialog />
-      <MobileBottomSheet>
-        <StadiumSidebar />
-      </MobileBottomSheet>
-      <StadiumCanvas />
+      {matchStartIso ? (
+        <Suspense fallback={<StadiumLoadingState />}>
+          <StadiumExperience />
+        </Suspense>
+      ) : (
+        <StadiumLoadingState waitingForMatch />
+      )}
     </main>
   );
 }

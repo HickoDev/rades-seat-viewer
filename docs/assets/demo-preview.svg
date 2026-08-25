@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title description">
+  <title id="title">Radès View demo video placeholder</title>
+  <desc id="description">A top-view stadium illustration with instructions for adding the final product demonstration video.</desc>
+  <rect width="1200" height="675" fill="#e6e0d6"/>
+  <rect x="54" y="54" width="1092" height="567" fill="#f6f2e9" stroke="#a9a196" stroke-width="2"/>
+  <path d="M72 54h8v567h-8z" fill="#a54836"/>
+  <g transform="translate(775 335)">
+    <ellipse rx="272" ry="185" fill="#d1cbc0" stroke="#5d6668" stroke-width="3"/>
+    <ellipse rx="221" ry="143" fill="#176f71" stroke="#f6f2e9" stroke-width="10"/>
+    <ellipse rx="173" ry="104" fill="#9c5647" stroke="#f6f2e9" stroke-width="6"/>
+    <ellipse rx="143" ry="76" fill="#507749"/>
+    <rect x="-91" y="-59" width="182" height="118" fill="none" stroke="#f4efd8" stroke-width="3"/>
+    <path d="M0-59v118M-18 0a18 18 0 1 0 36 0 18 18 0 1 0-36 0" fill="none" stroke="#f4efd8" stroke-width="3"/>
+    <path d="M-221 0h-45M221 0h45M0-143v-36M0 143v36" stroke="#a54836" stroke-width="10"/>
+  </g>
+  <g fill="#172126" font-family="Arial, Helvetica, sans-serif">
+    <text x="132" y="151" font-size="26" font-weight="700" letter-spacing="3">RADÈS VIEW</text>
+    <text x="132" y="224" font-size="52" font-weight="700">Product demo</text>
+    <text x="132" y="276" fill="#5f686c" font-size="24">Video preview slot</text>
+    <rect x="132" y="329" width="74" height="74" fill="#a54836"/>
+    <path d="M164 349l25 17-25 17z" fill="#fff"/>
+    <text x="132" y="466" fill="#176f71" font-size="18" font-weight="700">UPLOAD TARGET</text>
+    <text x="132" y="500" fill="#5f686c" font-size="18">docs/assets/rades-view-demo.mp4</text>
+    <text x="132" y="561" fill="#7d8485" font-size="15">Until then, this preview opens the live application.</text>
+  </g>
+</svg>

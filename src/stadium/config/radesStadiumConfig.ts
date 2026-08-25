@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-8',
+  version: 'rades-procedural-9',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -183,7 +183,7 @@ export const radesStadiumConfig = {
     benchBayCount: 8,
     benchFrameThickness: 0.08,
     benchSidelineOffset: 9.2,
-    benchSeparation: 1.5,
+    benchSeparation: 6.2,
     benchSeatCount: 12,
   },
   grandstand: {
@@ -200,6 +200,15 @@ export const radesStadiumConfig = {
     frontInset: 1.9,
     balconyDepth: 1.7,
     balconyRailHeight: 0.95,
+    // The current retractable covered route was reported as roughly 30 m.
+    playerTunnelLength: 30,
+    playerTunnelWidth: 5.2,
+    playerTunnelEaveHeight: 2.5,
+    playerTunnelRidgeHeight: 3.25,
+    playerTunnelFrameCount: 16,
+    playerTunnelFrameRadius: 0.045,
+    playerTunnelPitchClearance: 2,
+    playerTunnelSeatClearanceRows: 4,
   },
   exterior: {
     mainEntranceSide: 1,
@@ -282,6 +291,9 @@ export const radesStadiumConfig = {
         'calibrated-from-authorized-visual-reference',
       'structure.exteriorBracing': 'estimate-requires-calibration',
       'structure.teamBenches': 'estimate-requires-calibration',
+      'structure.playerTunnelLength': 'corroborated-secondary-source',
+      'structure.playerTunnelVisualForm':
+        'calibrated-from-authorized-visual-reference',
       'grandstand.officialCapacity': 'corroborated-secondary-source',
       'grandstand.pressDeskCount': 'corroborated-secondary-source',
       'grandstand.dimensions': 'estimate-requires-calibration',
@@ -308,6 +320,7 @@ export const radesStadiumConfig = {
       'Four circular access-ramp towers, the open X-braced upper facade, membrane seams, and suspended scoreboards are photo-calibrated visual estimates.',
       'The paired ramp arrangement, faceted roof character, and ceremonial-side massing were independently rebuilt from an authorized public visual reference; no reference mesh or texture is included.',
       'The rectangular concourse bays, tier-separator fascia, track-bend event aprons, inner safety rail, and denser roof-edge lattice are visually calibrated from owner-supplied reference renders; their dimensions are not surveyed.',
+      'The main-stand player route includes the approximately 30 m retractable covered tunnel reported in January 2023; width, frame spacing, and exact endpoints remain visual estimates.',
     ],
   },
 } satisfies StadiumConfig;

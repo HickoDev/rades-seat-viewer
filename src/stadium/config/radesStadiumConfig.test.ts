@@ -65,4 +65,14 @@ describe('radesStadiumConfig', () => {
       radesStadiumConfig.verification.values['structure.spiralRamps'],
     ).toBe('estimate-requires-calibration');
   });
+
+  it('keeps the reported player route and technical areas unobstructed', () => {
+    expect(radesStadiumConfig.grandstand.playerTunnelLength).toBe(30);
+    expect(radesStadiumConfig.structure.benchSeparation).toBeGreaterThan(
+      radesStadiumConfig.grandstand.playerTunnelWidth,
+    );
+    expect(
+      radesStadiumConfig.verification.values['structure.playerTunnelLength'],
+    ).toBe('corroborated-secondary-source');
+  });
 });

@@ -10,7 +10,15 @@ export type TracksideRailOptions = {
   radiusX: number;
   radiusZ: number;
   segmentCount: number;
+  gapAngle?: number;
+  gapCenterAngle?: number;
 };
+
+function angularDistance(first: number, second: number) {
+  return Math.abs(
+    Math.atan2(Math.sin(first - second), Math.cos(first - second)),
+  );
+}
 
 function pointOnRail(
   angle: number,
@@ -33,12 +41,21 @@ export function createTracksideRailMatrices({
   radiusX,
   radiusZ,
   segmentCount,
+  gapAngle = 0,
+  gapCenterAngle = 0,
 }: TracksideRailOptions): Matrix4[] {
   const matrices: Matrix4[] = [];
 
   for (let index = 0; index < segmentCount; index += 1) {
     const angle = (index / segmentCount) * Math.PI * 2;
     const nextAngle = ((index + 1) / segmentCount) * Math.PI * 2;
+    const midpointAngle = (angle + nextAngle) / 2;
+    if (
+      gapAngle > 0 &&
+      angularDistance(midpointAngle, gapCenterAngle) < gapAngle / 2
+    ) {
+      continue;
+    }
     const base = pointOnRail(angle, baseHeight, radiusX, radiusZ);
     const top = pointOnRail(angle, baseHeight + height, radiusX, radiusZ);
     const mid = pointOnRail(

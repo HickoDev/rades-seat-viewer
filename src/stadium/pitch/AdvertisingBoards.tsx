@@ -61,7 +61,7 @@ function createRunPositions(
 }
 
 export function AdvertisingBoards() {
-  const { fieldFurniture, pitch } = radesStadiumConfig;
+  const { fieldFurniture, grandstand, pitch } = radesStadiumConfig;
   const geometry = useMemo(
     () =>
       new BoxGeometry(
@@ -123,18 +123,27 @@ export function AdvertisingBoards() {
         )),
       )}
       {([-1, 1] as const).flatMap((side) =>
-        sidelinePositions.map((offset, index) => (
-          <mesh
-            key={`sideline-${side}-${index}`}
-            geometry={geometry}
-            material={resources[(index + 1) % resources.length].material}
-            position={[
-              offset,
-              fieldFurniture.advertisingBoardHeight / 2,
-              side * (pitch.width / 2 + fieldFurniture.sidelineOffset),
-            ]}
-          />
-        )),
+        sidelinePositions.map((offset, index) => {
+          const intersectsPlayerRoute =
+            side === grandstand.side &&
+            Math.abs(offset) <
+              grandstand.playerTunnelWidth / 2 +
+                fieldFurniture.advertisingBoardSegmentLength / 2;
+          if (intersectsPlayerRoute) return null;
+
+          return (
+            <mesh
+              key={`sideline-${side}-${index}`}
+              geometry={geometry}
+              material={resources[(index + 1) % resources.length].material}
+              position={[
+                offset,
+                fieldFurniture.advertisingBoardHeight / 2,
+                side * (pitch.width / 2 + fieldFurniture.sidelineOffset),
+              ]}
+            />
+          );
+        }),
       )}
     </group>
   );

@@ -53,6 +53,20 @@ describe('generateSeatLayout', () => {
     ).toBe(true);
   });
 
+  it('leaves the first lower rows clear above the main player entrance', () => {
+    const conflictingSeats = layout.metadata.filter(
+      (seat) =>
+        seat.tierId === 'lower' &&
+        seat.rowNumber <=
+          radesStadiumConfig.grandstand.playerTunnelSeatClearanceRows &&
+        seat.position[2] * radesStadiumConfig.grandstand.side > 0 &&
+        Math.abs(seat.position[0]) <
+          radesStadiumConfig.grandstand.playerTunnelWidth / 2,
+    );
+
+    expect(conflictingSeats).toHaveLength(0);
+  });
+
   it('keeps physical seat spacing approximately uniform within a row', () => {
     const seats = layout.metadata
       .filter((seat) => seat.sectionId === 'upper-09' && seat.rowNumber === 5)

@@ -32,6 +32,10 @@ export function StadiumBowl() {
   const lowerTier = radesStadiumConfig.tiers.find(
     (tier) => tier.id === 'lower',
   );
+  const playerTunnelGapAngle = lowerTier
+    ? (radesStadiumConfig.grandstand.playerTunnelWidth + 0.6) /
+      lowerTier.startRadiusX
+    : 0;
   const upperSlabOccluder = useMemo(() => {
     if (!upperTier) return null;
     const geometry = createEllipticalRingGeometry({
@@ -70,6 +74,11 @@ export function StadiumBowl() {
         <mesh
           name="lower-tier-front-wall"
           position={[0, (lowerTier.baseHeight + lowerTier.rowHeight) / 2, 0]}
+          rotation={[
+            0,
+            radesStadiumConfig.grandstand.side === 1 ? 0 : Math.PI,
+            0,
+          ]}
           scale={[
             lowerTier.startRadiusX,
             lowerTier.baseHeight + lowerTier.rowHeight,
@@ -80,7 +89,18 @@ export function StadiumBowl() {
             occluderType: 'lower-tier-front-wall',
           }}
         >
-          <cylinderGeometry args={[1, 1, 1, 192, 1, true]} />
+          <cylinderGeometry
+            args={[
+              1,
+              1,
+              1,
+              192,
+              1,
+              true,
+              playerTunnelGapAngle / 2,
+              Math.PI * 2 - playerTunnelGapAngle,
+            ]}
+          />
           <meshStandardMaterial
             color="#929c96"
             roughness={0.97}

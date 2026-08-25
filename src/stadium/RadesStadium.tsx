@@ -10,6 +10,7 @@ import { Facade } from './exterior/Facade';
 import { StadiumSite } from './exterior/StadiumSite';
 import { StadiumBowl } from './bowl/StadiumBowl';
 import { FootballPitch } from './pitch/FootballPitch';
+import { PlayerEntranceTunnel } from './pitch/PlayerEntranceTunnel';
 import { AthleticsTrack } from './track/AthleticsTrack';
 import { AthleticsEventAprons } from './track/AthleticsEventAprons';
 import { StadiumApron } from './track/StadiumApron';
@@ -39,6 +40,7 @@ export function RadesStadium() {
       <AthleticsTrack />
       <TracksideSafetyRail />
       <FootballPitch />
+      <PlayerEntranceTunnel />
       <MatchPlayers />
       <TechnicalAreaPeople />
       <StadiumBowl />

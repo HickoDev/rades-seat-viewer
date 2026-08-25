@@ -12,6 +12,7 @@ export function TracksideSafetyRail() {
   const meshRef = useRef<InstancedMesh>(null);
   const lowerTier = radesStadiumConfig.tiers[0];
   const details = radesStadiumConfig.bowlDetails;
+  const grandstand = radesStadiumConfig.grandstand;
   const geometry = useMemo(() => new CylinderGeometry(1, 1, 1, 7), []);
   const material = useMemo(
     () =>
@@ -32,8 +33,12 @@ export function TracksideSafetyRail() {
         radiusX: lowerTier.startRadiusX - details.tracksideRailInset,
         radiusZ: lowerTier.startRadiusZ - details.tracksideRailInset,
         segmentCount: details.tracksideRailSegmentCount,
+        gapAngle:
+          (grandstand.playerTunnelWidth + 0.6) /
+          (lowerTier.startRadiusX - details.tracksideRailInset),
+        gapCenterAngle: grandstand.side === 1 ? Math.PI / 2 : -Math.PI / 2,
       }),
-    [details, lowerTier],
+    [details, grandstand, lowerTier],
   );
 
   useLayoutEffect(() => {

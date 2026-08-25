@@ -85,9 +85,18 @@ export function generateSeatLayout(
             continue;
           }
 
-          seatNumber += 1;
           const x = Math.cos(angle) * radiusX;
           const z = Math.sin(angle) * radiusZ;
+          const isInsidePlayerTunnelClearance =
+            tier.id === 'lower' &&
+            rowIndex < config.grandstand.playerTunnelSeatClearanceRows &&
+            z * config.grandstand.side > 0 &&
+            Math.abs(x) < config.grandstand.playerTunnelWidth / 2;
+          if (isInsidePlayerTunnelClearance) {
+            continue;
+          }
+
+          seatNumber += 1;
           const rotationY = Math.atan2(-x, -z);
           const seat: SeatMetadata = {
             id: `${sectionId}-r${rowIndex + 1}-s${seatNumber}`,

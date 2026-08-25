@@ -173,6 +173,14 @@ export type StadiumConfig = {
     frontInset: number;
     balconyDepth: number;
     balconyRailHeight: number;
+    playerTunnelLength: number;
+    playerTunnelWidth: number;
+    playerTunnelEaveHeight: number;
+    playerTunnelRidgeHeight: number;
+    playerTunnelFrameCount: number;
+    playerTunnelFrameRadius: number;
+    playerTunnelPitchClearance: number;
+    playerTunnelSeatClearanceRows: number;
   };
   exterior: {
     mainEntranceSide: -1 | 1;

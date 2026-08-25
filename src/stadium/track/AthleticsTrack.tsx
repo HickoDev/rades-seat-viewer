@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
 import { createTrackGeometry } from './createTrackGeometry';
@@ -29,6 +29,39 @@ export function AthleticsTrack() {
       ),
     [track],
   );
+  const innerKerbGeometry = useMemo(
+    () =>
+      createTrackGeometry({
+        innerRadius: track.innerCurveRadius - track.innerKerbWidth,
+        laneCount: 1,
+        laneWidth: track.innerKerbWidth,
+        straightLength: track.straightLength,
+      }),
+    [track],
+  );
+  const drainChannelGeometry = useMemo(
+    () =>
+      createTrackGeometry({
+        innerRadius:
+          track.innerCurveRadius -
+          track.innerKerbWidth -
+          track.drainChannelWidth,
+        laneCount: 1,
+        laneWidth: track.drainChannelWidth,
+        straightLength: track.straightLength,
+      }),
+    [track],
+  );
+
+  useEffect(
+    () => () => {
+      trackGeometry.dispose();
+      laneGeometries.forEach((geometry) => geometry.dispose());
+      innerKerbGeometry.dispose();
+      drainChannelGeometry.dispose();
+    },
+    [drainChannelGeometry, innerKerbGeometry, laneGeometries, trackGeometry],
+  );
 
   return (
     <group name="athletics-track" position={[0, -0.01, 0]}>
@@ -40,6 +73,20 @@ export function AthleticsTrack() {
           <meshBasicMaterial color="#f1d9c4" />
         </mesh>
       ))}
+      <mesh geometry={innerKerbGeometry} position={[0, 0.045, 0]}>
+        <meshStandardMaterial
+          color="#e9e8df"
+          metalness={0.08}
+          roughness={0.72}
+        />
+      </mesh>
+      <mesh geometry={drainChannelGeometry} position={[0, 0.032, 0]}>
+        <meshStandardMaterial
+          color="#6f7672"
+          metalness={0.32}
+          roughness={0.58}
+        />
+      </mesh>
     </group>
   );
 }

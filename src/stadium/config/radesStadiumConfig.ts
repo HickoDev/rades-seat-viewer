@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-11',
+  version: 'rades-procedural-12',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -39,11 +39,43 @@ export const radesStadiumConfig = {
     laneWidth: 1.22,
     straightLength: 84.39,
     innerCurveRadius: 36.5,
-    // Photo-calibrated field-event aprons inside the two track bends.
-    endApronStartOffset: 3.5,
-    endApronRunwayLength: 18,
-    endApronRunwayWidth: 10.2,
-    endApronRunwayLineCount: 6,
+    innerKerbWidth: 0.18,
+    drainChannelWidth: 0.12,
+    // The two bends intentionally differ; all values remain visual estimates.
+    eventEnds: [
+      {
+        id: 'west-event-end',
+        side: -1,
+        apronStartOffset: 3.5,
+        runwayLength: 18,
+        runwayWidth: 10.2,
+        runwayLineCount: 6,
+        runwayOffsetZ: 0,
+        sandPitLength: 8.6,
+        sandPitWidth: 3,
+        sandPitOffsetFromPitchEnd: 8.4,
+        sandPitOffsetZ: -15.4,
+        throwingCircleRadius: 1.25,
+        throwingCircleOffsetFromPitchEnd: 16,
+        throwingCircleOffsetZ: 14,
+      },
+      {
+        id: 'east-event-end',
+        side: 1,
+        apronStartOffset: 4.8,
+        runwayLength: 22,
+        runwayWidth: 6.4,
+        runwayLineCount: 4,
+        runwayOffsetZ: -7.8,
+        sandPitLength: 9.2,
+        sandPitWidth: 3.2,
+        sandPitOffsetFromPitchEnd: 9.8,
+        sandPitOffsetZ: -16,
+        throwingCircleRadius: 1.35,
+        throwingCircleOffsetFromPitchEnd: 14.5,
+        throwingCircleOffsetZ: 12.4,
+      },
+    ],
   },
   fieldFurniture: {
     goalPostRadius: 0.06,
@@ -361,6 +393,7 @@ export const radesStadiumConfig = {
       'Vomitories and wide stair wedges use explicit per-section access data instead of an evenly repeated rule; their locations remain visual estimates pending seating plans.',
       'The main-stand player route includes the approximately 30 m retractable covered tunnel reported in January 2023; width, frame spacing, and exact endpoints remain visual estimates.',
       'The honor, press, control-room, and service-core volumes are modeled separately from interior references; their envelope and window rhythm remain unsurveyed estimates.',
+      'The two athletics bends have independent apron, runway, sand-pit, and throwing-circle layouts derived from interior views; they are intentionally not mirrored.',
     ],
   },
 } satisfies StadiumConfig;

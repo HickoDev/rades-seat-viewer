@@ -18,4 +18,24 @@ describe('createAthleticsEventApronGeometry', () => {
     expect(bounds?.min.x).toBeGreaterThan(105 / 2);
     geometry.dispose();
   });
+
+  it('supports independently sized event aprons at each bend', () => {
+    const west = createAthleticsEventApronGeometry({
+      curveRadius: 36.5,
+      pitchLength: 105,
+      startOffset: 3.5,
+      straightLength: 84.39,
+    });
+    const east = createAthleticsEventApronGeometry({
+      curveRadius: 36.5,
+      pitchLength: 105,
+      startOffset: 4.8,
+      straightLength: 84.39,
+    });
+
+    expect(west.boundingBox?.min.x).not.toBe(east.boundingBox?.min.x);
+    expect(west.boundingBox?.min.y).not.toBe(east.boundingBox?.min.y);
+    west.dispose();
+    east.dispose();
+  });
 });

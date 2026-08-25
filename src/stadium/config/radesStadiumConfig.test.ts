@@ -39,6 +39,16 @@ describe('radesStadiumConfig', () => {
     expect(lowerTier.startRadiusZ).toBeGreaterThan(outerTrackRadius);
   });
 
+  it('configures the two athletics bends independently', () => {
+    const [west, east] = radesStadiumConfig.track.eventEnds;
+
+    expect(west.side).toBe(-1);
+    expect(east.side).toBe(1);
+    expect(west.apronStartOffset).not.toBe(east.apronStartOffset);
+    expect(west.runwayWidth).not.toBe(east.runwayWidth);
+    expect(west.throwingCircleOffsetZ).not.toBe(east.throwingCircleOffsetZ);
+  });
+
   it('records the reported honor and press tribune capacities separately', () => {
     expect(
       radesStadiumConfig.tiers.map((tier) => tier.reportedCapacity),

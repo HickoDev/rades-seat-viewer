@@ -38,10 +38,24 @@ export type StadiumConfig = {
     laneWidth: number;
     straightLength: number;
     innerCurveRadius: number;
-    endApronStartOffset: number;
-    endApronRunwayLength: number;
-    endApronRunwayWidth: number;
-    endApronRunwayLineCount: number;
+    innerKerbWidth: number;
+    drainChannelWidth: number;
+    eventEnds: Array<{
+      id: string;
+      side: -1 | 1;
+      apronStartOffset: number;
+      runwayLength: number;
+      runwayWidth: number;
+      runwayLineCount: number;
+      runwayOffsetZ: number;
+      sandPitLength: number;
+      sandPitWidth: number;
+      sandPitOffsetFromPitchEnd: number;
+      sandPitOffsetZ: number;
+      throwingCircleRadius: number;
+      throwingCircleOffsetFromPitchEnd: number;
+      throwingCircleOffsetZ: number;
+    }>;
   };
   fieldFurniture: {
     goalPostRadius: number;

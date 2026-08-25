@@ -1,5 +1,7 @@
 import { BufferGeometry, Float32BufferAttribute } from 'three';
 
+import { getStadiumPerimeterPoint } from '../geometry/stadiumPerimeter';
+
 export type TierGeometryOptions = {
   startAngle: number;
   endAngle: number;
@@ -18,13 +20,14 @@ export type TierGeometryOptions = {
   };
 };
 
-function ellipsePoint(
+function perimeterPoint(
   angle: number,
-  radiusX: number,
-  radiusZ: number,
+  extentX: number,
+  extentZ: number,
   height: number,
 ): [number, number, number] {
-  return [Math.cos(angle) * radiusX, height, Math.sin(angle) * radiusZ];
+  const point = getStadiumPerimeterPoint(angle, extentX, extentZ);
+  return [point.x, height, point.z];
 }
 
 export function createTierGeometry({
@@ -90,17 +93,22 @@ export function createTierGeometry({
       if (isInsideOpening) continue;
 
       addQuad(
-        ellipsePoint(segmentStart, innerRadiusX, innerRadiusZ, treadHeight),
-        ellipsePoint(segmentStart, outerRadiusX, outerRadiusZ, treadHeight),
-        ellipsePoint(segmentEnd, innerRadiusX, innerRadiusZ, treadHeight),
-        ellipsePoint(segmentEnd, outerRadiusX, outerRadiusZ, treadHeight),
+        perimeterPoint(segmentStart, innerRadiusX, innerRadiusZ, treadHeight),
+        perimeterPoint(segmentStart, outerRadiusX, outerRadiusZ, treadHeight),
+        perimeterPoint(segmentEnd, innerRadiusX, innerRadiusZ, treadHeight),
+        perimeterPoint(segmentEnd, outerRadiusX, outerRadiusZ, treadHeight),
       );
 
       addQuad(
-        ellipsePoint(segmentStart, innerRadiusX, innerRadiusZ, previousHeight),
-        ellipsePoint(segmentEnd, innerRadiusX, innerRadiusZ, previousHeight),
-        ellipsePoint(segmentStart, innerRadiusX, innerRadiusZ, treadHeight),
-        ellipsePoint(segmentEnd, innerRadiusX, innerRadiusZ, treadHeight),
+        perimeterPoint(
+          segmentStart,
+          innerRadiusX,
+          innerRadiusZ,
+          previousHeight,
+        ),
+        perimeterPoint(segmentEnd, innerRadiusX, innerRadiusZ, previousHeight),
+        perimeterPoint(segmentStart, innerRadiusX, innerRadiusZ, treadHeight),
+        perimeterPoint(segmentEnd, innerRadiusX, innerRadiusZ, treadHeight),
       );
     }
   }
@@ -137,8 +145,8 @@ export function createEllipticalRingGeometry({
   for (let index = 0; index <= segments; index += 1) {
     const angle = (index / segments) * Math.PI * 2;
     positions.push(
-      ...ellipsePoint(angle, innerRadiusX, innerRadiusZ, height),
-      ...ellipsePoint(angle, outerRadiusX, outerRadiusZ, height),
+      ...perimeterPoint(angle, innerRadiusX, innerRadiusZ, height),
+      ...perimeterPoint(angle, outerRadiusX, outerRadiusZ, height),
     );
 
     if (index < segments) {

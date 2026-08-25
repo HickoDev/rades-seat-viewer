@@ -15,18 +15,31 @@ export function StadiumApron() {
       ),
     [track.innerCurveRadius, track.straightLength],
   );
+  const bowlApronGeometry = useMemo(
+    () =>
+      createCapsuleInfieldGeometry(
+        lowerTier.startRadiusZ,
+        (lowerTier.startRadiusX - lowerTier.startRadiusZ) * 2,
+      ),
+    [lowerTier.startRadiusX, lowerTier.startRadiusZ],
+  );
 
-  useEffect(() => () => infieldGeometry.dispose(), [infieldGeometry]);
+  useEffect(
+    () => () => {
+      bowlApronGeometry.dispose();
+      infieldGeometry.dispose();
+    },
+    [bowlApronGeometry, infieldGeometry],
+  );
 
   return (
     <group name="stadium-ground-surfaces">
       <mesh
+        geometry={bowlApronGeometry}
         position={[0, -0.065, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
-        scale={[lowerTier.startRadiusX, lowerTier.startRadiusZ, 1]}
         receiveShadow
       >
-        <circleGeometry args={[1, 192]} />
         <meshStandardMaterial color="#aa9d84" roughness={0.98} />
       </mesh>
       <mesh

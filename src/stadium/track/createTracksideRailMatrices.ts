@@ -1,6 +1,7 @@
 import { Matrix4, Vector3 } from 'three';
 
 import { createCylinderBetweenMatrix } from '../../utils/geometry';
+import { getStadiumPerimeterPoint } from '../geometry/stadiumPerimeter';
 
 export type TracksideRailOptions = {
   baseHeight: number;
@@ -26,11 +27,8 @@ function pointOnRail(
   radiusX: number,
   radiusZ: number,
 ) {
-  return new Vector3(
-    Math.cos(angle) * radiusX,
-    height,
-    Math.sin(angle) * radiusZ,
-  );
+  const point = getStadiumPerimeterPoint(angle, radiusX, radiusZ);
+  return new Vector3(point.x, height, point.z);
 }
 
 export function createTracksideRailMatrices({

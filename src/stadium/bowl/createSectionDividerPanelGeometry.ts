@@ -1,6 +1,10 @@
 import { BufferGeometry, Float32BufferAttribute } from 'three';
 
 import type { StadiumConfig } from '../types/stadium.types';
+import {
+  getStadiumPerimeterAngleForDistance,
+  getStadiumPerimeterPoint,
+} from '../geometry/stadiumPerimeter';
 import { getTierAisleWidth } from './tierAccess';
 
 type TierConfig = StadiumConfig['tiers'][number];
@@ -9,10 +13,11 @@ type BarrierConfig = StadiumConfig['bowlDetails'];
 function tierPoint(tier: TierConfig, angle: number, rowIndex: number) {
   const radiusX = tier.startRadiusX + (rowIndex + 0.5) * tier.rowDepth;
   const radiusZ = tier.startRadiusZ + (rowIndex + 0.5) * tier.rowDepth;
+  const point = getStadiumPerimeterPoint(angle, radiusX, radiusZ);
   return [
-    Math.cos(angle) * radiusX,
+    point.x,
     tier.baseHeight + (rowIndex + 1) * tier.rowHeight,
-    Math.sin(angle) * radiusZ,
+    point.z,
   ] as const;
 }
 
@@ -23,7 +28,6 @@ export function createSectionDividerPanelGeometry(
   const positions: number[] = [];
   const indices: number[] = [];
   const sectionAngle = (Math.PI * 2) / tier.sectionCount;
-  const averageRadius = (tier.startRadiusX + tier.startRadiusZ) / 2;
   const panelHeight = barrier.sectionBarrierHeight * 0.54;
 
   for (
@@ -32,7 +36,11 @@ export function createSectionDividerPanelGeometry(
     sectionIndex += 1
   ) {
     const boundaryAngle = sectionIndex * sectionAngle;
-    const aisleAngle = getTierAisleWidth(tier, sectionIndex) / averageRadius;
+    const aisleAngle = getStadiumPerimeterAngleForDistance(
+      getTierAisleWidth(tier, sectionIndex),
+      tier.startRadiusX,
+      tier.startRadiusZ,
+    );
 
     for (const side of [-1, 1] as const) {
       const angle = boundaryAngle + side * aisleAngle * 0.54;

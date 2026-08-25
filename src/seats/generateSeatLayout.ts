@@ -2,15 +2,13 @@ import { Matrix4, Quaternion, Vector3 } from 'three';
 
 import type { StadiumConfig } from '../stadium/types/stadium.types';
 import { getSectionId } from '../stadium/bowl/sectionIds';
+import { getStadiumPerimeterPoint } from '../stadium/geometry/stadiumPerimeter';
 import {
   getTierAccessOpening,
   getTierAisleWidth,
 } from '../stadium/bowl/tierAccess';
-import {
-  angleAtArcLength,
-  arcLengthAtAngle,
-  createEllipticalArcTable,
-} from './ellipticalArcTable';
+import { angleAtArcLength, arcLengthAtAngle } from './ellipticalArcTable';
+import { createStadiumArcTable } from './stadiumArcTable';
 import type { SeatLayout, SeatMetadata } from './seat.types';
 
 const upAxis = new Vector3(0, 1, 0);
@@ -38,7 +36,7 @@ export function generateSeatLayout(
       const radiusX = tier.startRadiusX + (rowIndex + 0.5) * tier.rowDepth;
       const radiusZ = tier.startRadiusZ + (rowIndex + 0.5) * tier.rowDepth;
       const averageRadius = (radiusX + radiusZ) / 2;
-      const arcTable = createEllipticalArcTable(
+      const arcTable = createStadiumArcTable(
         radiusX,
         radiusZ,
         config.seats.arcTableSamples,
@@ -96,8 +94,12 @@ export function generateSeatLayout(
             continue;
           }
 
-          const x = Math.cos(angle) * radiusX;
-          const z = Math.sin(angle) * radiusZ;
+          const perimeterPoint = getStadiumPerimeterPoint(
+            angle,
+            radiusX,
+            radiusZ,
+          );
+          const { x, z } = perimeterPoint;
           const isInsidePlayerTunnelClearance =
             tier.id === 'lower' &&
             rowIndex < config.grandstand.playerTunnelSeatClearanceRows &&

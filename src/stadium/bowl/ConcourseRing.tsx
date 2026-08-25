@@ -7,6 +7,7 @@ import {
 } from 'three';
 
 import type { StadiumConfig } from '../types/stadium.types';
+import { createStadiumPerimeterWallGeometry } from '../geometry/createStadiumPerimeterWallGeometry';
 import { createConcourseFeatureMatrices } from './createConcourseFeatureMatrices';
 
 type TierConfig = StadiumConfig['tiers'][number];
@@ -30,6 +31,38 @@ export function ConcourseRing({
     [details, lowerTier, upperTier],
   );
   const boxGeometry = useMemo(() => new BoxGeometry(1, 1, 1), []);
+  const wallGeometries = useMemo(
+    () => ({
+      accent: createStadiumPerimeterWallGeometry({
+        bottom:
+          features.concourse.bottom +
+          features.concourse.height * 0.53 -
+          details.concourseAccentBandHeight / 2,
+        extentX: features.concourse.radiusX - 0.11,
+        extentZ: features.concourse.radiusZ - 0.11,
+        height: details.concourseAccentBandHeight,
+      }),
+      lowerFascia: createStadiumPerimeterWallGeometry({
+        bottom: features.concourse.bottom,
+        extentX: features.concourse.radiusX - 0.08,
+        extentZ: features.concourse.radiusZ - 0.08,
+        height: details.concourseFasciaHeight,
+      }),
+      shell: createStadiumPerimeterWallGeometry({
+        bottom: features.concourse.bottom,
+        extentX: features.concourse.radiusX,
+        extentZ: features.concourse.radiusZ,
+        height: features.concourse.height,
+      }),
+      upperFascia: createStadiumPerimeterWallGeometry({
+        bottom: upperTier.baseHeight - details.concourseFasciaHeight,
+        extentX: features.concourse.radiusX - 0.08,
+        extentZ: features.concourse.radiusZ - 0.08,
+        height: details.concourseFasciaHeight,
+      }),
+    }),
+    [details, features.concourse, upperTier.baseHeight],
+  );
   const portalMaterial = useMemo(
     () =>
       new MeshStandardMaterial({
@@ -98,53 +131,34 @@ export function ConcourseRing({
   useEffect(
     () => () => {
       boxGeometry.dispose();
+      Object.values(wallGeometries).forEach((geometry) => geometry.dispose());
       portalMaterial.dispose();
       frameMaterial.dispose();
       signMaterial.dispose();
       lightMaterial.dispose();
     },
-    [boxGeometry, frameMaterial, lightMaterial, portalMaterial, signMaterial],
+    [
+      boxGeometry,
+      frameMaterial,
+      lightMaterial,
+      portalMaterial,
+      signMaterial,
+      wallGeometries,
+    ],
   );
 
   return (
     <group name="illuminated-concourse-ring">
-      <mesh
-        position={[
-          0,
-          features.concourse.bottom + features.concourse.height / 2,
-          0,
-        ]}
-        scale={[
-          features.concourse.radiusX,
-          features.concourse.height,
-          features.concourse.radiusZ,
-        ]}
-      >
-        <cylinderGeometry args={[1, 1, 1, 192, 1, true]} />
+      <mesh geometry={wallGeometries.shell}>
         <meshStandardMaterial
           color="#d1cfc4"
           roughness={0.94}
           side={DoubleSide}
         />
       </mesh>
-      {[features.concourse.bottom, upperTier.baseHeight].map(
-        (height, bandIndex) => (
-          <mesh
-            key={height}
-            position={[
-              0,
-              height +
-                ((bandIndex === 0 ? 1 : -1) * details.concourseFasciaHeight) /
-                  2,
-              0,
-            ]}
-            scale={[
-              features.concourse.radiusX - 0.08,
-              details.concourseFasciaHeight,
-              features.concourse.radiusZ - 0.08,
-            ]}
-          >
-            <cylinderGeometry args={[1, 1, 1, 192, 1, true]} />
+      {[wallGeometries.lowerFascia, wallGeometries.upperFascia].map(
+        (geometry, bandIndex) => (
+          <mesh key={bandIndex} geometry={geometry}>
             <meshStandardMaterial
               color="#ebe7dc"
               roughness={0.88}
@@ -153,19 +167,7 @@ export function ConcourseRing({
           </mesh>
         ),
       )}
-      <mesh
-        position={[
-          0,
-          features.concourse.bottom + features.concourse.height * 0.53,
-          0,
-        ]}
-        scale={[
-          features.concourse.radiusX - 0.11,
-          details.concourseAccentBandHeight,
-          features.concourse.radiusZ - 0.11,
-        ]}
-      >
-        <cylinderGeometry args={[1, 1, 1, 192, 1, true]} />
+      <mesh geometry={wallGeometries.accent}>
         <meshStandardMaterial
           color="#236eb3"
           emissive="#123b6d"

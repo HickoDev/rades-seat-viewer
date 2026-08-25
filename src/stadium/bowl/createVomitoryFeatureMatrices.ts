@@ -1,6 +1,7 @@
 import { Matrix4, Quaternion, Vector3 } from 'three';
 
 import type { StadiumConfig } from '../types/stadium.types';
+import { getStadiumPerimeterFrame } from '../geometry/stadiumPerimeter';
 import { getTierAccessOpening } from './tierAccess';
 
 type TierConfig = StadiumConfig['tiers'][number];
@@ -43,12 +44,14 @@ export function createVomitoryFeatureMatrices(tier: TierConfig) {
     const radiusZ = tier.startRadiusZ + opening.row * tier.rowDepth;
     const height =
       tier.baseHeight + opening.row * tier.rowHeight + opening.height / 2;
+    const perimeter = getStadiumPerimeterFrame(angle, radiusX, radiusZ);
+    const inwardRotation = Math.atan2(-perimeter.x, -perimeter.z);
     const rotation = new Quaternion().setFromAxisAngle(
       new Vector3(0, 1, 0),
-      -angle + Math.PI / 2,
+      inwardRotation,
     );
     const portalTransform = new Matrix4().compose(
-      new Vector3(Math.cos(angle) * radiusX, height, Math.sin(angle) * radiusZ),
+      new Vector3(perimeter.x, height, perimeter.z),
       rotation,
       unitScale,
     );

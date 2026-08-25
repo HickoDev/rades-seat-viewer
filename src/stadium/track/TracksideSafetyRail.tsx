@@ -6,6 +6,7 @@ import {
 } from 'three';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import { getStadiumPerimeterAngleForDistance } from '../geometry/stadiumPerimeter';
 import { createTracksideRailMatrices } from './createTracksideRailMatrices';
 
 export function TracksideSafetyRail() {
@@ -33,9 +34,11 @@ export function TracksideSafetyRail() {
         radiusX: lowerTier.startRadiusX - details.tracksideRailInset,
         radiusZ: lowerTier.startRadiusZ - details.tracksideRailInset,
         segmentCount: details.tracksideRailSegmentCount,
-        gapAngle:
-          (grandstand.playerTunnelWidth + 0.6) /
-          (lowerTier.startRadiusX - details.tracksideRailInset),
+        gapAngle: getStadiumPerimeterAngleForDistance(
+          grandstand.playerTunnelWidth + 0.6,
+          lowerTier.startRadiusX - details.tracksideRailInset,
+          lowerTier.startRadiusZ - details.tracksideRailInset,
+        ),
         gapCenterAngle: grandstand.side === 1 ? Math.PI / 2 : -Math.PI / 2,
       }),
     [details, grandstand, lowerTier],

@@ -4,6 +4,7 @@ import { MeshStandardMaterial } from 'three';
 import { findRepresentativeTerracePosition } from '../../seats/viewingPositions';
 import { useStadiumStore } from '../../state/useStadiumStore';
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import { getStadiumPerimeterAngleForDistance } from '../geometry/stadiumPerimeter';
 import type { StadiumConfig } from '../types/stadium.types';
 import { createTierGeometry } from './createTierGeometry';
 import { getSectionId } from './sectionIds';
@@ -23,7 +24,6 @@ export function StadiumTier({ tier }: StadiumTierProps) {
     (state) => state.selectTerracePosition,
   );
   const sectionAngle = (Math.PI * 2) / tier.sectionCount;
-  const averageRadius = (tier.startRadiusX + tier.startRadiusZ) / 2;
 
   const geometries = useMemo(
     () =>
@@ -31,13 +31,20 @@ export function StadiumTier({ tier }: StadiumTierProps) {
         const startAngle = sectionIndex * sectionAngle;
         const centerAngle = startAngle + sectionAngle / 2;
         const opening = getTierAccessOpening(tier, sectionIndex);
-        const startAisleAngle =
-          getTierAisleWidth(tier, sectionIndex) / averageRadius;
-        const endAisleAngle =
-          getTierAisleWidth(tier, sectionIndex + 1) / averageRadius;
-        const portalRadius =
-          (tier.startRadiusX + tier.startRadiusZ) / 2 +
-          (opening?.row ?? 0) * tier.rowDepth;
+        const startAisleAngle = getStadiumPerimeterAngleForDistance(
+          getTierAisleWidth(tier, sectionIndex),
+          tier.startRadiusX,
+          tier.startRadiusZ,
+        );
+        const endAisleAngle = getStadiumPerimeterAngleForDistance(
+          getTierAisleWidth(tier, sectionIndex + 1),
+          tier.startRadiusX,
+          tier.startRadiusZ,
+        );
+        const portalExtentX =
+          tier.startRadiusX + (opening?.row ?? 0) * tier.rowDepth;
+        const portalExtentZ =
+          tier.startRadiusZ + (opening?.row ?? 0) * tier.rowDepth;
         return createTierGeometry({
           startAngle: startAngle + startAisleAngle / 2,
           endAngle: startAngle + sectionAngle - endAisleAngle / 2,
@@ -51,14 +58,18 @@ export function StadiumTier({ tier }: StadiumTierProps) {
           opening: opening
             ? {
                 centerAngle,
-                angularWidth: opening.width / portalRadius,
+                angularWidth: getStadiumPerimeterAngleForDistance(
+                  opening.width,
+                  portalExtentX,
+                  portalExtentZ,
+                ),
                 startRow: opening.row,
                 rowCount: Math.ceil(opening.height / tier.rowHeight),
               }
             : undefined,
         });
       }),
-    [averageRadius, sectionAngle, tier],
+    [sectionAngle, tier],
   );
 
   const materials = useMemo(

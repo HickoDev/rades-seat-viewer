@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-15',
+  version: 'rades-procedural-16',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -409,6 +409,7 @@ export const radesStadiumConfig = {
       'The two athletics bends have independent apron, runway, sand-pit, and throwing-circle layouts derived from interior views; they are intentionally not mirrored.',
       'Seat colors use broad section and row blocks rather than a fine checkerboard, while chairless virages use separate standing spectator instances.',
       'The inner roof now includes an estimated maintenance catwalk, clustered floodlight banks, and scoreboard service decks visible from spectator viewpoints.',
+      'The bowl, seating rows, walkways, and front safety rail now follow a rounded-stadium capsule perimeter with flat long sides instead of a continuous mathematical ellipse.',
     ],
   },
 } satisfies StadiumConfig;

@@ -1,6 +1,7 @@
 import { Matrix4, Quaternion, Vector3 } from 'three';
 
 import type { StadiumConfig } from '../types/stadium.types';
+import { getStadiumPerimeterFrame } from '../geometry/stadiumPerimeter';
 
 type TierConfig = StadiumConfig['tiers'][number];
 type BowlDetails = StadiumConfig['bowlDetails'];
@@ -47,15 +48,21 @@ export function createConcourseFeatureMatrices(
     sectionIndex += 1
   ) {
     const angle = ((sectionIndex + 0.5) / upperTier.sectionCount) * Math.PI * 2;
+    const inwardOffset = details.concoursePortalDepth * 0.65;
+    const portalFrame = getStadiumPerimeterFrame(
+      angle,
+      concourse.radiusX - inwardOffset,
+      concourse.radiusZ - inwardOffset,
+    );
+    const rotationY = -Math.atan2(portalFrame.tangentZ, portalFrame.tangentX);
     const rotation = new Quaternion().setFromAxisAngle(
       new Vector3(0, 1, 0),
-      -angle + Math.PI / 2,
+      rotationY,
     );
-    const inwardOffset = details.concoursePortalDepth * 0.65;
     const position = new Vector3(
-      Math.cos(angle) * (concourse.radiusX - inwardOffset),
+      portalFrame.x,
       portalBase + details.concoursePortalHeight / 2,
-      Math.sin(angle) * (concourse.radiusZ - inwardOffset),
+      portalFrame.z,
     );
     portals.push(
       new Matrix4().compose(
@@ -106,12 +113,17 @@ export function createConcourseFeatureMatrices(
       ),
     );
 
+    const signPoint = getStadiumPerimeterFrame(
+      angle,
+      concourse.radiusX - inwardOffset * 1.2,
+      concourse.radiusZ - inwardOffset * 1.2,
+    );
     signs.push(
       new Matrix4().compose(
         new Vector3(
-          Math.cos(angle) * (concourse.radiusX - inwardOffset * 1.2),
+          signPoint.x,
           portalBase + details.concoursePortalHeight + frameThickness * 1.8,
-          Math.sin(angle) * (concourse.radiusZ - inwardOffset * 1.2),
+          signPoint.z,
         ),
         rotation,
         new Vector3(
@@ -122,12 +134,17 @@ export function createConcourseFeatureMatrices(
       ),
     );
 
+    const lightPoint = getStadiumPerimeterFrame(
+      angle,
+      concourse.radiusX - inwardOffset * 1.5,
+      concourse.radiusZ - inwardOffset * 1.5,
+    );
     lights.push(
       new Matrix4().compose(
         new Vector3(
-          Math.cos(angle) * (concourse.radiusX - inwardOffset * 1.5),
+          lightPoint.x,
           concourse.bottom + concourse.height * 0.88,
-          Math.sin(angle) * (concourse.radiusZ - inwardOffset * 1.5),
+          lightPoint.z,
         ),
         rotation,
         new Vector3(

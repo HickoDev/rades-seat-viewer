@@ -2,6 +2,8 @@ import { useEffect, useMemo } from 'react';
 import { DoubleSide } from 'three';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import { createStadiumPerimeterWallGeometry } from '../geometry/createStadiumPerimeterWallGeometry';
+import { getStadiumPerimeterAngleForDistance } from '../geometry/stadiumPerimeter';
 import { Aisles } from './Aisles';
 import { ConcourseRing } from './ConcourseRing';
 import { createEllipticalRingGeometry } from './createTierGeometry';
@@ -33,9 +35,38 @@ export function StadiumBowl() {
     (tier) => tier.id === 'lower',
   );
   const playerTunnelGapAngle = lowerTier
-    ? (radesStadiumConfig.grandstand.playerTunnelWidth + 0.6) /
-      lowerTier.startRadiusX
+    ? getStadiumPerimeterAngleForDistance(
+        radesStadiumConfig.grandstand.playerTunnelWidth + 0.6,
+        lowerTier.startRadiusX,
+        lowerTier.startRadiusZ,
+      )
     : 0;
+  const lowerFrontWallGeometry = useMemo(() => {
+    if (!lowerTier) return null;
+    return createStadiumPerimeterWallGeometry({
+      bottom: 0,
+      extentX: lowerTier.startRadiusX,
+      extentZ: lowerTier.startRadiusZ,
+      gapAngle: playerTunnelGapAngle,
+      gapCenterAngle:
+        radesStadiumConfig.grandstand.side === 1 ? Math.PI / 2 : -Math.PI / 2,
+      height: lowerTier.baseHeight + lowerTier.rowHeight,
+    });
+  }, [lowerTier, playerTunnelGapAngle]);
+  const structuralWallGeometries = useMemo(
+    () =>
+      radesStadiumConfig.tiers.map((tier) => {
+        const extentX = tier.startRadiusX + tier.rowCount * tier.rowDepth;
+        const extentZ = tier.startRadiusZ + tier.rowCount * tier.rowDepth;
+        return createStadiumPerimeterWallGeometry({
+          bottom: 0,
+          extentX: extentX + tier.walkwayWidth,
+          extentZ: extentZ + tier.walkwayWidth,
+          height: tier.baseHeight + tier.rowCount * tier.rowHeight,
+        });
+      }),
+    [],
+  );
   const upperSlabOccluder = useMemo(() => {
     if (!upperTier) return null;
     const geometry = createEllipticalRingGeometry({
@@ -54,10 +85,17 @@ export function StadiumBowl() {
   useEffect(
     () => () => {
       walkwayGeometries.forEach((geometry) => geometry.dispose());
+      structuralWallGeometries.forEach((geometry) => geometry.dispose());
+      lowerFrontWallGeometry?.dispose();
       upperSlabOccluder?.disposeBoundsTree();
       upperSlabOccluder?.dispose();
     },
-    [upperSlabOccluder, walkwayGeometries],
+    [
+      lowerFrontWallGeometry,
+      structuralWallGeometries,
+      upperSlabOccluder,
+      walkwayGeometries,
+    ],
   );
 
   return (
@@ -72,35 +110,13 @@ export function StadiumBowl() {
       <HonorPressTribune />
       {lowerTier && (
         <mesh
+          geometry={lowerFrontWallGeometry ?? undefined}
           name="lower-tier-front-wall"
-          position={[0, (lowerTier.baseHeight + lowerTier.rowHeight) / 2, 0]}
-          rotation={[
-            0,
-            radesStadiumConfig.grandstand.side === 1 ? 0 : Math.PI,
-            0,
-          ]}
-          scale={[
-            lowerTier.startRadiusX,
-            lowerTier.baseHeight + lowerTier.rowHeight,
-            lowerTier.startRadiusZ,
-          ]}
           userData={{
             shadowOccluder: true,
             occluderType: 'lower-tier-front-wall',
           }}
         >
-          <cylinderGeometry
-            args={[
-              1,
-              1,
-              1,
-              192,
-              1,
-              true,
-              playerTunnelGapAngle / 2,
-              Math.PI * 2 - playerTunnelGapAngle,
-            ]}
-          />
           <meshStandardMaterial
             color="#929c96"
             roughness={0.97}
@@ -109,10 +125,6 @@ export function StadiumBowl() {
         </mesh>
       )}
       {radesStadiumConfig.tiers.map((tier, tierIndex) => {
-        const outerRadiusX = tier.startRadiusX + tier.rowCount * tier.rowDepth;
-        const outerRadiusZ = tier.startRadiusZ + tier.rowCount * tier.rowDepth;
-        const tierHeight = tier.baseHeight + tier.rowCount * tier.rowHeight;
-
         return (
           <group key={tier.id}>
             <StadiumTier tier={tier} />
@@ -126,18 +138,12 @@ export function StadiumBowl() {
               <meshStandardMaterial color="#7f8b85" roughness={0.96} />
             </mesh>
             <mesh
-              position={[0, tierHeight / 2, 0]}
-              scale={[
-                outerRadiusX + tier.walkwayWidth,
-                tierHeight,
-                outerRadiusZ + tier.walkwayWidth,
-              ]}
+              geometry={structuralWallGeometries[tierIndex]}
               userData={{
                 shadowOccluder: true,
                 occluderType: 'large-structural-wall',
               }}
             >
-              <cylinderGeometry args={[1, 1, 1, 192, 1, true]} />
               <meshStandardMaterial
                 color="#c9c5b8"
                 emissive="#494840"

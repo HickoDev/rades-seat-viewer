@@ -16,7 +16,7 @@ The implementation uses the following features because they recur across photogr
 
 - a two-level pale-blue seating bowl;
 - a pale intermediate concourse articulated by repeated dark arched openings, light surrounds, and a blue accent strip;
-- radial light-concrete aisles, metal barriers, and framed vomitories;
+- radial light-concrete aisles, metal barriers, recessed vomitory passages, and four non-walkable barrier-lined cuts separating the lower virages from the lateral stands;
 - a long glazed honor/press frontage on one sideline;
 - a white tensile roof with visibly sagged radial membrane bays, a scalloped outer edge, and a dense white inner space truss;
 - tall external roof masts with cable stays and roof-edge floodlight arrays;

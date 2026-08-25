@@ -1,7 +1,7 @@
 import { Matrix4, Quaternion, Vector3 } from 'three';
 
-import type { StadiumConfig } from '../types/stadium.types';
 import { getStadiumPerimeterFrame } from '../geometry/stadiumPerimeter';
+import type { StadiumConfig } from '../types/stadium.types';
 import { getTierAccessOpening } from './tierAccess';
 
 type TierConfig = StadiumConfig['tiers'][number];
@@ -25,11 +25,18 @@ function composePortalPart(
     );
 }
 
+/**
+ * Creates recessed, traversable-looking tier passages. Local negative Z runs
+ * from the seating face toward the rear concourse, so nothing is placed in
+ * front of the chairs or across the opening mouth.
+ */
 export function createVomitoryFeatureMatrices(tier: TierConfig) {
-  const panels: Matrix4[] = [];
+  const ceilings: Matrix4[] = [];
   const floors: Matrix4[] = [];
   const frames: Matrix4[] = [];
+  const lights: Matrix4[] = [];
   const signs: Matrix4[] = [];
+  const walls: Matrix4[] = [];
 
   for (
     let sectionIndex = 0;
@@ -56,47 +63,70 @@ export function createVomitoryFeatureMatrices(tier: TierConfig) {
       unitScale,
     );
     const frame = opening.frameThickness;
-    const frameDepth = opening.depth * 0.22;
-
-    panels.push(
-      composePortalPart(
-        portalTransform,
-        [0, 0, opening.depth * 0.36],
-        [opening.width, opening.height, opening.depth * 0.1],
-      ),
+    const frameDepth = Math.max(frame * 0.9, 0.18);
+    const clearedRows = Math.ceil(opening.height / tier.rowHeight);
+    const passageDepth = Math.max(
+      opening.depth,
+      clearedRows * tier.rowDepth + tier.rowDepth * 0.35,
     );
+    const passageCenterZ = -passageDepth / 2;
+
     floors.push(
       composePortalPart(
         portalTransform,
-        [0, -opening.height / 2 + frame * 0.2, 0],
-        [opening.width + frame * 2, frame * 0.4, opening.depth],
+        [0, -opening.height / 2 + frame * 0.22, passageCenterZ],
+        [opening.width + frame * 2, frame * 0.44, passageDepth],
       ),
     );
+    ceilings.push(
+      composePortalPart(
+        portalTransform,
+        [0, opening.height / 2 + frame * 0.3, passageCenterZ],
+        [opening.width + frame * 2, frame * 0.6, passageDepth],
+      ),
+    );
+    for (const side of [-1, 1] as const) {
+      walls.push(
+        composePortalPart(
+          portalTransform,
+          [side * (opening.width / 2 + frame / 2), 0, passageCenterZ],
+          [frame, opening.height + frame * 1.2, passageDepth],
+        ),
+      );
+    }
+
     frames.push(
       composePortalPart(
         portalTransform,
-        [-(opening.width + frame) / 2, 0, 0],
+        [-(opening.width + frame) / 2, 0, -frameDepth / 2],
         [frame, opening.height + frame * 2, frameDepth],
       ),
       composePortalPart(
         portalTransform,
-        [(opening.width + frame) / 2, 0, 0],
+        [(opening.width + frame) / 2, 0, -frameDepth / 2],
         [frame, opening.height + frame * 2, frameDepth],
       ),
       composePortalPart(
         portalTransform,
-        [0, (opening.height + frame) / 2, 0],
+        [0, (opening.height + frame) / 2, -frameDepth / 2],
         [opening.width + frame * 2, frame, frameDepth],
       ),
     );
     signs.push(
       composePortalPart(
         portalTransform,
-        [0, opening.height * 0.32, -frameDepth * 0.58],
+        [0, opening.height * 0.32, frameDepth * 0.18],
         [opening.width * 0.27, frame * 0.72, frame * 0.14],
+      ),
+    );
+    lights.push(
+      composePortalPart(
+        portalTransform,
+        [0, opening.height / 2 - frame * 0.82, -passageDepth * 0.62],
+        [opening.width * 0.38, frame * 0.18, frame * 0.34],
       ),
     );
   }
 
-  return { floors, frames, panels, signs };
+  return { ceilings, floors, frames, lights, signs, walls };
 }

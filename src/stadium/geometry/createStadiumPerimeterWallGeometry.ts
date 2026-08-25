@@ -10,6 +10,10 @@ export type StadiumPerimeterWallOptions = {
   segments?: number;
   gapAngle?: number;
   gapCenterAngle?: number;
+  gaps?: Array<{
+    centerAngle: number;
+    angularWidth: number;
+  }>;
 };
 
 function angularDistance(first: number, second: number) {
@@ -24,6 +28,7 @@ export function createStadiumPerimeterWallGeometry({
   extentZ,
   gapAngle = 0,
   gapCenterAngle = 0,
+  gaps = [],
   height,
   segments = 192,
 }: StadiumPerimeterWallOptions): BufferGeometry {
@@ -34,10 +39,14 @@ export function createStadiumPerimeterWallGeometry({
     const startAngle = (index / segments) * Math.PI * 2;
     const endAngle = ((index + 1) / segments) * Math.PI * 2;
     const midpointAngle = (startAngle + endAngle) / 2;
-    if (
+    const legacyGap =
       gapAngle > 0 &&
-      angularDistance(midpointAngle, gapCenterAngle) < gapAngle / 2
-    ) {
+      angularDistance(midpointAngle, gapCenterAngle) < gapAngle / 2;
+    const isInsideGap = gaps.some(
+      (gap) =>
+        angularDistance(midpointAngle, gap.centerAngle) < gap.angularWidth / 2,
+    );
+    if (legacyGap || isInsideGap) {
       continue;
     }
 

@@ -8,6 +8,7 @@ import {
 
 import type { StadiumConfig } from '../types/stadium.types';
 import { createStadiumPerimeterWallGeometry } from '../geometry/createStadiumPerimeterWallGeometry';
+import { getStadiumPerimeterAngleForDistance } from '../geometry/stadiumPerimeter';
 import { createArchedPortalGeometry } from './createArchedPortalGeometry';
 import { createConcourseFeatureMatrices } from './createConcourseFeatureMatrices';
 
@@ -31,6 +32,19 @@ export function ConcourseRing({
     () => createConcourseFeatureMatrices(upperTier, lowerTier, details),
     [details, lowerTier, upperTier],
   );
+  const separationGaps = useMemo(
+    () =>
+      lowerTier.majorCutouts.map((cutout) => ({
+        centerAngle:
+          (cutout.boundaryIndex / lowerTier.sectionCount) * Math.PI * 2,
+        angularWidth: getStadiumPerimeterAngleForDistance(
+          cutout.width,
+          features.concourse.radiusX,
+          features.concourse.radiusZ,
+        ),
+      })),
+    [features.concourse, lowerTier],
+  );
   const boxGeometry = useMemo(() => new BoxGeometry(1, 1, 1), []);
   const portalGeometry = useMemo(() => createArchedPortalGeometry(), []);
   const portalFrameGeometry = useMemo(
@@ -47,27 +61,31 @@ export function ConcourseRing({
         extentX: features.concourse.radiusX - 0.11,
         extentZ: features.concourse.radiusZ - 0.11,
         height: details.concourseAccentBandHeight,
+        gaps: separationGaps,
       }),
       lowerFascia: createStadiumPerimeterWallGeometry({
         bottom: features.concourse.bottom,
         extentX: features.concourse.radiusX - 0.08,
         extentZ: features.concourse.radiusZ - 0.08,
         height: details.concourseFasciaHeight,
+        gaps: separationGaps,
       }),
       shell: createStadiumPerimeterWallGeometry({
         bottom: features.concourse.bottom,
         extentX: features.concourse.radiusX,
         extentZ: features.concourse.radiusZ,
         height: features.concourse.height,
+        gaps: separationGaps,
       }),
       upperFascia: createStadiumPerimeterWallGeometry({
         bottom: upperTier.baseHeight - details.concourseFasciaHeight,
         extentX: features.concourse.radiusX - 0.08,
         extentZ: features.concourse.radiusZ - 0.08,
         height: details.concourseFasciaHeight,
+        gaps: separationGaps,
       }),
     }),
-    [details, features.concourse, upperTier.baseHeight],
+    [details, features.concourse, separationGaps, upperTier.baseHeight],
   );
   const portalMaterial = useMemo(
     () =>

@@ -101,7 +101,6 @@ export type StadiumConfig = {
       id: string;
       boundaryIndex: number;
       width: number;
-      accessWidth: number;
       wallHeight: number;
     }>;
     walkwayWidth: number;

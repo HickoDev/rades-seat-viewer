@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-20',
+  version: 'rades-procedural-21',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -123,35 +123,31 @@ export const radesStadiumConfig = {
         { boundaryIndex: 20, width: 2.5 },
         { boundaryIndex: 28, width: 2.5 },
       ],
-      // Four full-depth separation corridors between the end virages and
-      // lateral stands. Their dimensions remain visual estimates.
+      // Four non-walkable separation cuts between the end virages and lateral
+      // stands. Their dimensions remain visual estimates.
       majorCutouts: [
         {
-          id: 'north-east-virage-access',
+          id: 'north-east-virage-separation',
           boundaryIndex: 3,
           width: 11,
-          accessWidth: 6.4,
           wallHeight: 1.55,
         },
         {
-          id: 'north-west-virage-access',
+          id: 'north-west-virage-separation',
           boundaryIndex: 13,
           width: 11,
-          accessWidth: 6.4,
           wallHeight: 1.55,
         },
         {
-          id: 'south-west-virage-access',
+          id: 'south-west-virage-separation',
           boundaryIndex: 19,
           width: 11,
-          accessWidth: 6.4,
           wallHeight: 1.55,
         },
         {
-          id: 'south-east-virage-access',
+          id: 'south-east-virage-separation',
           boundaryIndex: 29,
           width: 11,
-          accessWidth: 6.4,
           wallHeight: 1.55,
         },
       ],
@@ -453,7 +449,7 @@ export const radesStadiumConfig = {
       'Bowl and roof radii are procedural calibration estimates chosen to clear the track and match the visible silhouette.',
       'The lower virages are modeled as seatless terraces; the upper virage keeps physical chairs but is closed to visitors. Exact boundaries still require seating plans.',
       'Published historical summaries split capacity into 32,000 lower-tribune and 28,000 upper-tribune places; procedural chair instances and current visitor access intentionally do not assert those totals.',
-      'Section rails, framed vomitories, and concourse openings are photo-calibrated procedural estimates.',
+      'Section rails, recessed vomitory passages, and concourse openings are photo-calibrated procedural estimates.',
       'The honor stand is reported at 7,000 places and the press stand at 300 desks; their modeled envelope is photo-calibrated rather than surveyed.',
       'Goal nets, advertising hoardings, roof waves, support masts, and the ceremonial entrance are visual estimates from dated photographs and may vary by event or renovation state.',
       'The paired blue technical-area shelters are positioned from interior photographs; their exact dimensions and athletics-track offsets require a site survey.',
@@ -461,14 +457,14 @@ export const radesStadiumConfig = {
       'Four circular access-ramp towers, the open X-braced upper facade, membrane seams, and suspended scoreboards are photo-calibrated visual estimates.',
       'The paired ramp arrangement, faceted roof character, and ceremonial-side massing were independently rebuilt from an authorized public visual reference; no reference mesh or texture is included.',
       'The arched concourse bays, tier-separator fascia, track-bend event aprons, inner safety rail, and denser roof-edge lattice are visually calibrated from owner-supplied reference renders; their dimensions are not surveyed.',
-      'Vomitories and wide stair wedges use explicit per-section access data instead of an evenly repeated rule; their locations remain visual estimates pending seating plans.',
+      'Vomitories use explicit per-section access data, clear the tier and chairs, and extend toward the rear concourse as open passages rather than surface-mounted dark panels; their locations remain visual estimates pending seating plans.',
       'The main-stand player route includes the approximately 30 m retractable covered tunnel reported in January 2023; width, frame spacing, and exact endpoints remain visual estimates.',
       'The honor, press, control-room, and service-core volumes are modeled separately from interior references; their envelope and window rhythm remain unsurveyed estimates.',
       'The two athletics bends have independent apron, runway, sand-pit, and throwing-circle layouts derived from interior views; they are intentionally not mirrored.',
       'Seat colors use broad section and row blocks rather than a fine checkerboard, while chairless lower virages use separate standing spectator instances.',
       'The inner roof now includes an estimated maintenance catwalk, clustered floodlight banks, and scoreboard service decks visible from spectator viewpoints.',
       'The bowl, seating rows, walkways, and front safety rail now follow a rounded-stadium capsule perimeter with flat long sides instead of a continuous mathematical ellipse.',
-      'Four full-depth lower-tier corridors separate the two virages from the lateral stands; the ramp widths and portal dimensions are calibrated from the supplied reference model and remain unsurveyed.',
+      'Four full-depth lower-tier cuts separate the two virages from the lateral stands. They contain no stair, ramp, floor, or portal: the open void and safety barriers follow the supplied reference model and remain unsurveyed.',
       'Upper-virage sections remain physically modeled but are marked closed to visitors; they are excluded from public POV selection, crowds, and visitor-facing simulations.',
       'The membrane, inner truss, fascia, lighting supports, and static shadow meshes now share the rounded-stadium plan visible in the supplied interior reference; the yellow scoreboard housings and diagonal hangers are visual estimates.',
       'Repeated arched concourse bays, a continuous multi-level main-stand facade, and a blue VIP chair block are visually calibrated from the supplied interior model and remain unsurveyed.',

@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { createTierGeometry } from './createTierGeometry';
+import {
+  createEllipticalRingGeometry,
+  createTierGeometry,
+} from './createTierGeometry';
 
 describe('createTierGeometry', () => {
   it('raises each successive seating row', () => {
@@ -54,5 +57,32 @@ describe('createTierGeometry', () => {
 
     solid.dispose();
     withOpening.dispose();
+  });
+
+  it('cuts virage separations through a walkway ring', () => {
+    const solid = createEllipticalRingGeometry({
+      innerRadiusX: 120,
+      innerRadiusZ: 84,
+      outerRadiusX: 123,
+      outerRadiusZ: 87,
+      height: 14,
+      segments: 128,
+    });
+    const cut = createEllipticalRingGeometry({
+      innerRadiusX: 120,
+      innerRadiusZ: 84,
+      outerRadiusX: 123,
+      outerRadiusZ: 87,
+      height: 14,
+      segments: 128,
+      gaps: [{ centerAngle: Math.PI / 2, angularWidth: 0.12 }],
+    });
+
+    expect(cut.getAttribute('position').count).toBeLessThan(
+      solid.getAttribute('position').count,
+    );
+
+    solid.dispose();
+    cut.dispose();
   });
 });

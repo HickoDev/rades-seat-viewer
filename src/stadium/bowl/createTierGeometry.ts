@@ -129,7 +129,17 @@ export type EllipticalRingOptions = {
   outerRadiusZ: number;
   height: number;
   segments?: number;
+  gaps?: Array<{
+    centerAngle: number;
+    angularWidth: number;
+  }>;
 };
+
+function angularDistance(first: number, second: number) {
+  return Math.abs(
+    Math.atan2(Math.sin(first - second), Math.cos(first - second)),
+  );
+}
 
 export function createEllipticalRingGeometry({
   height,
@@ -138,21 +148,40 @@ export function createEllipticalRingGeometry({
   outerRadiusX,
   outerRadiusZ,
   segments = 192,
+  gaps = [],
 }: EllipticalRingOptions): BufferGeometry {
   const positions: number[] = [];
   const indices: number[] = [];
 
-  for (let index = 0; index <= segments; index += 1) {
-    const angle = (index / segments) * Math.PI * 2;
-    positions.push(
-      ...perimeterPoint(angle, innerRadiusX, innerRadiusZ, height),
-      ...perimeterPoint(angle, outerRadiusX, outerRadiusZ, height),
-    );
-
-    if (index < segments) {
-      const base = index * 2;
-      indices.push(base, base + 2, base + 1, base + 1, base + 2, base + 3);
+  for (let index = 0; index < segments; index += 1) {
+    const startAngle = (index / segments) * Math.PI * 2;
+    const endAngle = ((index + 1) / segments) * Math.PI * 2;
+    const midpointAngle = (startAngle + endAngle) / 2;
+    if (
+      gaps.some(
+        (gap) =>
+          angularDistance(midpointAngle, gap.centerAngle) <
+          gap.angularWidth / 2,
+      )
+    ) {
+      continue;
     }
+
+    const offset = positions.length / 3;
+    positions.push(
+      ...perimeterPoint(startAngle, innerRadiusX, innerRadiusZ, height),
+      ...perimeterPoint(startAngle, outerRadiusX, outerRadiusZ, height),
+      ...perimeterPoint(endAngle, innerRadiusX, innerRadiusZ, height),
+      ...perimeterPoint(endAngle, outerRadiusX, outerRadiusZ, height),
+    );
+    indices.push(
+      offset,
+      offset + 2,
+      offset + 1,
+      offset + 1,
+      offset + 2,
+      offset + 3,
+    );
   }
 
   const geometry = new BufferGeometry();

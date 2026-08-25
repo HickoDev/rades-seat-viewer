@@ -5,7 +5,7 @@ import {
   getStadiumPerimeterAngleForDistance,
   getStadiumPerimeterPoint,
 } from '../geometry/stadiumPerimeter';
-import { getTierAisleWidth } from './tierAccess';
+import { getTierAisleWidth, getTierMajorCutout } from './tierAccess';
 
 type TierConfig = StadiumConfig['tiers'][number];
 type BarrierConfig = StadiumConfig['bowlDetails'];
@@ -28,8 +28,6 @@ export function createSectionDividerPanelGeometry(
   const positions: number[] = [];
   const indices: number[] = [];
   const sectionAngle = (Math.PI * 2) / tier.sectionCount;
-  const panelHeight = barrier.sectionBarrierHeight * 0.54;
-
   for (
     let sectionIndex = 0;
     sectionIndex < tier.sectionCount;
@@ -41,9 +39,13 @@ export function createSectionDividerPanelGeometry(
       tier.startRadiusX,
       tier.startRadiusZ,
     );
+    const barrierHeight =
+      getTierMajorCutout(tier, sectionIndex)?.wallHeight ??
+      barrier.sectionBarrierHeight;
+    const panelHeight = barrierHeight * 0.54;
 
     for (const side of [-1, 1] as const) {
-      const angle = boundaryAngle + side * aisleAngle * 0.54;
+      const angle = boundaryAngle + side * aisleAngle * 0.5;
       const start = tierPoint(tier, angle, 0);
       const end = tierPoint(tier, angle, tier.rowCount - 1);
       const offset = positions.length / 3;

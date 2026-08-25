@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import { getStadiumPerimeterFrame } from '../geometry/stadiumPerimeter';
 import { createConcourseFeatureMatrices } from './createConcourseFeatureMatrices';
 import { createSectionDividerPanelGeometry } from './createSectionDividerPanelGeometry';
 import { createSectionBarrierMatrices } from './createSectionBarrierMatrices';
@@ -34,17 +35,34 @@ describe('procedural bowl details', () => {
     geometry.dispose();
   });
 
-  it('creates one framed, lit vomitory treatment per configured portal', () => {
+  it('creates one recessed, framed passage per configured vomitory', () => {
     const features = createVomitoryFeatureMatrices(lowerTier);
     const portalCount = lowerTier.vomitorySectionIndices.length;
+    const firstSection = lowerTier.vomitorySectionIndices[0];
+    const firstOpening = getTierAccessOpening(lowerTier, firstSection);
+    const firstAngle =
+      ((firstSection + 0.5) / lowerTier.sectionCount) * Math.PI * 2;
+    const portal = getStadiumPerimeterFrame(
+      firstAngle,
+      lowerTier.startRadiusX + (firstOpening?.row ?? 0) * lowerTier.rowDepth,
+      lowerTier.startRadiusZ + (firstOpening?.row ?? 0) * lowerTier.rowDepth,
+    );
+    const floorMatrix = features.floors[0];
+    const floorDistance = Math.hypot(
+      floorMatrix.elements[12],
+      floorMatrix.elements[14],
+    );
 
-    expect(features.panels).toHaveLength(portalCount);
+    expect(features.ceilings).toHaveLength(portalCount);
     expect(features.floors).toHaveLength(portalCount);
     expect(features.frames).toHaveLength(portalCount * 3);
+    expect(features.lights).toHaveLength(portalCount);
     expect(features.signs).toHaveLength(portalCount);
+    expect(features.walls).toHaveLength(portalCount * 2);
+    expect(floorDistance).toBeGreaterThan(Math.hypot(portal.x, portal.z));
   });
 
-  it('supports explicit wide portals and stair wedges per section', () => {
+  it('supports explicit wide portals and aisle widths per section', () => {
     const standardOpening = getTierAccessOpening(lowerTier, 1);
     const wideOpening = getTierAccessOpening(lowerTier, 6);
 

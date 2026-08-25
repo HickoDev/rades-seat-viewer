@@ -7,27 +7,33 @@ import { createVomitoryFeatureMatrices } from './createVomitoryFeatureMatrices';
 type TierConfig = StadiumConfig['tiers'][number];
 
 export function Vomitories({ tier }: { tier: TierConfig }) {
-  const panelRef = useRef<InstancedMesh>(null);
+  const ceilingRef = useRef<InstancedMesh>(null);
   const floorRef = useRef<InstancedMesh>(null);
   const frameRef = useRef<InstancedMesh>(null);
+  const lightRef = useRef<InstancedMesh>(null);
   const signRef = useRef<InstancedMesh>(null);
+  const wallRef = useRef<InstancedMesh>(null);
   const geometry = useMemo(() => new BoxGeometry(1, 1, 1), []);
   const features = useMemo(() => createVomitoryFeatureMatrices(tier), [tier]);
   const materials = useMemo(
     () => ({
+      concrete: new MeshStandardMaterial({
+        color: '#d7d8d1',
+        roughness: 0.97,
+      }),
       floor: new MeshStandardMaterial({
-        color: '#89948e',
+        color: '#737d78',
         roughness: 0.96,
       }),
       frame: new MeshStandardMaterial({
         color: '#b8c0ba',
         roughness: 0.93,
       }),
-      panel: new MeshStandardMaterial({
-        color: '#3d4b49',
-        emissive: '#1e3432',
-        emissiveIntensity: 0.2,
-        roughness: 0.82,
+      light: new MeshStandardMaterial({
+        color: '#f4f0d5',
+        emissive: '#fff3b4',
+        emissiveIntensity: 1.7,
+        roughness: 0.42,
       }),
       sign: new MeshStandardMaterial({
         color: '#74dea2',
@@ -41,10 +47,12 @@ export function Vomitories({ tier }: { tier: TierConfig }) {
 
   useLayoutEffect(() => {
     const groups = [
-      [panelRef.current, features.panels],
+      [ceilingRef.current, features.ceilings],
       [floorRef.current, features.floors],
       [frameRef.current, features.frames],
+      [lightRef.current, features.lights],
       [signRef.current, features.signs],
+      [wallRef.current, features.walls],
     ] as const;
 
     groups.forEach(([mesh, matrices]) => {
@@ -68,9 +76,9 @@ export function Vomitories({ tier }: { tier: TierConfig }) {
   return (
     <group name={`${tier.id}-vomitories`}>
       <instancedMesh
-        ref={panelRef}
-        args={[geometry, materials.panel, features.panels.length]}
-        name={`${tier.id}-vomitory-interiors`}
+        ref={ceilingRef}
+        args={[geometry, materials.concrete, features.ceilings.length]}
+        name={`${tier.id}-vomitory-passage-ceilings`}
       />
       <instancedMesh
         ref={floorRef}
@@ -83,9 +91,19 @@ export function Vomitories({ tier }: { tier: TierConfig }) {
         name={`${tier.id}-vomitory-frames`}
       />
       <instancedMesh
+        ref={lightRef}
+        args={[geometry, materials.light, features.lights.length]}
+        name={`${tier.id}-vomitory-passage-lights`}
+      />
+      <instancedMesh
         ref={signRef}
         args={[geometry, materials.sign, features.signs.length]}
         name={`${tier.id}-vomitory-signs`}
+      />
+      <instancedMesh
+        ref={wallRef}
+        args={[geometry, materials.concrete, features.walls.length]}
+        name={`${tier.id}-vomitory-passage-side-walls`}
       />
     </group>
   );

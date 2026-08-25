@@ -6,7 +6,7 @@ import {
   getStadiumPerimeterAngleForDistance,
   getStadiumPerimeterPoint,
 } from '../geometry/stadiumPerimeter';
-import { getTierAisleWidth } from './tierAccess';
+import { getTierAisleWidth, getTierMajorCutout } from './tierAccess';
 
 type TierConfig = StadiumConfig['tiers'][number];
 type BarrierConfig = StadiumConfig['bowlDetails'];
@@ -53,27 +53,20 @@ export function createSectionBarrierMatrices(
       tier.startRadiusX,
       tier.startRadiusZ,
     );
+    const barrierHeight =
+      getTierMajorCutout(tier, sectionIndex)?.wallHeight ??
+      barrier.sectionBarrierHeight;
 
     for (const side of [-1, 1] as const) {
-      const angle = boundaryAngle + side * aisleAngle * 0.54;
+      const angle = boundaryAngle + side * aisleAngle * 0.5;
       const startRow = 0;
       const endRow = tier.rowCount - 1;
 
       for (const heightRatio of [barrier.sectionBarrierMidRailRatio, 1]) {
         matrices.push(
           createCylinderBetweenMatrix(
-            getTierPoint(
-              tier,
-              angle,
-              startRow,
-              barrier.sectionBarrierHeight * heightRatio,
-            ),
-            getTierPoint(
-              tier,
-              angle,
-              endRow,
-              barrier.sectionBarrierHeight * heightRatio,
-            ),
+            getTierPoint(tier, angle, startRow, barrierHeight * heightRatio),
+            getTierPoint(tier, angle, endRow, barrierHeight * heightRatio),
             barrier.sectionBarrierRailRadius,
           ),
         );
@@ -83,7 +76,7 @@ export function createSectionBarrierMatrices(
         matrices.push(
           createCylinderBetweenMatrix(
             getTierPoint(tier, angle, rowIndex, 0.04),
-            getTierPoint(tier, angle, rowIndex, barrier.sectionBarrierHeight),
+            getTierPoint(tier, angle, rowIndex, barrierHeight),
             barrier.sectionBarrierRailRadius,
           ),
         );

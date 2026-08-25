@@ -8,10 +8,24 @@ import { Aisles } from './Aisles';
 import { ConcourseRing } from './ConcourseRing';
 import { createEllipticalRingGeometry } from './createTierGeometry';
 import { HonorPressTribune } from './HonorPressTribune';
-import { MajorBowlAccess } from './MajorBowlAccess';
 import { SectionBarriers } from './SectionBarriers';
 import { StadiumTier } from './StadiumTier';
 import { Vomitories } from './Vomitories';
+
+function getMajorCutoutGaps(
+  tier: (typeof radesStadiumConfig.tiers)[number],
+  extentX: number,
+  extentZ: number,
+) {
+  return tier.majorCutouts.map((cutout) => ({
+    centerAngle: (cutout.boundaryIndex / tier.sectionCount) * Math.PI * 2,
+    angularWidth: getStadiumPerimeterAngleForDistance(
+      cutout.width,
+      extentX,
+      extentZ,
+    ),
+  }));
+}
 
 export function StadiumBowl() {
   const walkwayGeometries = useMemo(
@@ -25,6 +39,7 @@ export function StadiumBowl() {
           outerRadiusX: outerRadiusX + tier.walkwayWidth,
           outerRadiusZ: outerRadiusZ + tier.walkwayWidth,
           height: tier.baseHeight + tier.rowCount * tier.rowHeight,
+          gaps: getMajorCutoutGaps(tier, outerRadiusX, outerRadiusZ),
         });
       }),
     [],
@@ -64,6 +79,7 @@ export function StadiumBowl() {
           extentX: extentX + tier.walkwayWidth,
           extentZ: extentZ + tier.walkwayWidth,
           height: tier.baseHeight + tier.rowCount * tier.rowHeight,
+          gaps: getMajorCutoutGaps(tier, extentX, extentZ),
         });
       }),
     [],
@@ -135,7 +151,6 @@ export function StadiumBowl() {
               tier={tier}
             />
             <Vomitories tier={tier} />
-            {tier.majorCutouts.length > 0 && <MajorBowlAccess tier={tier} />}
             <mesh geometry={walkwayGeometries[tierIndex]}>
               <meshStandardMaterial color="#7f8b85" roughness={0.96} />
             </mesh>

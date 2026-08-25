@@ -178,6 +178,89 @@ function FacilityVolume({
   );
 }
 
+function ContinuousGrandstandFacade({
+  frontZ,
+  materials,
+  side,
+}: {
+  frontZ: number;
+  materials: FacilityMaterials;
+  side: -1 | 1;
+}) {
+  const { grandstand } = radesStadiumConfig;
+  const bayWidth = grandstand.width / grandstand.windowBayCount;
+  const centerZ = frontZ + (side * grandstand.depth) / 2;
+
+  return (
+    <group name="continuous-main-stand-facade">
+      <mesh
+        material={materials.shell}
+        position={[0, grandstand.baseHeight + grandstand.height / 2, centerZ]}
+        userData={{
+          shadowOccluder: true,
+          occluderType: 'continuous-grandstand-facade',
+        }}
+      >
+        <boxGeometry
+          args={[grandstand.width, grandstand.height, grandstand.depth]}
+        />
+      </mesh>
+
+      {Array.from({ length: grandstand.facadeLevelCount }, (_, levelIndex) =>
+        Array.from({ length: grandstand.windowBayCount }, (_, bayIndex) => (
+          <mesh
+            key={`${levelIndex}:${bayIndex}`}
+            material={materials.glass}
+            position={[
+              -grandstand.width / 2 + bayWidth * (bayIndex + 0.5),
+              grandstand.baseHeight +
+                0.68 +
+                levelIndex * grandstand.facadeLevelSpacing,
+              frontZ - side * 0.065,
+            ]}
+          >
+            <boxGeometry
+              args={[bayWidth - 0.42, grandstand.facadeWindowHeight, 0.1]}
+            />
+          </mesh>
+        )),
+      )}
+
+      {Array.from(
+        { length: grandstand.facadeLevelCount - 1 },
+        (_, levelIndex) => (
+          <mesh
+            key={levelIndex}
+            material={materials.frame}
+            position={[
+              0,
+              grandstand.baseHeight +
+                1.38 +
+                levelIndex * grandstand.facadeLevelSpacing,
+              frontZ - side * 0.095,
+            ]}
+          >
+            <boxGeometry args={[grandstand.width, 0.12, 0.14]} />
+          </mesh>
+        ),
+      )}
+
+      <mesh
+        material={materials.frame}
+        position={[
+          0,
+          grandstand.baseHeight + grandstand.height + 0.16,
+          centerZ,
+        ]}
+      >
+        <boxGeometry
+          args={[grandstand.width + 0.5, 0.32, grandstand.depth + 0.36]}
+        />
+      </mesh>
+    </group>
+  );
+}
+
 export function HonorPressTribune() {
   const { grandstand, tiers } = radesStadiumConfig;
   const upperTier = tiers.find((tier) => tier.id === 'upper') ?? tiers[1];
@@ -238,6 +321,12 @@ export function HonorPressTribune() {
         dimensionsAreEstimates: true,
       }}
     >
+      <ContinuousGrandstandFacade
+        frontZ={frontZ}
+        materials={materials}
+        side={side}
+      />
+
       {facilities.map((facility) => (
         <FacilityVolume
           key={facility.id}

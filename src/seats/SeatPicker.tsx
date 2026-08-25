@@ -11,6 +11,7 @@ import {
 import { getHeatmapGroupKey } from '../sunlight/sunlightHeatmap';
 import { useStadiumStore } from '../state/useStadiumStore';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
+import { isVisitorClosedSection } from './viewingPositions';
 import type { SeatLayout } from './seat.types';
 
 type SeatPickerProps = {
@@ -23,6 +24,7 @@ const lowerSeatColor = new Color(radesStadiumConfig.seats.lowerPrimaryColor);
 const lowerAccentColor = new Color(radesStadiumConfig.seats.lowerAccentColor);
 const upperSeatColor = new Color(radesStadiumConfig.seats.upperPrimaryColor);
 const upperAccentColor = new Color(radesStadiumConfig.seats.upperAccentColor);
+const vipSeatColor = new Color(radesStadiumConfig.seats.vipColor);
 const selectedSeatColor = new Color('#d9ff70');
 const heatmapColors = {
   'mostly-sunny': new Color('#ffcb55'),
@@ -33,6 +35,13 @@ const heatmapColors = {
 
 function getDefaultSeatColor(seat: SeatLayout['metadata'][number]): Color {
   const sectionNumber = Number(seat.sectionId.split('-').at(-1)) || 1;
+  const sectionIndex = sectionNumber - 1;
+  if (
+    seat.tierId === 'lower' &&
+    radesStadiumConfig.grandstand.vipSectionIndices.includes(sectionIndex)
+  ) {
+    return vipSeatColor;
+  }
   const sectionBand = Math.floor(
     (sectionNumber - 1) / radesStadiumConfig.seats.colorSectionBandSize,
   );
@@ -124,7 +133,7 @@ export function SeatPicker({ geometry, layout, material }: SeatPickerProps) {
   const handleClick = (event: ThreeEvent<MouseEvent>) => {
     if (event.instanceId === undefined) return;
     const seat = layout.metadata[event.instanceId];
-    if (!seat) return;
+    if (!seat || isVisitorClosedSection(seat.sectionId)) return;
 
     event.stopPropagation();
     selectSection(seat.sectionId);
@@ -141,8 +150,13 @@ export function SeatPicker({ geometry, layout, material }: SeatPickerProps) {
       onPointerOut={() => {
         document.body.style.cursor = '';
       }}
-      onPointerOver={() => {
-        document.body.style.cursor = 'pointer';
+      onPointerOver={(event) => {
+        const seat =
+          event.instanceId === undefined
+            ? null
+            : layout.metadata[event.instanceId];
+        document.body.style.cursor =
+          seat && !isVisitorClosedSection(seat.sectionId) ? 'pointer' : '';
       }}
       receiveShadow={false}
     />

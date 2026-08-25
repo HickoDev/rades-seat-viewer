@@ -99,9 +99,10 @@ export function StadiumSidebar() {
           <strong>Source-calibrated</strong>
         </div>
         <p>
-          60,000 stated capacity · 64 frames at 33 m
+          60,000 historical reported capacity · current usable capacity not
+          asserted
           <br />
-          Virages have no individual seats · bowl and roof remain estimates
+          Lower virages have no chairs · upper virages closed to visitors
         </p>
       </footer>
     </aside>

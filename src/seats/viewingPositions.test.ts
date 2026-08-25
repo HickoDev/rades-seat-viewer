@@ -33,7 +33,7 @@ describe('stadium viewing positions', () => {
 
   it('distinguishes virage terraces from seated sections', () => {
     expect(isTerraceSection('lower-01')).toBe(true);
-    expect(isTerraceSection('upper-32')).toBe(true);
+    expect(isTerraceSection('upper-32')).toBe(false);
     expect(isTerraceSection('lower-05')).toBe(false);
     expect(findRepresentativeTerracePosition('lower-05')).toBeNull();
   });

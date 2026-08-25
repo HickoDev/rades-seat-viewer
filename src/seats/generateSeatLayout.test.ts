@@ -6,14 +6,14 @@ import { generateSeatLayout } from './generateSeatLayout';
 const layout = generateSeatLayout(radesStadiumConfig);
 
 describe('generateSeatLayout', () => {
-  it('does not mistake stated capacity for an exact plastic-seat count', () => {
+  it('does not mistake historical capacity for an exact chair count', () => {
     expect(layout.metadata.length).toBeLessThan(
-      radesStadiumConfig.identity.statedCapacity,
+      radesStadiumConfig.identity.historicalReportedCapacity,
     );
     expect(layout.metadata.length).toBeGreaterThan(25_000);
   });
 
-  it('leaves both configurable virage terraces without seat instances', () => {
+  it('leaves configured lower virage terraces without seat instances', () => {
     const seatlessIds = radesStadiumConfig.tiers.flatMap((tier) =>
       tier.seatlessSectionIndices.map(
         (sectionIndex) =>

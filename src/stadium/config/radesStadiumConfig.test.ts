@@ -17,7 +17,8 @@ describe('radesStadiumConfig', () => {
   });
 
   it('records the contractor-sourced structural facts', () => {
-    expect(radesStadiumConfig.identity.statedCapacity).toBe(60_000);
+    expect(radesStadiumConfig.identity.historicalReportedCapacity).toBe(60_000);
+    expect(radesStadiumConfig.identity.currentUsableCapacity).toBeNull();
     expect(radesStadiumConfig.structure).toMatchObject({
       frameCount: 64,
       portalFrameHeight: 33,
@@ -49,6 +50,14 @@ describe('radesStadiumConfig', () => {
     expect(west.throwingCircleOffsetZ).not.toBe(east.throwingCircleOffsetZ);
   });
 
+  it('matches the reference oval and adds the straight-side jump facility', () => {
+    const { straightJump } = radesStadiumConfig.track;
+
+    expect(radesStadiumConfig.track.laneCount).toBe(8);
+    expect(straightJump.runwayLength).toBeGreaterThan(35);
+    expect(straightJump.pitLength).toBeGreaterThan(8);
+  });
+
   it('groups inner-roof floodlights into maintainable banks', () => {
     const { roof } = radesStadiumConfig;
 
@@ -61,7 +70,7 @@ describe('radesStadiumConfig', () => {
 
   it('records the reported honor and press tribune capacities separately', () => {
     expect(
-      radesStadiumConfig.tiers.map((tier) => tier.reportedCapacity),
+      radesStadiumConfig.tiers.map((tier) => tier.historicalReportedCapacity),
     ).toEqual([32_000, 28_000]);
     expect(radesStadiumConfig.grandstand).toMatchObject({
       officialCapacity: 7_000,
@@ -73,6 +82,7 @@ describe('radesStadiumConfig', () => {
     expect(
       radesStadiumConfig.verification.values['grandstand.dimensions'],
     ).toBe('estimate-requires-calibration');
+    expect(radesStadiumConfig.grandstand.vipSectionIndices).toEqual([7, 8]);
   });
 
   it('records the four photographed circular ramp towers as estimates', () => {

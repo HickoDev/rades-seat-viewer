@@ -78,36 +78,13 @@ export function createConcourseFeatureMatrices(
 
     const frameThickness = details.concoursePortalFrameThickness;
     const frameDepth = details.concoursePortalDepth * 1.8;
-    const tangent = new Vector3(1, 0, 0).applyQuaternion(rotation);
-    const sideOffset = details.concoursePortalWidth / 2 + frameThickness / 2;
-    for (const side of [-1, 1] as const) {
-      portalFrames.push(
-        new Matrix4().compose(
-          position.clone().addScaledVector(tangent, side * sideOffset),
-          rotation,
-          new Vector3(
-            frameThickness,
-            details.concoursePortalHeight + frameThickness * 2,
-            frameDepth,
-          ),
-        ),
-      );
-    }
     portalFrames.push(
       new Matrix4().compose(
-        position
-          .clone()
-          .add(
-            new Vector3(
-              0,
-              details.concoursePortalHeight / 2 + frameThickness / 2,
-              0,
-            ),
-          ),
+        position,
         rotation,
         new Vector3(
           details.concoursePortalWidth + frameThickness * 2,
-          frameThickness,
+          details.concoursePortalHeight + frameThickness * 2,
           frameDepth,
         ),
       ),

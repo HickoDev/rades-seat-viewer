@@ -8,6 +8,7 @@ import {
 
 import type { StadiumConfig } from '../types/stadium.types';
 import { createStadiumPerimeterWallGeometry } from '../geometry/createStadiumPerimeterWallGeometry';
+import { createArchedPortalGeometry } from './createArchedPortalGeometry';
 import { createConcourseFeatureMatrices } from './createConcourseFeatureMatrices';
 
 type TierConfig = StadiumConfig['tiers'][number];
@@ -31,6 +32,11 @@ export function ConcourseRing({
     [details, lowerTier, upperTier],
   );
   const boxGeometry = useMemo(() => new BoxGeometry(1, 1, 1), []);
+  const portalGeometry = useMemo(() => createArchedPortalGeometry(), []);
+  const portalFrameGeometry = useMemo(
+    () => createArchedPortalGeometry({ frameThickness: 0.075 }),
+    [],
+  );
   const wallGeometries = useMemo(
     () => ({
       accent: createStadiumPerimeterWallGeometry({
@@ -131,6 +137,8 @@ export function ConcourseRing({
   useEffect(
     () => () => {
       boxGeometry.dispose();
+      portalGeometry.dispose();
+      portalFrameGeometry.dispose();
       Object.values(wallGeometries).forEach((geometry) => geometry.dispose());
       portalMaterial.dispose();
       frameMaterial.dispose();
@@ -142,6 +150,8 @@ export function ConcourseRing({
       frameMaterial,
       lightMaterial,
       portalMaterial,
+      portalFrameGeometry,
+      portalGeometry,
       signMaterial,
       wallGeometries,
     ],
@@ -178,13 +188,17 @@ export function ConcourseRing({
       </mesh>
       <instancedMesh
         ref={portalRef}
-        args={[boxGeometry, portalMaterial, upperTier.sectionCount]}
-        name="concourse-rectangular-portals"
+        args={[portalGeometry, portalMaterial, upperTier.sectionCount]}
+        name="concourse-arched-portals"
       />
       <instancedMesh
         ref={frameRef}
-        args={[boxGeometry, frameMaterial, features.portalFrames.length]}
-        name="concourse-portal-frames"
+        args={[
+          portalFrameGeometry,
+          frameMaterial,
+          features.portalFrames.length,
+        ]}
+        name="concourse-arched-portal-surrounds"
       />
       <instancedMesh
         ref={signRef}

@@ -15,7 +15,8 @@ export type StadiumConfig = {
     latitude: number;
     longitude: number;
     northRotationDegrees: number;
-    statedCapacity: number;
+    historicalReportedCapacity: number;
+    currentUsableCapacity: number | null;
   };
   pitch: {
     length: number;
@@ -56,6 +57,16 @@ export type StadiumConfig = {
       throwingCircleOffsetFromPitchEnd: number;
       throwingCircleOffsetZ: number;
     }>;
+    straightJump: {
+      side: -1 | 1;
+      direction: -1 | 1;
+      centerX: number;
+      outsideOffset: number;
+      runwayLength: number;
+      runwayWidth: number;
+      pitLength: number;
+      pitWidth: number;
+    };
   };
   fieldFurniture: {
     goalPostRadius: number;
@@ -73,7 +84,7 @@ export type StadiumConfig = {
   tiers: Array<{
     id: string;
     name: string;
-    reportedCapacity: number;
+    historicalReportedCapacity: number;
     sectionCount: number;
     rowCount: number;
     startRadiusX: number;
@@ -209,11 +220,15 @@ export type StadiumConfig = {
     officialCapacity: number;
     pressDeskCount: number;
     sectionIndices: number[];
+    vipSectionIndices: number[];
     width: number;
     depth: number;
     baseHeight: number;
     height: number;
     windowBayCount: number;
+    facadeLevelCount: number;
+    facadeWindowHeight: number;
+    facadeLevelSpacing: number;
     signBandHeight: number;
     frontInset: number;
     balconyDepth: number;
@@ -275,6 +290,7 @@ export type StadiumConfig = {
     lowerAccentColor: string;
     upperPrimaryColor: string;
     upperAccentColor: string;
+    vipColor: string;
     accentRowInterval: number;
     colorSectionBandSize: number;
   };

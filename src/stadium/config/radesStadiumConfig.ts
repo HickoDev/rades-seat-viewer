@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-19',
+  version: 'rades-procedural-20',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -16,7 +16,8 @@ export const radesStadiumConfig = {
     longitude: 10.27281,
     // Derived from the mapped pitch long axis. This is not a surveyed bearing.
     northRotationDegrees: -75.2,
-    statedCapacity: 60_000,
+    historicalReportedCapacity: 60_000,
+    currentUsableCapacity: null,
   },
   pitch: {
     length: 105,
@@ -35,7 +36,7 @@ export const radesStadiumConfig = {
     mowingStripeCount: 12,
   },
   track: {
-    laneCount: 10,
+    laneCount: 8,
     laneWidth: 1.22,
     straightLength: 84.39,
     innerCurveRadius: 36.5,
@@ -76,6 +77,18 @@ export const radesStadiumConfig = {
         throwingCircleOffsetZ: 12.4,
       },
     ],
+    // Straight-side long-jump furniture is positioned from the supplied
+    // interior model and is not based on a surveyed athletics plan.
+    straightJump: {
+      side: 1,
+      direction: 1,
+      centerX: -13,
+      outsideOffset: 4.3,
+      runwayLength: 40,
+      runwayWidth: 1.22,
+      pitLength: 9,
+      pitWidth: 3,
+    },
   },
   fieldFurniture: {
     goalPostRadius: 0.06,
@@ -94,7 +107,7 @@ export const radesStadiumConfig = {
     {
       id: 'lower',
       name: 'Enceinte inférieure',
-      reportedCapacity: 32_000,
+      historicalReportedCapacity: 32_000,
       sectionCount: 32,
       rowCount: 28,
       startRadiusX: 96,
@@ -162,7 +175,7 @@ export const radesStadiumConfig = {
     {
       id: 'upper',
       name: 'Enceinte supérieure',
-      reportedCapacity: 28_000,
+      historicalReportedCapacity: 28_000,
       sectionCount: 32,
       rowCount: 25,
       startRadiusX: 122,
@@ -194,7 +207,7 @@ export const radesStadiumConfig = {
         { sectionIndex: 22, row: 7, width: 4.8, height: 3.2 },
         { sectionIndex: 24, row: 7, width: 4.8, height: 3.2 },
       ],
-      seatlessSectionIndices: [0, 1, 2, 13, 14, 15, 16, 17, 18, 29, 30, 31],
+      seatlessSectionIndices: [],
       // The upper virage remains part of the physical bowl but is not offered
       // as a public viewing location in the current operating layout.
       closedToVisitorsSectionIndices: [
@@ -301,11 +314,15 @@ export const radesStadiumConfig = {
     officialCapacity: 7_000,
     pressDeskCount: 300,
     sectionIndices: [6, 7, 8, 9],
+    vipSectionIndices: [7, 8],
     width: 90,
     depth: 5.8,
     baseHeight: 13.8,
     height: 5.2,
-    windowBayCount: 16,
+    windowBayCount: 24,
+    facadeLevelCount: 3,
+    facadeWindowHeight: 0.78,
+    facadeLevelSpacing: 1.42,
     signBandHeight: 0.72,
     frontInset: 1.9,
     balconyDepth: 1.7,
@@ -368,6 +385,7 @@ export const radesStadiumConfig = {
     lowerAccentColor: '#c8478c',
     upperPrimaryColor: '#25aebd',
     upperAccentColor: '#bd3c82',
+    vipColor: '#1748b8',
     accentRowInterval: 14,
     colorSectionBandSize: 4,
   },
@@ -389,16 +407,17 @@ export const radesStadiumConfig = {
       'identity.latitude': 'calibrated-from-open-geodata',
       'identity.longitude': 'calibrated-from-open-geodata',
       'identity.northRotationDegrees': 'calibrated-from-open-geodata',
-      'identity.statedCapacity': 'verified-from-contractor',
+      'identity.historicalReportedCapacity': 'verified-from-contractor',
+      'identity.currentUsableCapacity': 'confirmed-by-project-owner',
       'pitch.length': 'verified-from-project-brief',
       'pitch.width': 'verified-from-project-brief',
       'pitch.markings': 'estimate-requires-calibration',
-      'track.laneCount': 'corroborated-secondary-source',
+      'track.laneCount': 'calibrated-from-authorized-visual-reference',
       'track.dimensions': 'estimate-requires-calibration',
       'track.fieldEventAprons': 'calibrated-from-authorized-visual-reference',
       fieldFurniture: 'estimate-requires-calibration',
       tiers: 'estimate-requires-calibration',
-      'tiers.reportedCapacities': 'corroborated-secondary-source',
+      'tiers.historicalReportedCapacities': 'corroborated-secondary-source',
       bowlDetails: 'estimate-requires-calibration',
       'bowlDetails.interiorVisualForm':
         'calibrated-from-authorized-visual-reference',
@@ -428,12 +447,12 @@ export const radesStadiumConfig = {
       occupants: 'estimate-requires-calibration',
     },
     notes: [
-      'The contractor SBF reports 60,000 seats, a 13,000 m² covered enclosure, and 64 portal frames reaching 33 m.',
+      'The contractor SBF historically reports 60,000 places, a 13,000 m² covered enclosure, and 64 portal frames reaching 33 m; the model does not assert a current usable capacity.',
       'Coordinates and scene orientation are calibrated from OpenStreetMap geometry and still require a survey.',
-      'The ten-lane track is corroborated by secondary references; its exact construction geometry requires verification.',
+      'The visible eight-lane oval and straight-side jump facility are calibrated from the supplied reference model; exact athletics construction geometry still requires a survey.',
       'Bowl and roof radii are procedural calibration estimates chosen to clear the track and match the visible silhouette.',
-      'Both virages are modeled as seatless terraces; their exact section boundaries still require seating plans.',
-      'Published summaries split the stated capacity into 32,000 lower-tribune and 28,000 upper-tribune places; procedural chair instances intentionally do not assert those totals.',
+      'The lower virages are modeled as seatless terraces; the upper virage keeps physical chairs but is closed to visitors. Exact boundaries still require seating plans.',
+      'Published historical summaries split capacity into 32,000 lower-tribune and 28,000 upper-tribune places; procedural chair instances and current visitor access intentionally do not assert those totals.',
       'Section rails, framed vomitories, and concourse openings are photo-calibrated procedural estimates.',
       'The honor stand is reported at 7,000 places and the press stand at 300 desks; their modeled envelope is photo-calibrated rather than surveyed.',
       'Goal nets, advertising hoardings, roof waves, support masts, and the ceremonial entrance are visual estimates from dated photographs and may vary by event or renovation state.',
@@ -441,17 +460,18 @@ export const radesStadiumConfig = {
       'Crowd and player motion is a lightweight illustrative match-day simulation, not motion-captured behavior or a reconstruction of a real match.',
       'Four circular access-ramp towers, the open X-braced upper facade, membrane seams, and suspended scoreboards are photo-calibrated visual estimates.',
       'The paired ramp arrangement, faceted roof character, and ceremonial-side massing were independently rebuilt from an authorized public visual reference; no reference mesh or texture is included.',
-      'The rectangular concourse bays, tier-separator fascia, track-bend event aprons, inner safety rail, and denser roof-edge lattice are visually calibrated from owner-supplied reference renders; their dimensions are not surveyed.',
+      'The arched concourse bays, tier-separator fascia, track-bend event aprons, inner safety rail, and denser roof-edge lattice are visually calibrated from owner-supplied reference renders; their dimensions are not surveyed.',
       'Vomitories and wide stair wedges use explicit per-section access data instead of an evenly repeated rule; their locations remain visual estimates pending seating plans.',
       'The main-stand player route includes the approximately 30 m retractable covered tunnel reported in January 2023; width, frame spacing, and exact endpoints remain visual estimates.',
       'The honor, press, control-room, and service-core volumes are modeled separately from interior references; their envelope and window rhythm remain unsurveyed estimates.',
       'The two athletics bends have independent apron, runway, sand-pit, and throwing-circle layouts derived from interior views; they are intentionally not mirrored.',
-      'Seat colors use broad section and row blocks rather than a fine checkerboard, while chairless virages use separate standing spectator instances.',
+      'Seat colors use broad section and row blocks rather than a fine checkerboard, while chairless lower virages use separate standing spectator instances.',
       'The inner roof now includes an estimated maintenance catwalk, clustered floodlight banks, and scoreboard service decks visible from spectator viewpoints.',
       'The bowl, seating rows, walkways, and front safety rail now follow a rounded-stadium capsule perimeter with flat long sides instead of a continuous mathematical ellipse.',
       'Four full-depth lower-tier corridors separate the two virages from the lateral stands; the ramp widths and portal dimensions are calibrated from the supplied reference model and remain unsurveyed.',
       'Upper-virage sections remain physically modeled but are marked closed to visitors; they are excluded from public POV selection, crowds, and visitor-facing simulations.',
       'The membrane, inner truss, fascia, lighting supports, and static shadow meshes now share the rounded-stadium plan visible in the supplied interior reference; the yellow scoreboard housings and diagonal hangers are visual estimates.',
+      'Repeated arched concourse bays, a continuous multi-level main-stand facade, and a blue VIP chair block are visually calibrated from the supplied interior model and remain unsurveyed.',
     ],
   },
 } satisfies StadiumConfig;

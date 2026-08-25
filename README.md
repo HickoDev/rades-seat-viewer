@@ -59,12 +59,12 @@ Heatmaps use one representative seat per section or per row, run in a Web Worker
 The model separates sourced facts from procedural estimates in the central typed configuration:
 
 - The 105 × 68 metre pitch and `Africa/Tunis` timezone remain explicit project requirements.
-- Stadium contractor SBF reports a 60,000 spectator capacity, a 13,000 m² covered enclosure, and 64 portal frames reaching 33 m. Capacity is not treated as a count of plastic seat instances.
+- Stadium contractor SBF historically reports 60,000 places, a 13,000 m² covered enclosure, and 64 portal frames reaching 33 m. This is not presented as the current usable capacity or as a count of plastic chair instances.
 - Published facility summaries report a 7,000-place honor tribune and a press tribune with 300 desks. Those capacities are recorded separately from the photo-calibrated suite geometry.
-- The two virages are modeled as stepped terraces without individual chair instances, following project-owner calibration. Their exact angular boundaries still require seating plans.
+- The lower virages are modeled as stepped terraces without individual chair instances, following project-owner calibration. Upper-virage chairs remain visible but those sections are closed to visitor POV selection. Exact angular boundaries still require seating plans.
 - The mapped stadium centre and pitch bearing are derived from OpenStreetMap geometry, not a land survey.
-- A ten-lane track is a corroborated secondary-source value. Track construction details, all bowl radii, roof radii, access ramps, and other uncertain dimensions remain configurable estimates.
-- Radès photo and authorized-render references show light-concrete radial aisles, edge barriers, framed tier vomitories, rectangular concourse bays between tiers, warm field-event aprons inside the track bends, and a continuous trackside safety rail. The implementation reproduces those visual relationships procedurally without copying photographic or model assets.
+- The supplied exact-model reference is represented with an eight-lane oval and a straight-side jump facility. Track construction details, all bowl radii, roof radii, access ramps, and other uncertain dimensions remain configurable estimates pending survey data.
+- Radès photo and authorized-render references show light-concrete radial aisles, edge barriers, framed tier vomitories, arched concourse bays between tiers, warm field-event aprons inside the track bends, and a continuous trackside safety rail. The implementation reproduces those visual relationships procedurally without copying photographic or model assets.
 - The beige scalloped membrane, gray underside, deep cross-braced white inner truss, cable-stayed masts, end scoreboards, glazed honor frontage, and cream/blue/yellow main entrance are modeled as configurable visual estimates. See the [visual calibration record](docs/rades-visual-calibration.md).
 - Interior photographs locate two long segmented translucent-blue dugouts on the athletics track in front of the main stand. Their modeled dimensions, offsets, seating, and occupants are photo-calibrated estimates rather than surveyed measurements.
 - A January 2023 report documents an approximately 30-metre retractable covered players' tunnel reaching the playing area. The procedural route now passes through a dedicated lower-stand opening between widened technical areas, with matching gaps in the trackside rail, early seating rows, and advertising line. Its exact width and frame spacing remain estimates.
@@ -79,7 +79,7 @@ Calibration references:
 - [IFAB Law 3 — two teams of up to eleven players](https://www.theifab.com/laws/latest/the-players/)
 - [OpenStreetMap stadium geometry](https://www.openstreetmap.org/way/104576770)
 - [OpenStreetMap mapped pitch geometry](https://www.openstreetmap.org/way/26235346)
-- [French-language stadium summary (secondary source for the ten-lane track)](https://fr.wikipedia.org/wiki/Stade_olympique_de_Rad%C3%A8s)
+- [French-language stadium summary](https://fr.wikipedia.org/wiki/Stade_olympique_de_Rad%C3%A8s)
 - [Wikimedia Commons Radès stadium photo archive](https://commons.wikimedia.org/wiki/Category:Rad%C3%A8s_stadium)
 - [2017 interior photograph showing aisles, vomitories, and the concourse](https://commons.wikimedia.org/wiki/File:Stade_de_Rad%C3%A9s_2017_1.jpg)
 - [Mosaïque FM interior photograph showing the Radès technical-area shelters](https://www.mosaiquefm.net/fr/football/1138703/est-zamalek-les-virages-du-stade-de-rades-ouverts)

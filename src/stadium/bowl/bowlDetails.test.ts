@@ -81,7 +81,7 @@ describe('procedural bowl details', () => {
 
     expect(features.concourse.height).toBeGreaterThan(0);
     expect(features.portals).toHaveLength(upperTier.sectionCount);
-    expect(features.portalFrames).toHaveLength(upperTier.sectionCount * 3);
+    expect(features.portalFrames).toHaveLength(upperTier.sectionCount);
     expect(features.signs).toHaveLength(upperTier.sectionCount);
     expect(features.lights).toHaveLength(upperTier.sectionCount);
   });

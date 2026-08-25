@@ -5,9 +5,9 @@ This document separates source-backed stadium facts from visual calibration esti
 ## Source-backed facts
 
 - SBF reports 64 reinforced-concrete portal frames reaching 33 metres, plus 22,000 m³ of concrete and 2,800 tonnes of steel in the supporting structure.
-- Published stadium summaries consistently report 60,000 covered places, with 32,000 in the lower tribune and 28,000 in the upper tribune. This is a spectator-capacity statement, not a plastic-chair instance count.
+- Published stadium summaries historically report 60,000 covered places, with 32,000 in the lower tribune and 28,000 in the upper tribune. This is not treated as a current usable-capacity claim or a plastic-chair instance count.
 - The same summaries report a 7,000-place honor/official tribune and a press tribune equipped with 300 desks.
-- The project owner has confirmed that the two virages must be represented as chairless terraces. Their exact angular boundaries remain unverified.
+- The project owner has confirmed that the lower virages must be represented as chairless terraces. Upper-virage chairs remain physically modeled, while those sections are closed to public POV selection. Exact angular boundaries remain unverified.
 - Two large end scoreboards are visible in interior photographs.
 
 ## Repeated visual features
@@ -15,7 +15,7 @@ This document separates source-backed stadium facts from visual calibration esti
 The implementation uses the following features because they recur across photographs from different dates and viewpoints:
 
 - a two-level pale-blue seating bowl;
-- a pale intermediate concourse articulated by repeated dark rectangular openings, light frames, and a blue accent strip;
+- a pale intermediate concourse articulated by repeated dark arched openings, light surrounds, and a blue accent strip;
 - radial light-concrete aisles, metal barriers, and framed vomitories;
 - a long glazed honor/press frontage on one sideline;
 - a white tensile roof with visibly sagged radial membrane bays, a scalloped outer edge, and a dense white inner space truss;
@@ -31,7 +31,7 @@ Advertising artwork changes by competition and sponsor. The application therefor
 
 The project owner reports that 3D artist Hassene Alaya granted permission to use the publicly displayed model as a visual reference, provided its original model file is not used. This project therefore independently recreates observed forms with procedural TypeScript geometry. It does not download, import, extract, trace, redistribute, or include any mesh or texture from the reference model.
 
-The owner-supplied interior and aerial renders used in the August 2026 calibration pass remain outside the repository. They were used to compare proportions and recurring structural relationships only: tier separation, rectangular concourse rhythm, seating color blocks, track-bend aprons, honor/press frontage, scoreboard placement, and roof-lattice depth.
+The owner-supplied interior and aerial renders used in the August 2026 calibration pass remain outside the repository. They were used to compare proportions and recurring structural relationships only: rounded bowl plan, tier separation, arched concourse rhythm, seating color blocks, track and jump facilities, continuous honor/press frontage, scoreboard placement, and roof-lattice depth.
 
 ## Configurable estimates
 

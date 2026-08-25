@@ -14,6 +14,7 @@ import { FootballPitch } from './pitch/FootballPitch';
 import { PlayerEntranceTunnel } from './pitch/PlayerEntranceTunnel';
 import { AthleticsTrack } from './track/AthleticsTrack';
 import { AthleticsEventAprons } from './track/AthleticsEventAprons';
+import { AthleticsStraightJump } from './track/AthleticsStraightJump';
 import { StadiumApron } from './track/StadiumApron';
 import { TracksideSafetyRail } from './track/TracksideSafetyRail';
 import { LightingStructures } from './roof/LightingStructures';
@@ -40,6 +41,7 @@ export function RadesStadium() {
       <StadiumApron />
       <AthleticsEventAprons />
       <AthleticsTrack />
+      <AthleticsStraightJump />
       <TracksideSafetyRail />
       <FootballPitch />
       <PlayerEntranceTunnel />

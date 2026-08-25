@@ -8,14 +8,15 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-23',
+  version: 'rades-procedural-24',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
     latitude: 36.74777,
     longitude: 10.27281,
-    // Derived from the mapped pitch long axis. This is not a surveyed bearing.
-    northRotationDegrees: -75.2,
+    // The mapped pitch bearing with the project-owner requested 180-degree
+    // reversal. This is an intentional viewing orientation, not a survey.
+    northRotationDegrees: 104.8,
     historicalReportedCapacity: 60_000,
     currentUsableCapacity: null,
   },
@@ -402,7 +403,7 @@ export const radesStadiumConfig = {
     values: {
       'identity.latitude': 'calibrated-from-open-geodata',
       'identity.longitude': 'calibrated-from-open-geodata',
-      'identity.northRotationDegrees': 'calibrated-from-open-geodata',
+      'identity.northRotationDegrees': 'confirmed-by-project-owner',
       'identity.historicalReportedCapacity': 'verified-from-contractor',
       'identity.currentUsableCapacity': 'confirmed-by-project-owner',
       'pitch.length': 'verified-from-project-brief',
@@ -444,7 +445,7 @@ export const radesStadiumConfig = {
     },
     notes: [
       'The contractor SBF historically reports 60,000 places, a 13,000 m² covered enclosure, and 64 portal frames reaching 33 m; the model does not assert a current usable capacity.',
-      'Coordinates and scene orientation are calibrated from OpenStreetMap geometry and still require a survey.',
+      'Coordinates come from OpenStreetMap geometry; the scene uses the project-owner requested 180-degree reversal of the mapped pitch bearing and still requires a survey.',
       'The visible eight-lane oval and straight-side jump facility are calibrated from the supplied reference model; exact athletics construction geometry still requires a survey.',
       'Bowl and roof radii are procedural calibration estimates chosen to clear the track and match the visible silhouette.',
       'The lower virages are modeled as seatless terraces; the upper virage keeps physical chairs but is closed to visitors. Exact boundaries still require seating plans.',
@@ -463,7 +464,7 @@ export const radesStadiumConfig = {
       'The two athletics bends have independent apron, runway, sand-pit, and throwing-circle layouts derived from interior views; they are intentionally not mirrored.',
       'Seat colors use broad section and row blocks rather than a fine checkerboard, while chairless lower virages use separate standing spectator instances.',
       'The inner roof now includes an estimated maintenance catwalk, clustered floodlight banks, and scoreboard service decks visible from spectator viewpoints.',
-      'Astronomical lighting, selected-seat exposure, and heatmaps share the configured map-derived coordinates, north rotation, and one procedural shadow-occluder model; roof and bowl calibration remains estimated rather than surveyed.',
+      'Astronomical lighting, selected-seat exposure, and heatmaps share the configured coordinates, project-owner selected 180-degree orientation reversal, and one procedural shadow-occluder model; roof and bowl calibration remains estimated rather than surveyed.',
       'The bowl, seating rows, walkways, and front safety rail now follow a rounded-stadium capsule perimeter with flat long sides instead of a continuous mathematical ellipse.',
       'Four full-depth lower-tier cuts separate the two virages from the lateral stands. They contain no stair, ramp, floor, or portal: the open void and safety barriers follow the supplied reference model and remain unsurveyed.',
       'Tier vomitories terminate inside the recessed passage and do not create a visual opening through the stadium exterior.',

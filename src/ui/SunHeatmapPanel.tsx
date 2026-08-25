@@ -44,7 +44,7 @@ export function SunHeatmapPanel() {
           </span>
           <div>
             <strong>Stadium exposure map</strong>
-            <small>Shown on seats and spectators</small>
+            <small>Shown on spectator clothing</small>
           </div>
         </div>
         <span className="automatic-badge">Automatic</span>
@@ -111,7 +111,7 @@ export function SunHeatmapPanel() {
             ))}
           </ul>
           <small>
-            Color is applied to spectator clothing as well as chairs so the map
+            Chair colors stay unchanged; exposure color on spectator clothing
             remains visible in occupied stands. Labels—not color alone—carry the
             meaning. This is sunlight exposure, not measured temperature.
           </small>

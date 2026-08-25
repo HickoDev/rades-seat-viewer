@@ -46,7 +46,9 @@ describe('sunlight calculations', () => {
       radesStadiumConfig.identity.northRotationDegrees,
     );
 
-    expect(mappedAxisInWorld.x).toBeGreaterThan(0.999);
+    // The project-owner requested reverse direction maps the same geographic
+    // long axis to world -X rather than +X.
+    expect(mappedAxisInWorld.x).toBeLessThan(-0.999);
     expect(Math.abs(mappedAxisInWorld.z)).toBeLessThan(0.001);
   });
 
@@ -64,7 +66,7 @@ describe('sunlight calculations', () => {
     );
 
     expect(sun.azimuthRadians * (180 / Math.PI)).toBeCloseTo(266.51, 1);
-    expect(direction.z).toBeLessThan(-0.9);
+    expect(direction.z).toBeGreaterThan(0.9);
   });
 
   it('returns stadium-shadow when a roof intersects the sun ray', () => {

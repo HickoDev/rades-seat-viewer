@@ -2,6 +2,7 @@ import { useFrame } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import {
   Color,
+  Euler,
   Matrix4,
   MeshStandardMaterial,
   Quaternion,
@@ -38,8 +39,6 @@ const playerHairColors = [
   new Color('#35251c'),
   new Color('#0d0d0c'),
 ];
-const upAxis = new Vector3(0, 1, 0);
-const unitScale = new Vector3(1, 1, 1);
 const ignoreRaycast = () => undefined;
 
 export function MatchPlayers() {
@@ -107,6 +106,8 @@ export function MatchPlayers() {
       matrix: new Matrix4(),
       position: new Vector3(),
       rotation: new Quaternion(),
+      euler: new Euler(0, 0, 0, 'YXZ'),
+      scale: new Vector3(1, 1, 1),
     }),
     [],
   );
@@ -126,11 +127,26 @@ export function MatchPlayers() {
         ballPosition,
       );
       transforms.position.set(...pose.position);
-      transforms.rotation.setFromAxisAngle(upAxis, pose.rotationY);
+      const runningAmount = Math.min(pose.movementSpeed / 6.5, 1);
+      const strideCompression =
+        Math.abs(Math.sin(pose.stridePhase)) * runningAmount * 0.018;
+      const lateralLean = Math.sin(pose.stridePhase) * runningAmount * 0.018;
+      transforms.euler.set(
+        pose.leanRadians,
+        pose.rotationY,
+        lateralLean,
+        'YXZ',
+      );
+      transforms.rotation.setFromEuler(transforms.euler);
+      transforms.scale.set(
+        1 + strideCompression * 0.28,
+        1 - strideCompression,
+        1 + strideCompression * 0.18,
+      );
       transforms.matrix.compose(
         transforms.position,
         transforms.rotation,
-        unitScale,
+        transforms.scale,
       );
       body.setMatrixAt(instanceId, transforms.matrix);
       head.setMatrixAt(instanceId, transforms.matrix);
@@ -142,8 +158,8 @@ export function MatchPlayers() {
 
     if (ballRef.current) {
       ballRef.current.position.set(...ballPosition);
-      ballRef.current.rotation.x = elapsedSeconds * 2.8;
-      ballRef.current.rotation.z = elapsedSeconds * 1.9;
+      ballRef.current.rotation.x = elapsedSeconds * 5.4;
+      ballRef.current.rotation.z = elapsedSeconds * 3.7;
     }
   };
 

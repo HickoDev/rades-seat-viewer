@@ -396,6 +396,11 @@ export const radesStadiumConfig = {
     crowdAnimatedFraction: 0.06,
     crowdMotionAmplitude: 0.035,
     crowdMotionCyclesPerSecond: 0.18,
+    // Artistic crowd-motion estimates, tuned for visibility without making the
+    // standing terraces look synchronised or affecting seat-view geometry.
+    virageAnimatedFraction: 0.62,
+    virageBounceAmplitude: 0.085,
+    virageBounceCyclesPerSecond: 1.05,
     technicalAreaSeatedPerTeam: 9,
     technicalAreaStandingPerTeam: 2,
   },

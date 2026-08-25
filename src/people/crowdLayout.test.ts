@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { isVisitorClosedSection } from '../seats/viewingPositions';
-import { generateCrowdMembers, radesCrowdPlacementLayout } from './crowdLayout';
+import {
+  calculateVirageSupporterMotion,
+  generateCrowdMembers,
+  radesCrowdPlacementLayout,
+} from './crowdLayout';
 
 describe('generateCrowdMembers', () => {
   it('is deterministic and respects the requested occupancy range', () => {
@@ -48,5 +52,48 @@ describe('generateCrowdMembers', () => {
     expect(animated.length).toBeGreaterThan(400);
     expect(animated.length).toBeLessThan(800);
     expect(animated.every((member) => member.motionStrength > 0)).toBe(true);
+  });
+
+  it('creates bounded, staggered supporter bounces across the virage', () => {
+    const members = generateCrowdMembers(
+      radesCrowdPlacementLayout.metadata.slice(0, 10_000),
+      1,
+      1,
+    );
+    const first = members[0];
+    const second = members.find(
+      (member) =>
+        member.placement.rowNumber !== first.placement.rowNumber ||
+        member.placement.seatNumber !== first.placement.seatNumber,
+    );
+    expect(second).toBeDefined();
+    if (!second) return;
+
+    const amplitude = 0.085;
+    const firstMotion = calculateVirageSupporterMotion(
+      first,
+      1.25,
+      amplitude,
+      1.05,
+    );
+    const repeatedMotion = calculateVirageSupporterMotion(
+      first,
+      1.25,
+      amplitude,
+      1.05,
+    );
+    const neighbouringMotion = calculateVirageSupporterMotion(
+      second,
+      1.25,
+      amplitude,
+      1.05,
+    );
+
+    expect(repeatedMotion).toEqual(firstMotion);
+    expect(firstMotion.verticalOffset).toBeGreaterThanOrEqual(0);
+    expect(firstMotion.verticalOffset).toBeLessThanOrEqual(amplitude);
+    expect(firstMotion.scaleY).toBeGreaterThanOrEqual(0.978);
+    expect(firstMotion.scaleY).toBeLessThanOrEqual(1);
+    expect(neighbouringMotion).not.toEqual(firstMotion);
   });
 });

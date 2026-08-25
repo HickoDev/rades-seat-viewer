@@ -76,5 +76,36 @@ describe('createMatchPlayerLayout', () => {
     const later = calculateMatchPlayerPose(player, 8, radesStadiumConfig.pitch);
     expect(later.position).not.toEqual(start.position);
     expect(later.rotationY).not.toBe(start.rotationY);
+    expect(later.movementSpeed).toBeGreaterThan(0);
+    expect(later.movementSpeed).toBeLessThan(10);
+    expect(later.leanRadians).toBeGreaterThanOrEqual(0);
+    expect(later.leanRadians).toBeLessThanOrEqual(0.1);
+  });
+
+  it('moves the ball through smooth dribbles and short passes', () => {
+    let previous = calculateBallPosition(0, radesStadiumConfig.pitch);
+    let maximumStep = 0;
+    let maximumHeight = previous[1];
+
+    for (
+      let elapsedSeconds = 0.1;
+      elapsedSeconds <= 60;
+      elapsedSeconds += 0.1
+    ) {
+      const next = calculateBallPosition(
+        elapsedSeconds,
+        radesStadiumConfig.pitch,
+      );
+      maximumStep = Math.max(
+        maximumStep,
+        Math.hypot(next[0] - previous[0], next[2] - previous[2]),
+      );
+      maximumHeight = Math.max(maximumHeight, next[1]);
+      previous = next;
+    }
+
+    expect(maximumStep).toBeLessThan(1.2);
+    expect(maximumHeight).toBeGreaterThan(0.45);
+    expect(maximumHeight).toBeLessThan(0.65);
   });
 });

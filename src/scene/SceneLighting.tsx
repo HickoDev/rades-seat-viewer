@@ -1,12 +1,17 @@
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { useSunPreview } from '../sunlight/useSunPreview';
 import { useRenderQuality } from '../utils/useRenderQuality';
+import { calculateDaylightLightingLevels } from './calculateDaylightLightingLevels';
 
 export function SceneLighting() {
   const lightDistance = radesStadiumConfig.roof.outerRadiusX * 0.75;
   const renderQuality = useRenderQuality();
   const sunPreview = useSunPreview();
   const daylightFactor = sunPreview?.daylightFactor ?? 1;
+  const lighting = calculateDaylightLightingLevels(
+    daylightFactor,
+    sunPreview?.isNight ?? false,
+  );
   const direction = sunPreview?.direction;
   const showDirectionalSun =
     !sunPreview || sunPreview.position.altitudeRadians > 0;
@@ -23,11 +28,11 @@ export function SceneLighting() {
       <hemisphereLight
         args={[
           sunPreview?.isNight ? '#152442' : '#eaf7ff',
-          sunPreview?.isNight ? '#111714' : '#6f776d',
-          0.16 + daylightFactor * 0.5,
+          sunPreview?.isNight ? '#111714' : '#918d80',
+          lighting.hemisphereIntensity,
         ]}
       />
-      <ambientLight intensity={sunPreview?.isNight ? 0.08 : 0.055} />
+      <ambientLight intensity={lighting.ambientIntensity} />
       {showDirectionalSun && (
         <directionalLight
           castShadow={renderQuality === 'high'}
@@ -36,11 +41,11 @@ export function SceneLighting() {
               ? '#ffd09a'
               : '#fff9ed'
           }
-          intensity={sunPreview ? 0.45 + daylightFactor * 2.35 : 2.1}
+          intensity={lighting.directionalIntensity}
           position={position}
           shadow-bias={-0.00018}
           shadow-normalBias={0.035}
-          shadow-radius={1.25}
+          shadow-radius={2}
           shadow-mapSize-width={renderQuality === 'high' ? 2048 : 512}
           shadow-mapSize-height={renderQuality === 'high' ? 2048 : 512}
           shadow-camera-near={1}

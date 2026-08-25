@@ -9,7 +9,9 @@ export function QualityControls() {
     <label className="quality-control">
       <span>
         <strong>Rendering quality</strong>
-        <small>Auto lowers detail on compact touch devices</small>
+        <small>
+          Auto uses high detail on desktop and lighter detail on compact screens
+        </small>
       </span>
       <select
         aria-label="Rendering quality"

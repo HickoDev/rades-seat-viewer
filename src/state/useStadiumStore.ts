@@ -76,7 +76,7 @@ const initialState = {
   heatmapResolution: 'section' as const,
   heatmapTimeMode: 'instant' as const,
   sunHeatmapResult: null,
-  qualityMode: 'high' as const,
+  qualityMode: 'auto' as const,
 };
 
 export const useStadiumStore = create<StadiumState>((set) => ({

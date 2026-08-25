@@ -303,6 +303,9 @@ export type StadiumConfig = {
     crowdAnimatedFraction: number;
     crowdMotionAmplitude: number;
     crowdMotionCyclesPerSecond: number;
+    virageAnimatedFraction: number;
+    virageBounceAmplitude: number;
+    virageBounceCyclesPerSecond: number;
     technicalAreaSeatedPerTeam: number;
     technicalAreaStandingPerTeam: number;
   };

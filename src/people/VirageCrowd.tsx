@@ -1,6 +1,8 @@
+import { useFrame } from '@react-three/fiber';
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import {
   Color,
+  InstancedBufferAttribute,
   Matrix4,
   MeshLambertMaterial,
   MeshStandardMaterial,
@@ -15,6 +17,7 @@ import { useStadiumStore } from '../state/useStadiumStore';
 import { heatmapColorValues } from '../sunlight/heatmapColors';
 import { getHeatmapGroupKey } from '../sunlight/sunlightHeatmap';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
+import { useReducedMotion } from '../utils/useReducedMotion';
 import { useRenderQuality } from '../utils/useRenderQuality';
 import {
   createPersonBodyGeometry,
@@ -51,6 +54,68 @@ const heatmapColors = {
   'fully-shaded': new Color(heatmapColorValues['fully-shaded']),
 } as const;
 
+type VirageBounceUniforms = {
+  time: { value: number };
+  amplitude: { value: number };
+  cyclesPerSecond: { value: number };
+  enabled: { value: number };
+};
+
+type VirageMaterial = MeshLambertMaterial | MeshStandardMaterial;
+
+function enableVirageBounce(
+  material: VirageMaterial,
+  uniforms: VirageBounceUniforms,
+): VirageMaterial {
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.uVirageTime = uniforms.time;
+    shader.uniforms.uVirageAmplitude = uniforms.amplitude;
+    shader.uniforms.uVirageCyclesPerSecond = uniforms.cyclesPerSecond;
+    shader.uniforms.uVirageMotionEnabled = uniforms.enabled;
+    shader.vertexShader = shader.vertexShader
+      .replace(
+        '#include <common>',
+        `#include <common>
+attribute vec3 virageMotion;
+uniform float uVirageTime;
+uniform float uVirageAmplitude;
+uniform float uVirageCyclesPerSecond;
+uniform float uVirageMotionEnabled;`,
+      )
+      .replace(
+        '#include <begin_vertex>',
+        `#include <begin_vertex>
+if (uVirageMotionEnabled > 0.5 && virageMotion.z > 0.5) {
+  float virageWave =
+    uVirageTime * uVirageCyclesPerSecond * 6.28318530718 + virageMotion.x;
+  float viragePulse = max(0.0, sin(virageWave));
+  float virageFollowThrough = max(0.0, sin(virageWave * 0.5 + 0.8));
+  float virageBounce =
+    uVirageAmplitude * virageMotion.y *
+    (viragePulse * 0.86 + virageFollowThrough * 0.14);
+  transformed.y *= 1.0 - viragePulse * 0.022 * virageMotion.y;
+  transformed.z +=
+    sin(virageWave - 0.56548667765) * transformed.y * 0.035 * virageMotion.y;
+  transformed.y += virageBounce;
+}`,
+      );
+  };
+  material.customProgramCacheKey = () => 'rades-virage-bounce-v1';
+  material.userData.virageTimeUniform = uniforms.time;
+  return material;
+}
+
+function updateVirageTimeUniform(
+  mesh: InstancedMesh | null,
+  elapsedSeconds: number,
+): void {
+  const material = mesh?.material;
+  if (!material || Array.isArray(material)) return;
+  const timeUniform = material.userData.virageTimeUniform as
+    { value: number } | undefined;
+  if (timeUniform) timeUniform.value = elapsedSeconds;
+}
+
 function memberKey(member: ReturnType<typeof generateCrowdMembers>[number]) {
   const placement = member.placement;
   return `${placement.sectionId}:${placement.rowNumber}:${placement.seatNumber}`;
@@ -62,6 +127,7 @@ export function VirageCrowd() {
   const hairRef = useRef<InstancedMesh>(null);
   const hiddenInstanceRef = useRef<number | null>(null);
   const renderQuality = useRenderQuality();
+  const prefersReducedMotion = useReducedMotion();
   const cameraMode = useStadiumStore((state) => state.cameraMode);
   const selectedSectionId = useStadiumStore((state) => state.selectedSectionId);
   const selectedRow = useStadiumStore((state) => state.selectedRow);
@@ -78,14 +144,27 @@ export function VirageCrowd() {
       generateCrowdMembers(
         radesCrowdPlacementLayout.metadata,
         occupancy,
-        0,
+        occupants.virageAnimatedFraction,
       ).filter(
         (member) =>
           isTerraceSection(member.placement.sectionId) &&
           !isVisitorClosedSection(member.placement.sectionId),
       ),
-    [occupancy],
+    [occupancy, occupants.virageAnimatedFraction],
   );
+  const motionData = useMemo(() => {
+    const data = new Float32Array(members.length * 3);
+    members.forEach((member, instanceId) => {
+      const placement = member.placement;
+      data[instanceId * 3] =
+        placement.rowNumber * 0.19 +
+        placement.seatNumber * 0.065 +
+        member.motionPhase * 0.14;
+      data[instanceId * 3 + 1] = member.motionStrength;
+      data[instanceId * 3 + 2] = member.animated ? 1 : 0;
+    });
+    return data;
+  }, [members]);
   const instanceByPlacement = useMemo(
     () =>
       new Map(
@@ -128,21 +207,75 @@ export function VirageCrowd() {
       ),
     [occupants.standingSpectatorHeight],
   );
-  const bodyMaterial = useMemo(
+  const motionAttributes = useMemo(
     () =>
+      Array.from(
+        { length: 3 },
+        () => new InstancedBufferAttribute(motionData.slice(), 3),
+      ),
+    [motionData],
+  );
+  const bounceUniforms = useMemo<VirageBounceUniforms>(
+    () => ({
+      time: { value: 0 },
+      amplitude: { value: occupants.virageBounceAmplitude },
+      cyclesPerSecond: { value: occupants.virageBounceCyclesPerSecond },
+      enabled: { value: prefersReducedMotion ? 0 : 1 },
+    }),
+    [
+      occupants.virageBounceAmplitude,
+      occupants.virageBounceCyclesPerSecond,
+      prefersReducedMotion,
+    ],
+  );
+  const bodyMaterial = useMemo(() => {
+    const material =
       renderQuality === 'high'
         ? new MeshStandardMaterial({ color: '#ffffff', roughness: 0.9 })
-        : new MeshLambertMaterial({ color: '#ffffff' }),
-    [renderQuality],
-  );
+        : new MeshLambertMaterial({ color: '#ffffff' });
+    return prefersReducedMotion
+      ? material
+      : enableVirageBounce(material, bounceUniforms);
+  }, [bounceUniforms, prefersReducedMotion, renderQuality]);
   const headMaterial = useMemo(
-    () => new MeshLambertMaterial({ color: '#ffffff' }),
-    [],
+    () =>
+      prefersReducedMotion
+        ? new MeshLambertMaterial({ color: '#ffffff' })
+        : enableVirageBounce(
+            new MeshLambertMaterial({ color: '#ffffff' }),
+            bounceUniforms,
+          ),
+    [bounceUniforms, prefersReducedMotion],
   );
   const hairMaterial = useMemo(
-    () => new MeshLambertMaterial({ color: '#ffffff' }),
-    [],
+    () =>
+      prefersReducedMotion
+        ? new MeshLambertMaterial({ color: '#ffffff' })
+        : enableVirageBounce(
+            new MeshLambertMaterial({ color: '#ffffff' }),
+            bounceUniforms,
+          ),
+    [bounceUniforms, prefersReducedMotion],
   );
+
+  useLayoutEffect(() => {
+    if (prefersReducedMotion) return;
+    const geometries = [bodyGeometry, headGeometry, hairGeometry];
+    geometries.forEach((geometry, index) => {
+      geometry.setAttribute('virageMotion', motionAttributes[index]);
+    });
+    return () => {
+      geometries.forEach((geometry) => {
+        geometry.deleteAttribute('virageMotion');
+      });
+    };
+  }, [
+    bodyGeometry,
+    hairGeometry,
+    headGeometry,
+    motionAttributes,
+    prefersReducedMotion,
+  ]);
 
   useLayoutEffect(() => {
     const body = bodyRef.current;
@@ -152,10 +285,14 @@ export function VirageCrowd() {
 
     const matrix = new Matrix4();
     members.forEach((member, instanceId) => {
-      matrix.fromArray(
-        radesCrowdPlacementLayout.matrices,
-        member.placementIndex * 16,
-      );
+      if (hiddenInstanceRef.current === instanceId) {
+        matrix.copy(hiddenMatrix);
+      } else {
+        matrix.fromArray(
+          radesCrowdPlacementLayout.matrices,
+          member.placementIndex * 16,
+        );
+      }
       body.setMatrixAt(instanceId, matrix);
       head.setMatrixAt(instanceId, matrix);
       hair?.setMatrixAt(instanceId, matrix);
@@ -184,7 +321,6 @@ export function VirageCrowd() {
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
       mesh.computeBoundingSphere();
     }
-    hiddenInstanceRef.current = null;
   }, [heatmapColorByGroup, members, sunHeatmapResult?.resolution]);
 
   useEffect(() => {
@@ -225,27 +361,38 @@ export function VirageCrowd() {
     selectedSectionId,
   ]);
 
+  useFrame((state) => {
+    if (prefersReducedMotion) return;
+    updateVirageTimeUniform(bodyRef.current, state.clock.getElapsedTime());
+  });
+
   useEffect(
     () => () => {
       bodyGeometry.dispose();
       headGeometry.dispose();
       hairGeometry.dispose();
+    },
+    [bodyGeometry, hairGeometry, headGeometry],
+  );
+
+  useEffect(
+    () => () => {
       bodyMaterial.dispose();
       headMaterial.dispose();
       hairMaterial.dispose();
     },
-    [
-      bodyGeometry,
-      bodyMaterial,
-      hairGeometry,
-      hairMaterial,
-      headGeometry,
-      headMaterial,
-    ],
+    [bodyMaterial, hairMaterial, headMaterial],
   );
 
   return (
-    <group name="standing-virage-crowd" userData={{ seatingType: 'terrace' }}>
+    <group
+      name="standing-virage-crowd"
+      userData={{
+        animated: true,
+        animatedFraction: occupants.virageAnimatedFraction,
+        seatingType: 'terrace',
+      }}
+    >
       <instancedMesh
         ref={bodyRef}
         args={[bodyGeometry, bodyMaterial, members.length]}

@@ -11,6 +11,13 @@ export type CrowdMember = {
   motionStrength: number;
 };
 
+export type VirageSupporterMotion = {
+  verticalOffset: number;
+  yawOffsetRadians: number;
+  forwardLeanRadians: number;
+  scaleY: number;
+};
+
 export const radesCrowdPlacementLayout = radesViewingPositionLayout;
 
 function stableHash(value: string): number {
@@ -49,4 +56,36 @@ export function generateCrowdMembers(
   });
 
   return members;
+}
+
+export function calculateVirageSupporterMotion(
+  member: CrowdMember,
+  elapsedSeconds: number,
+  amplitude: number,
+  cyclesPerSecond: number,
+): VirageSupporterMotion {
+  const placement = member.placement;
+  const beat = elapsedSeconds * cyclesPerSecond * Math.PI * 2;
+  const terraceWavePhase =
+    placement.rowNumber * 0.19 +
+    placement.seatNumber * 0.065 +
+    member.motionPhase * 0.14;
+  const wave = beat + terraceWavePhase;
+  const upwardPulse = Math.max(0, Math.sin(wave));
+  const followThrough = Math.max(0, Math.sin(wave * 0.5 + 0.8));
+  const verticalOffset =
+    amplitude *
+    member.motionStrength *
+    (upwardPulse * 0.86 + followThrough * 0.14);
+
+  return {
+    verticalOffset,
+    yawOffsetRadians:
+      Math.sin(wave * 0.54 + member.motionPhase) *
+      0.024 *
+      member.motionStrength,
+    forwardLeanRadians:
+      Math.sin(wave - Math.PI * 0.18) * 0.035 * member.motionStrength,
+    scaleY: 1 - upwardPulse * 0.022 * member.motionStrength,
+  };
 }

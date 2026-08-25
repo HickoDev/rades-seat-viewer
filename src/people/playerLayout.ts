@@ -12,6 +12,9 @@ export type MatchPlayer = {
 export type MatchPlayerPose = {
   position: [number, number, number];
   rotationY: number;
+  movementSpeed: number;
+  stridePhase: number;
+  leanRadians: number;
 };
 
 type PitchDimensions = {
@@ -39,8 +42,87 @@ const formation: FormationPosition[] = [
   { xRatio: 0.08, zRatio: 0.25 },
 ];
 
+const ballRoute: ReadonlyArray<readonly [number, number]> = [
+  [-0.34, -0.08],
+  [-0.18, 0.24],
+  [0.03, 0.12],
+  [0.3, -0.2],
+  [0.16, -0.04],
+  [-0.08, -0.26],
+  [-0.31, 0.17],
+  [-0.12, 0.04],
+];
+
+const ballRouteSegmentSeconds = 5.5;
+
 function clamp(value: number, minimum: number, maximum: number): number {
   return Math.min(Math.max(value, minimum), maximum);
+}
+
+function lerp(start: number, end: number, amount: number): number {
+  return start + (end - start) * amount;
+}
+
+function smoothstep(value: number): number {
+  return value * value * (3 - 2 * value);
+}
+
+function calculatePlayerGroundPosition(
+  player: MatchPlayer,
+  elapsedSeconds: number,
+  pitch: PitchDimensions,
+  ballPosition: [number, number, number],
+): [number, number] {
+  const [baseX, , baseZ] = player.position;
+  const phase =
+    elapsedSeconds * (player.role === 'goalkeeper' ? 0.48 : 0.62) +
+    player.motionPhase;
+  const halfLength = pitch.length / 2 - 1.4;
+  const halfWidth = pitch.width / 2 - 1.2;
+
+  if (player.role === 'goalkeeper') {
+    return [
+      clamp(
+        baseX +
+          Math.sin(phase * 0.72) * player.motionRadiusX +
+          ballPosition[0] * 0.018,
+        -halfLength,
+        halfLength,
+      ),
+      clamp(
+        baseZ +
+          Math.cos(phase) * player.motionRadiusZ +
+          ballPosition[2] * 0.045,
+        -pitch.width * 0.18,
+        pitch.width * 0.18,
+      ),
+    ];
+  }
+
+  const routeX =
+    Math.sin(phase) * player.motionRadiusX +
+    Math.sin(phase * 0.43 + player.motionPhase) * 0.9;
+  const routeZ =
+    Math.cos(phase * 0.81) * player.motionRadiusZ +
+    Math.sin(phase * 0.37 + player.motionPhase) * 0.7;
+  const tacticalX = baseX + routeX + ballPosition[0] * 0.16;
+  const tacticalZ = baseZ + routeZ + ballPosition[2] * 0.12;
+  const distanceToBall = Math.hypot(
+    ballPosition[0] - tacticalX,
+    ballPosition[2] - tacticalZ,
+  );
+  const proximity = clamp(1 - distanceToBall / 27, 0, 1);
+  const engagement = proximity * proximity * 0.78;
+  const contestRadius = 1.05 + (player.motionPhase % 1.8);
+  const contestX =
+    ballPosition[0] + Math.cos(player.motionPhase) * contestRadius;
+  const contestZ =
+    ballPosition[2] + Math.sin(player.motionPhase) * contestRadius;
+
+  return [
+    clamp(lerp(tacticalX, contestX, engagement), -halfLength, halfLength),
+    clamp(lerp(tacticalZ, contestZ, engagement), -halfWidth, halfWidth),
+  ];
 }
 
 export function createMatchPlayerLayout(pitch: PitchDimensions): MatchPlayer[] {
@@ -76,17 +158,24 @@ export function calculateBallPosition(
 ): [number, number, number] {
   const halfLength = pitch.length / 2 - 2.4;
   const halfWidth = pitch.width / 2 - 2.4;
-  const x =
-    Math.sin(elapsedSeconds * 0.115) * pitch.length * 0.3 +
-    Math.sin(elapsedSeconds * 0.31 + 0.8) * pitch.length * 0.08;
-  const z =
-    Math.sin(elapsedSeconds * 0.19 + 1.4) * pitch.width * 0.27 +
-    Math.cos(elapsedSeconds * 0.37) * pitch.width * 0.055;
-  const bounce = Math.abs(Math.sin(elapsedSeconds * 2.4)) * 0.035;
+  const routeTime = Math.max(0, elapsedSeconds) / ballRouteSegmentSeconds;
+  const segmentIndex = Math.floor(routeTime) % ballRoute.length;
+  const nextIndex = (segmentIndex + 1) % ballRoute.length;
+  const progress = routeTime - Math.floor(routeTime);
+  const easedProgress = smoothstep(progress);
+  const start = ballRoute[segmentIndex];
+  const end = ballRoute[nextIndex];
+  const x = lerp(start[0], end[0], easedProgress) * pitch.length;
+  const z = lerp(start[1], end[1], easedProgress) * pitch.width;
+  const passLift =
+    Math.sin(progress * Math.PI) ** 2 * (segmentIndex % 3 === 1 ? 0.42 : 0.08);
+  const dribbleBounce =
+    Math.abs(Math.sin(elapsedSeconds * 6.2)) *
+    (0.025 + Math.sin(progress * Math.PI) * 0.02);
 
   return [
     clamp(x, -halfLength, halfLength),
-    0.16 + bounce,
+    0.13 + passLift + dribbleBounce,
     clamp(z, -halfWidth, halfWidth),
   ];
 }
@@ -97,31 +186,46 @@ export function calculateMatchPlayerPose(
   pitch: PitchDimensions,
   ballPosition = calculateBallPosition(elapsedSeconds, pitch),
 ): MatchPlayerPose {
-  const [baseX, baseY, baseZ] = player.position;
-  const cadence = player.role === 'goalkeeper' ? 0.42 : 0.64;
-  const phase = elapsedSeconds * cadence + player.motionPhase;
-  const ballInfluence = player.role === 'goalkeeper' ? 0.025 : 0.095;
-  const halfLength = pitch.length / 2 - 1.4;
-  const halfWidth = pitch.width / 2 - 1.2;
-  const x = clamp(
-    baseX +
-      Math.sin(phase) * player.motionRadiusX +
-      ballPosition[0] * ballInfluence,
-    -halfLength,
-    halfLength,
+  const [, baseY] = player.position;
+  const [x, z] = calculatePlayerGroundPosition(
+    player,
+    elapsedSeconds,
+    pitch,
+    ballPosition,
   );
-  const goalkeeperWidthLimit = pitch.width * 0.18;
-  const z = clamp(
-    baseZ +
-      Math.cos(phase * 0.83) * player.motionRadiusZ +
-      ballPosition[2] * ballInfluence,
-    player.role === 'goalkeeper' ? -goalkeeperWidthLimit : -halfWidth,
-    player.role === 'goalkeeper' ? goalkeeperWidthLimit : halfWidth,
+  const sampleSeconds = 0.08;
+  const futureBall = calculateBallPosition(
+    elapsedSeconds + sampleSeconds,
+    pitch,
   );
-  const y = baseY + Math.abs(Math.sin(phase * 2.15)) * 0.025;
-  const rotationY = Math.atan2(ballPosition[0] - x, ballPosition[2] - z);
+  const [futureX, futureZ] = calculatePlayerGroundPosition(
+    player,
+    elapsedSeconds + sampleSeconds,
+    pitch,
+    futureBall,
+  );
+  const velocityX = (futureX - x) / sampleSeconds;
+  const velocityZ = (futureZ - z) / sampleSeconds;
+  const movementSpeed = Math.hypot(velocityX, velocityZ);
+  const stridePhase =
+    elapsedSeconds * (3.8 + clamp(movementSpeed, 0, 7) * 0.72) +
+    player.motionPhase;
+  const strideHeight =
+    Math.abs(Math.sin(stridePhase)) *
+    clamp((movementSpeed - 0.2) * 0.008, 0, 0.052);
+  const moving = movementSpeed > 0.18;
+  const rotationY = moving
+    ? Math.atan2(velocityX, velocityZ)
+    : Math.atan2(ballPosition[0] - x, ballPosition[2] - z);
+  const leanRadians = clamp(movementSpeed * 0.012, 0, 0.1);
 
-  return { position: [x, y, z], rotationY };
+  return {
+    position: [x, baseY + strideHeight, z],
+    rotationY,
+    movementSpeed,
+    stridePhase,
+    leanRadians,
+  };
 }
 
 // Compatibility for older callers while the public concept remains a match layout.

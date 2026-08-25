@@ -14,12 +14,12 @@ describe('stadium selection state', () => {
       showWeather: false,
       showSunHeatmap: false,
       heatmapTimeMode: 'instant',
-      qualityMode: 'high',
+      qualityMode: 'auto',
     });
   });
 
   it('starts with high-quality graphics', () => {
-    expect(useStadiumStore.getState().qualityMode).toBe('high');
+    expect(useStadiumStore.getState().qualityMode).toBe('auto');
   });
 
   it('enters first-person mode for a serializable terrace position', () => {

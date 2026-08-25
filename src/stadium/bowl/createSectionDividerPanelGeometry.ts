@@ -33,16 +33,17 @@ export function createSectionDividerPanelGeometry(
     sectionIndex < tier.sectionCount;
     sectionIndex += 1
   ) {
+    // The wide virage separations are open voids with edge railings. A solid
+    // divider here reads as a broad grey stair or slab when seen obliquely.
+    if (getTierMajorCutout(tier, sectionIndex)) continue;
+
     const boundaryAngle = sectionIndex * sectionAngle;
     const aisleAngle = getStadiumPerimeterAngleForDistance(
       getTierAisleWidth(tier, sectionIndex),
       tier.startRadiusX,
       tier.startRadiusZ,
     );
-    const barrierHeight =
-      getTierMajorCutout(tier, sectionIndex)?.wallHeight ??
-      barrier.sectionBarrierHeight;
-    const panelHeight = barrierHeight * 0.54;
+    const panelHeight = barrier.sectionBarrierHeight * 0.54;
 
     for (const side of [-1, 1] as const) {
       const angle = boundaryAngle + side * aisleAngle * 0.5;

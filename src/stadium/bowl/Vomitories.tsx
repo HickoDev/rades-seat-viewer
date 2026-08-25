@@ -7,6 +7,7 @@ import { createVomitoryFeatureMatrices } from './createVomitoryFeatureMatrices';
 type TierConfig = StadiumConfig['tiers'][number];
 
 export function Vomitories({ tier }: { tier: TierConfig }) {
+  const backWallRef = useRef<InstancedMesh>(null);
   const ceilingRef = useRef<InstancedMesh>(null);
   const floorRef = useRef<InstancedMesh>(null);
   const frameRef = useRef<InstancedMesh>(null);
@@ -20,6 +21,12 @@ export function Vomitories({ tier }: { tier: TierConfig }) {
       concrete: new MeshStandardMaterial({
         color: '#d7d8d1',
         roughness: 0.97,
+      }),
+      interior: new MeshStandardMaterial({
+        color: '#293431',
+        emissive: '#101b19',
+        emissiveIntensity: 0.16,
+        roughness: 0.92,
       }),
       floor: new MeshStandardMaterial({
         color: '#737d78',
@@ -47,6 +54,7 @@ export function Vomitories({ tier }: { tier: TierConfig }) {
 
   useLayoutEffect(() => {
     const groups = [
+      [backWallRef.current, features.backWalls],
       [ceilingRef.current, features.ceilings],
       [floorRef.current, features.floors],
       [frameRef.current, features.frames],
@@ -75,6 +83,12 @@ export function Vomitories({ tier }: { tier: TierConfig }) {
 
   return (
     <group name={`${tier.id}-vomitories`}>
+      <instancedMesh
+        ref={backWallRef}
+        args={[geometry, materials.interior, features.backWalls.length]}
+        name={`${tier.id}-vomitory-internal-end-walls`}
+        userData={{ circulationRole: 'internal-concourse-entrance' }}
+      />
       <instancedMesh
         ref={ceilingRef}
         args={[geometry, materials.concrete, features.ceilings.length]}

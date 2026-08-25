@@ -26,11 +26,13 @@ describe('procedural bowl details', () => {
     ).toBe(true);
   });
 
-  it('adds solid divider panels between every section', () => {
+  it('keeps solid divider panels out of the open virage separations', () => {
     const geometry = createSectionDividerPanelGeometry(lowerTier, details);
     const positions = geometry.getAttribute('position');
 
-    expect(positions.count).toBe(lowerTier.sectionCount * 2 * 4);
+    expect(positions.count).toBe(
+      (lowerTier.sectionCount - lowerTier.majorCutouts.length) * 2 * 4,
+    );
     expect(Array.from(positions.array).every(Number.isFinite)).toBe(true);
     geometry.dispose();
   });
@@ -54,6 +56,7 @@ describe('procedural bowl details', () => {
     );
 
     expect(features.ceilings).toHaveLength(portalCount);
+    expect(features.backWalls).toHaveLength(portalCount);
     expect(features.floors).toHaveLength(portalCount);
     expect(features.frames).toHaveLength(portalCount * 3);
     expect(features.lights).toHaveLength(portalCount);

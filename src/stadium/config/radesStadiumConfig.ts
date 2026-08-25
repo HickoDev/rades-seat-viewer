@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-21',
+  version: 'rades-procedural-22',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -465,6 +465,7 @@ export const radesStadiumConfig = {
       'The inner roof now includes an estimated maintenance catwalk, clustered floodlight banks, and scoreboard service decks visible from spectator viewpoints.',
       'The bowl, seating rows, walkways, and front safety rail now follow a rounded-stadium capsule perimeter with flat long sides instead of a continuous mathematical ellipse.',
       'Four full-depth lower-tier cuts separate the two virages from the lateral stands. They contain no stair, ramp, floor, or portal: the open void and safety barriers follow the supplied reference model and remain unsurveyed.',
+      'Tier vomitories terminate inside the recessed passage and do not create a visual opening through the stadium exterior.',
       'Upper-virage sections remain physically modeled but are marked closed to visitors; they are excluded from public POV selection, crowds, and visitor-facing simulations.',
       'The membrane, inner truss, fascia, lighting supports, and static shadow meshes now share the rounded-stadium plan visible in the supplied interior reference; the yellow scoreboard housings and diagonal hangers are visual estimates.',
       'Repeated arched concourse bays, a continuous multi-level main-stand facade, and a blue VIP chair block are visually calibrated from the supplied interior model and remain unsurveyed.',

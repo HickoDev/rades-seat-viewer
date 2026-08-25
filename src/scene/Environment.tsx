@@ -21,11 +21,7 @@ export function Environment() {
         sunPosition={[siteDiameter, siteDiameter * 0.62, siteDiameter * 0.28]}
         turbidity={3.2}
       />
-      <mesh
-        position={[0, -0.14, 0]}
-        rotation={[-Math.PI / 2, 0, 0]}
-        receiveShadow
-      >
+      <mesh position={[0, -4, 0]} rotation={[-Math.PI / 2, 0, 0]} receiveShadow>
         <planeGeometry args={[siteDiameter * 12, siteDiameter * 12]} />
         <meshStandardMaterial color="#7d8b73" roughness={1} />
       </mesh>

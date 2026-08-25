@@ -2,9 +2,11 @@ import { useEffect, useMemo } from 'react';
 
 import { createEllipticalRingGeometry } from '../bowl/createTierGeometry';
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import { createStadiumSiteBaseGeometry } from './createStadiumSiteBaseGeometry';
 
 export function StadiumSite() {
-  const { roof, site, structure } = radesStadiumConfig;
+  const { roof, site, structure, tiers } = radesStadiumConfig;
+  const lowerTier = tiers.find((tier) => tier.id === 'lower') ?? tiers[0];
   const promenadeInnerX =
     roof.outerRadiusX + structure.exteriorRadiusOffset + site.promenadeOffset;
   const promenadeInnerZ =
@@ -18,6 +20,11 @@ export function StadiumSite() {
 
   const geometries = useMemo(
     () => ({
+      base: createStadiumSiteBaseGeometry(
+        site.baseRadiusX,
+        site.baseRadiusZ,
+        lowerTier,
+      ),
       promenade: createEllipticalRingGeometry({
         innerRadiusX: promenadeInnerX,
         innerRadiusZ: promenadeInnerZ,
@@ -43,12 +50,15 @@ export function StadiumSite() {
     [
       landscapeOuterX,
       landscapeOuterZ,
+      lowerTier,
       promenadeInnerX,
       promenadeInnerZ,
       promenadeOuterX,
       promenadeOuterZ,
       roadOuterX,
       roadOuterZ,
+      site.baseRadiusX,
+      site.baseRadiusZ,
     ],
   );
 
@@ -64,12 +74,11 @@ export function StadiumSite() {
       userData={{ dimensionsAreEstimates: true }}
     >
       <mesh
+        geometry={geometries.base}
         position={[0, -0.075, 0]}
         rotation={[-Math.PI / 2, 0, 0]}
-        scale={[site.baseRadiusX, site.baseRadiusZ, 1]}
         receiveShadow
       >
-        <circleGeometry args={[1, 192]} />
         <meshStandardMaterial color="#bcb49f" roughness={0.99} />
       </mesh>
       <mesh geometry={geometries.promenade} receiveShadow>

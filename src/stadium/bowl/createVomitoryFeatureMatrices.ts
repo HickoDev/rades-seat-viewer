@@ -31,6 +31,7 @@ function composePortalPart(
  * front of the chairs or across the opening mouth.
  */
 export function createVomitoryFeatureMatrices(tier: TierConfig) {
+  const backWalls: Matrix4[] = [];
   const ceilings: Matrix4[] = [];
   const floors: Matrix4[] = [];
   const frames: Matrix4[] = [];
@@ -70,6 +71,17 @@ export function createVomitoryFeatureMatrices(tier: TierConfig) {
       clearedRows * tier.rowDepth + tier.rowDepth * 0.35,
     );
     const passageCenterZ = -passageDepth / 2;
+    const backWallDepth = Math.max(frame * 0.52, 0.12);
+
+    // Close the rear of the recess so the opening reads as an entrance into
+    // the internal concourse, never as a sightline through to the exterior.
+    backWalls.push(
+      composePortalPart(
+        portalTransform,
+        [0, 0, -passageDepth + backWallDepth / 2],
+        [opening.width, opening.height, backWallDepth],
+      ),
+    );
 
     floors.push(
       composePortalPart(
@@ -128,5 +140,5 @@ export function createVomitoryFeatureMatrices(tier: TierConfig) {
     );
   }
 
-  return { ceilings, floors, frames, lights, signs, walls };
+  return { backWalls, ceilings, floors, frames, lights, signs, walls };
 }

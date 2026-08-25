@@ -12,10 +12,8 @@ function createScoreboardMaterial() {
 
   context.fillStyle = '#071619';
   context.fillRect(0, 0, canvas.width, canvas.height);
-  context.fillStyle = '#1ca1b5';
-  context.fillRect(0, 0, canvas.width, 56);
-  context.fillStyle = '#bc2334';
-  context.fillRect(0, canvas.height - 40, canvas.width, 40);
+  context.fillStyle = '#102a2f';
+  context.fillRect(0, 0, canvas.width, 36);
   context.fillStyle = '#f1f6ed';
   context.textAlign = 'center';
   context.textBaseline = 'middle';
@@ -24,8 +22,8 @@ function createScoreboardMaterial() {
   context.font = '700 122px Arial';
   context.fillText('00:00', canvas.width / 2, 270);
   context.font = '600 46px Arial';
-  context.fillStyle = '#8ed5df';
-  context.fillText('MATCH DAY', canvas.width / 2, 398);
+  context.fillStyle = '#8eb9bd';
+  context.fillText('HAMMADI-AGREBI', canvas.width / 2, 398);
 
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;
@@ -81,6 +79,81 @@ export function Scoreboards() {
               roughness={0.5}
             />
           </mesh>
+          <mesh
+            position={[0, -structure.scoreboardHeight / 2 - 0.38, 0]}
+            receiveShadow
+          >
+            <boxGeometry
+              args={[
+                structure.scoreboardWidth + structure.scoreboardDeckWidthMargin,
+                0.22,
+                structure.scoreboardDeckDepth,
+              ]}
+            />
+            <meshStandardMaterial
+              color="#68706d"
+              metalness={0.42}
+              roughness={0.58}
+            />
+          </mesh>
+          {([-1, 1] as const).map((deckSide) => (
+            <mesh
+              key={`deck-rail-${deckSide}`}
+              position={[
+                0,
+                -structure.scoreboardHeight / 2 -
+                  0.38 +
+                  structure.scoreboardDeckRailHeight,
+                (deckSide * structure.scoreboardDeckDepth) / 2,
+              ]}
+            >
+              <boxGeometry
+                args={[
+                  structure.scoreboardWidth +
+                    structure.scoreboardDeckWidthMargin,
+                  0.07,
+                  0.07,
+                ]}
+              />
+              <meshStandardMaterial
+                color="#d9dfdc"
+                metalness={0.56}
+                roughness={0.38}
+              />
+            </mesh>
+          ))}
+          {Array.from({ length: 7 }, (_, postIndex) => postIndex).flatMap(
+            (postIndex) =>
+              ([-1, 1] as const).map((deckSide) => (
+                <mesh
+                  key={`deck-post-${postIndex}-${deckSide}`}
+                  position={[
+                    -(
+                      structure.scoreboardWidth +
+                      structure.scoreboardDeckWidthMargin
+                    ) /
+                      2 +
+                      (postIndex *
+                        (structure.scoreboardWidth +
+                          structure.scoreboardDeckWidthMargin)) /
+                        6,
+                    -structure.scoreboardHeight / 2 -
+                      0.38 +
+                      structure.scoreboardDeckRailHeight / 2,
+                    (deckSide * structure.scoreboardDeckDepth) / 2,
+                  ]}
+                >
+                  <cylinderGeometry
+                    args={[0.035, 0.035, structure.scoreboardDeckRailHeight, 6]}
+                  />
+                  <meshStandardMaterial
+                    color="#d9dfdc"
+                    metalness={0.56}
+                    roughness={0.38}
+                  />
+                </mesh>
+              )),
+          )}
           <mesh
             material={display.material}
             position={[0, 0, structure.scoreboardDepth / 2 + 0.03]}

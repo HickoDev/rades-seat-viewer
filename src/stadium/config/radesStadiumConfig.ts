@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-13',
+  version: 'rades-procedural-14',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -208,8 +208,16 @@ export const radesStadiumConfig = {
     floodlightCount: 64,
     floodlightWidth: 2.25,
     floodlightHeight: 0.62,
+    floodlightBankCount: 16,
+    floodlightsPerBank: 4,
+    floodlightSpacing: 2.45,
+    floodlightSupportRadius: 0.075,
     membraneSeamRadius: 0.055,
     innerFasciaHeight: 0.7,
+    innerCatwalkWidth: 1.45,
+    innerCatwalkHeight: 28.45,
+    innerCatwalkRailHeight: 1.05,
+    innerCatwalkRailSegmentCount: 64,
   },
   structure: {
     frameCount: 64,
@@ -237,6 +245,9 @@ export const radesStadiumConfig = {
     scoreboardHeight: 6,
     scoreboardDepth: 1.1,
     scoreboardSupportDrop: 3.4,
+    scoreboardDeckDepth: 2.7,
+    scoreboardDeckWidthMargin: 2.2,
+    scoreboardDeckRailHeight: 1.05,
     benchLength: 11.4,
     benchDepth: 2.5,
     benchHeight: 2.25,
@@ -397,6 +408,7 @@ export const radesStadiumConfig = {
       'The honor, press, control-room, and service-core volumes are modeled separately from interior references; their envelope and window rhythm remain unsurveyed estimates.',
       'The two athletics bends have independent apron, runway, sand-pit, and throwing-circle layouts derived from interior views; they are intentionally not mirrored.',
       'Seat colors use broad section and row blocks rather than a fine checkerboard, while chairless virages use separate standing spectator instances.',
+      'The inner roof now includes an estimated maintenance catwalk, clustered floodlight banks, and scoreboard service decks visible from spectator viewpoints.',
     ],
   },
 } satisfies StadiumConfig;

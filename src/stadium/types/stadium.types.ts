@@ -148,8 +148,16 @@ export type StadiumConfig = {
     floodlightCount: number;
     floodlightWidth: number;
     floodlightHeight: number;
+    floodlightBankCount: number;
+    floodlightsPerBank: number;
+    floodlightSpacing: number;
+    floodlightSupportRadius: number;
     membraneSeamRadius: number;
     innerFasciaHeight: number;
+    innerCatwalkWidth: number;
+    innerCatwalkHeight: number;
+    innerCatwalkRailHeight: number;
+    innerCatwalkRailSegmentCount: number;
   };
   structure: {
     frameCount: number;
@@ -176,6 +184,9 @@ export type StadiumConfig = {
     scoreboardHeight: number;
     scoreboardDepth: number;
     scoreboardSupportDrop: number;
+    scoreboardDeckDepth: number;
+    scoreboardDeckWidthMargin: number;
+    scoreboardDeckRailHeight: number;
     benchLength: number;
     benchDepth: number;
     benchHeight: number;

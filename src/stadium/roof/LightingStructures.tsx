@@ -7,6 +7,7 @@ import { radesStadiumConfig } from '../config/radesStadiumConfig';
 export function LightingStructures() {
   const cableRef = useRef<InstancedMesh>(null);
   const floodlightRef = useRef<InstancedMesh>(null);
+  const floodlightSupportRef = useRef<InstancedMesh>(null);
   const { roof } = radesStadiumConfig;
   const mastPlacements = useMemo(
     () =>
@@ -56,18 +57,61 @@ export function LightingStructures() {
   );
   const floodlightMatrices = useMemo(
     () =>
-      Array.from({ length: roof.floodlightCount }, (_, lightIndex) => {
-        const angle = (lightIndex / roof.floodlightCount) * Math.PI * 2;
-        const fixture = new Object3D();
-        fixture.position.set(
+      Array.from({ length: roof.floodlightBankCount }, (_, bankIndex) => {
+        const angle = (bankIndex / roof.floodlightBankCount) * Math.PI * 2;
+        const tangent = new Vector3(
+          -roof.innerRadiusX * Math.sin(angle),
+          0,
+          roof.innerRadiusZ * Math.cos(angle),
+        ).normalize();
+        const center = new Vector3(
           Math.cos(angle) * (roof.innerRadiusX + 1.2),
           roof.innerHeight - roof.innerTrussDepth - roof.floodlightHeight,
           Math.sin(angle) * (roof.innerRadiusZ + 1.2),
         );
-        fixture.lookAt(0, 0, 0);
-        fixture.scale.set(roof.floodlightWidth, roof.floodlightHeight, 0.28);
-        fixture.updateMatrix();
-        return fixture.matrix.clone();
+        return Array.from(
+          { length: roof.floodlightsPerBank },
+          (_, fixtureIndex) => {
+            const offset =
+              (fixtureIndex - (roof.floodlightsPerBank - 1) / 2) *
+              roof.floodlightSpacing;
+            const fixture = new Object3D();
+            fixture.position.copy(center).addScaledVector(tangent, offset);
+            fixture.lookAt(0, 0, 0);
+            fixture.scale.set(
+              roof.floodlightWidth,
+              roof.floodlightHeight,
+              0.28,
+            );
+            fixture.updateMatrix();
+            return fixture.matrix.clone();
+          },
+        );
+      }).flat(),
+    [roof],
+  );
+  const floodlightSupportMatrices = useMemo(
+    () =>
+      Array.from({ length: roof.floodlightBankCount }, (_, bankIndex) => {
+        const angle = (bankIndex / roof.floodlightBankCount) * Math.PI * 2;
+        const tangent = new Vector3(
+          -roof.innerRadiusX * Math.sin(angle),
+          0,
+          roof.innerRadiusZ * Math.cos(angle),
+        ).normalize();
+        const center = new Vector3(
+          Math.cos(angle) * (roof.innerRadiusX + 1.45),
+          roof.innerHeight - roof.innerTrussDepth + 0.18,
+          Math.sin(angle) * (roof.innerRadiusZ + 1.45),
+        );
+        const halfSpan =
+          ((roof.floodlightsPerBank - 1) * roof.floodlightSpacing) / 2 +
+          roof.floodlightWidth / 2;
+        return createCylinderBetweenMatrix(
+          center.clone().addScaledVector(tangent, -halfSpan),
+          center.clone().addScaledVector(tangent, halfSpan),
+          roof.floodlightSupportRadius,
+        );
       }),
     [roof],
   );
@@ -75,7 +119,8 @@ export function LightingStructures() {
   useLayoutEffect(() => {
     const cableMesh = cableRef.current;
     const floodlightMesh = floodlightRef.current;
-    if (!cableMesh || !floodlightMesh) return;
+    const supportMesh = floodlightSupportRef.current;
+    if (!cableMesh || !floodlightMesh || !supportMesh) return;
 
     cableMatrices.forEach((matrix, instanceId) =>
       cableMesh.setMatrixAt(instanceId, matrix),
@@ -83,11 +128,14 @@ export function LightingStructures() {
     floodlightMatrices.forEach((matrix, instanceId) =>
       floodlightMesh.setMatrixAt(instanceId, matrix),
     );
-    [cableMesh, floodlightMesh].forEach((mesh) => {
+    floodlightSupportMatrices.forEach((matrix, instanceId) =>
+      supportMesh.setMatrixAt(instanceId, matrix),
+    );
+    [cableMesh, floodlightMesh, supportMesh].forEach((mesh) => {
       mesh.instanceMatrix.needsUpdate = true;
       mesh.computeBoundingSphere();
     });
-  }, [cableMatrices, floodlightMatrices]);
+  }, [cableMatrices, floodlightMatrices, floodlightSupportMatrices]);
 
   return (
     <group name="roof-masts-cables-and-floodlights">
@@ -131,6 +179,18 @@ export function LightingStructures() {
           color="#4f5857"
           metalness={0.68}
           roughness={0.34}
+        />
+      </instancedMesh>
+      <instancedMesh
+        ref={floodlightSupportRef}
+        args={[undefined, undefined, floodlightSupportMatrices.length]}
+        name="floodlight-bank-support-bars"
+      >
+        <cylinderGeometry args={[1, 1, 1, 7]} />
+        <meshStandardMaterial
+          color="#d7dcda"
+          metalness={0.56}
+          roughness={0.4}
         />
       </instancedMesh>
       <instancedMesh

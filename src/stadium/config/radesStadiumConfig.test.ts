@@ -49,6 +49,16 @@ describe('radesStadiumConfig', () => {
     expect(west.throwingCircleOffsetZ).not.toBe(east.throwingCircleOffsetZ);
   });
 
+  it('groups inner-roof floodlights into maintainable banks', () => {
+    const { roof } = radesStadiumConfig;
+
+    expect(roof.floodlightBankCount * roof.floodlightsPerBank).toBe(
+      roof.floodlightCount,
+    );
+    expect(roof.innerCatwalkHeight).toBeLessThan(roof.innerHeight);
+    expect(roof.innerCatwalkRailHeight).toBeGreaterThan(0.9);
+  });
+
   it('records the reported honor and press tribune capacities separately', () => {
     expect(
       radesStadiumConfig.tiers.map((tier) => tier.reportedCapacity),

@@ -19,6 +19,7 @@ import { TracksideSafetyRail } from './track/TracksideSafetyRail';
 import { LightingStructures } from './roof/LightingStructures';
 import { RoofTrusses } from './roof/RoofTrusses';
 import { RoofMembraneDetails } from './roof/RoofMembraneDetails';
+import { RoofCatwalk } from './roof/RoofCatwalk';
 import { Scoreboards } from './roof/Scoreboards';
 import { StadiumRoof } from './roof/StadiumRoof';
 import { StructuralFrames } from './roof/StructuralFrames';
@@ -51,6 +52,7 @@ export function RadesStadium() {
       <StadiumRoof />
       <RoofMembraneDetails />
       <RoofTrusses />
+      <RoofCatwalk />
       <StructuralFrames />
       <Scoreboards />
       <Facade />

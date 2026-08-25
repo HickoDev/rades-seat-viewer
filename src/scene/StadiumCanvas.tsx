@@ -1,5 +1,5 @@
 import { Canvas } from '@react-three/fiber';
-import { Suspense } from 'react';
+import { Suspense, useRef } from 'react';
 import { ACESFilmicToneMapping, PCFShadowMap, SRGBColorSpace } from 'three';
 
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
@@ -10,6 +10,7 @@ import { useReducedMotion } from '../utils/useReducedMotion';
 import { LoadingScreen } from '../ui/LoadingScreen';
 import { CurrentExposureBadge } from '../ui/CurrentExposureBadge';
 import { CameraRig } from './CameraRig';
+import { CameraCompass } from './CameraCompass';
 import { Environment } from './Environment';
 import { PerformanceMonitor } from './PerformanceMonitor';
 import { SceneLighting } from './SceneLighting';
@@ -18,6 +19,7 @@ import { StadiumFloodlights } from './StadiumFloodlights';
 import { SunSimulation } from './SunSimulation';
 
 export function StadiumCanvas() {
+  const northIndicatorRef = useRef<HTMLDivElement>(null);
   const siteRadius = radesStadiumConfig.roof.outerRadiusX;
   const cameraMode = useStadiumStore((state) => state.cameraMode);
   const renderQuality = useRenderQuality();
@@ -52,7 +54,7 @@ export function StadiumCanvas() {
         onCreated={({ gl }) => {
           gl.outputColorSpace = SRGBColorSpace;
           gl.toneMapping = ACESFilmicToneMapping;
-          gl.toneMappingExposure = 1.05;
+          gl.toneMappingExposure = 1;
           gl.shadowMap.type = PCFShadowMap;
         }}
       >
@@ -65,6 +67,7 @@ export function StadiumCanvas() {
           <SunSimulation />
         </Suspense>
         <CameraRig />
+        <CameraCompass indicatorRef={northIndicatorRef} />
         <PerformanceMonitor />
       </Canvas>
 
@@ -76,11 +79,12 @@ export function StadiumCanvas() {
       </div>
 
       <div
+        ref={northIndicatorRef}
         className="north-indicator"
-        aria-label="Scene north aligned from open map geometry"
+        aria-label="True north relative to the current camera"
       >
         <span>N</span>
-        <small>map aligned</small>
+        <small>true north</small>
       </div>
     </section>
   );

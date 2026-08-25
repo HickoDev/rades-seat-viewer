@@ -24,10 +24,10 @@ export function SceneLighting() {
         args={[
           sunPreview?.isNight ? '#152442' : '#eaf7ff',
           sunPreview?.isNight ? '#111714' : '#6f776d',
-          0.14 + daylightFactor * 0.94,
+          0.16 + daylightFactor * 0.5,
         ]}
       />
-      <ambientLight intensity={sunPreview?.isNight ? 0.08 : 0.12} />
+      <ambientLight intensity={sunPreview?.isNight ? 0.08 : 0.055} />
       {showDirectionalSun && (
         <directionalLight
           castShadow={renderQuality === 'high'}
@@ -36,10 +36,11 @@ export function SceneLighting() {
               ? '#ffd09a'
               : '#fff9ed'
           }
-          intensity={sunPreview ? 0.35 + daylightFactor * 2.15 : 1.62}
+          intensity={sunPreview ? 0.45 + daylightFactor * 2.35 : 2.1}
           position={position}
           shadow-bias={-0.00018}
           shadow-normalBias={0.035}
+          shadow-radius={1.25}
           shadow-mapSize-width={renderQuality === 'high' ? 2048 : 512}
           shadow-mapSize-height={renderQuality === 'high' ? 2048 : 512}
           shadow-camera-near={1}

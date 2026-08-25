@@ -19,13 +19,15 @@ export function FootballPitch() {
         <mesh
           key={index}
           position={[-pitch.length / 2 + stripeWidth * (index + 0.5), 0.061, 0]}
+          receiveShadow
         >
           <boxGeometry args={[stripeWidth, 0.01, pitch.width]} />
-          <meshBasicMaterial
+          <meshStandardMaterial
             color={index % 2 === 0 ? '#2f7049' : '#286542'}
             polygonOffset
             polygonOffsetFactor={-1}
             polygonOffsetUnits={-1}
+            roughness={0.94}
           />
         </mesh>
       ))}

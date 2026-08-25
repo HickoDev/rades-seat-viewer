@@ -397,14 +397,14 @@ export function StadiumCrowd() {
         args={[bodyGeometry, bodyMaterial, staticMembers.length]}
         castShadow={false}
         raycast={ignoreRaycast}
-        receiveShadow={false}
+        receiveShadow={renderQuality === 'high'}
       />
       <instancedMesh
         ref={staticHeadRef}
         args={[headGeometry, headMaterial, staticMembers.length]}
         castShadow={false}
         raycast={ignoreRaycast}
-        receiveShadow={false}
+        receiveShadow={renderQuality === 'high'}
       />
       {renderQuality === 'high' && (
         <instancedMesh
@@ -412,7 +412,7 @@ export function StadiumCrowd() {
           args={[hairGeometry, hairMaterial, staticMembers.length]}
           castShadow={false}
           raycast={ignoreRaycast}
-          receiveShadow={false}
+          receiveShadow={renderQuality === 'high'}
         />
       )}
       <instancedMesh
@@ -421,7 +421,7 @@ export function StadiumCrowd() {
         castShadow={false}
         frustumCulled={false}
         raycast={ignoreRaycast}
-        receiveShadow={false}
+        receiveShadow={renderQuality === 'high'}
       />
       <instancedMesh
         ref={animatedHeadRef}
@@ -429,7 +429,7 @@ export function StadiumCrowd() {
         castShadow={false}
         frustumCulled={false}
         raycast={ignoreRaycast}
-        receiveShadow={false}
+        receiveShadow={renderQuality === 'high'}
       />
       {renderQuality === 'high' && (
         <instancedMesh
@@ -438,7 +438,7 @@ export function StadiumCrowd() {
           castShadow={false}
           frustumCulled={false}
           raycast={ignoreRaycast}
-          receiveShadow={false}
+          receiveShadow={renderQuality === 'high'}
         />
       )}
     </group>

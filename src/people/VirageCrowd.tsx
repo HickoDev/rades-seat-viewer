@@ -250,17 +250,20 @@ export function VirageCrowd() {
         ref={bodyRef}
         args={[bodyGeometry, bodyMaterial, members.length]}
         raycast={ignoreRaycast}
+        receiveShadow={renderQuality === 'high'}
       />
       <instancedMesh
         ref={headRef}
         args={[headGeometry, headMaterial, members.length]}
         raycast={ignoreRaycast}
+        receiveShadow={renderQuality === 'high'}
       />
       {renderQuality === 'high' && (
         <instancedMesh
           ref={hairRef}
           args={[hairGeometry, hairMaterial, members.length]}
           raycast={ignoreRaycast}
+          receiveShadow
         />
       )}
     </group>

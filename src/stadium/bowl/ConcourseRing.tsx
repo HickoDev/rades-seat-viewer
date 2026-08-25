@@ -177,7 +177,7 @@ export function ConcourseRing({
 
   return (
     <group name="illuminated-concourse-ring">
-      <mesh geometry={wallGeometries.shell}>
+      <mesh geometry={wallGeometries.shell} receiveShadow>
         <meshStandardMaterial
           color="#d1cfc4"
           roughness={0.94}
@@ -186,7 +186,7 @@ export function ConcourseRing({
       </mesh>
       {[wallGeometries.lowerFascia, wallGeometries.upperFascia].map(
         (geometry, bandIndex) => (
-          <mesh key={bandIndex} geometry={geometry}>
+          <mesh key={bandIndex} geometry={geometry} receiveShadow>
             <meshStandardMaterial
               color="#ebe7dc"
               roughness={0.88}
@@ -195,7 +195,7 @@ export function ConcourseRing({
           </mesh>
         ),
       )}
-      <mesh geometry={wallGeometries.accent}>
+      <mesh geometry={wallGeometries.accent} receiveShadow>
         <meshStandardMaterial
           color="#236eb3"
           emissive="#123b6d"

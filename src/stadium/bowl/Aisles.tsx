@@ -50,7 +50,12 @@ export function Aisles({ tier }: { tier: TierConfig }) {
   return (
     <group name={`${tier.id}-aisles`} dispose={null}>
       {geometries.map((geometry, index) => (
-        <mesh key={index} geometry={geometry} material={material} />
+        <mesh
+          key={index}
+          geometry={geometry}
+          material={material}
+          receiveShadow
+        />
       ))}
     </group>
   );

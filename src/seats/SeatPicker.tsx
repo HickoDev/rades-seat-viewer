@@ -12,6 +12,7 @@ import { getHeatmapGroupKey } from '../sunlight/sunlightHeatmap';
 import { heatmapColorValues } from '../sunlight/heatmapColors';
 import { useStadiumStore } from '../state/useStadiumStore';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
+import { useRenderQuality } from '../utils/useRenderQuality';
 import { isVisitorClosedSection } from './viewingPositions';
 import type { SeatLayout } from './seat.types';
 
@@ -58,6 +59,7 @@ function getDefaultSeatColor(seat: SeatLayout['metadata'][number]): Color {
 
 export function SeatPicker({ geometry, layout, material }: SeatPickerProps) {
   const meshRef = useRef<InstancedMesh>(null);
+  const renderQuality = useRenderQuality();
   const selectedSectionId = useStadiumStore((state) => state.selectedSectionId);
   const selectedRow = useStadiumStore((state) => state.selectedRow);
   const selectedSeat = useStadiumStore((state) => state.selectedSeat);
@@ -159,7 +161,7 @@ export function SeatPicker({ geometry, layout, material }: SeatPickerProps) {
         document.body.style.cursor =
           seat && !isVisitorClosedSection(seat.sectionId) ? 'pointer' : '';
       }}
-      receiveShadow={false}
+      receiveShadow={renderQuality === 'high'}
     />
   );
 }

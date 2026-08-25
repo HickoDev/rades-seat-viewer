@@ -953,11 +953,13 @@ summary:focus-visible {
 
 .north-indicator::before {
   position: absolute;
-  top: -7px;
+  top: 4px;
   width: 1px;
-  height: 13px;
+  height: 18px;
   background: var(--lime);
   content: '';
+  transform: rotate(var(--north-rotation, 0rad));
+  transform-origin: 50% 23px;
 }
 
 .north-indicator small {

@@ -16,6 +16,15 @@ function formatMatchTime(iso: string) {
     .toFormat('HH:mm');
 }
 
+function getCardinalDirection(azimuthRadians: number) {
+  const directions = ['N', 'NE', 'E', 'SE', 'S', 'SW', 'W', 'NW'];
+  const degrees = ((azimuthRadians * 180) / Math.PI + 360) % 360;
+  return {
+    degrees,
+    label: directions[Math.round(degrees / 45) % directions.length],
+  };
+}
+
 export function MatchTimeControls() {
   const matchStartIso = useStadiumStore((state) => state.matchStartIso);
   const matchEndIso = useStadiumStore((state) => state.matchEndIso);
@@ -44,6 +53,9 @@ export function MatchTimeControls() {
       Math.round(previewTime.diff(previewWindowStart, 'minutes').minutes),
     ),
   );
+  const sunBearing = sunPreview
+    ? getCardinalDirection(sunPreview.position.azimuthRadians)
+    : null;
 
   return (
     <article className="match-summary" aria-label="Selected match time">
@@ -85,7 +97,7 @@ export function MatchTimeControls() {
         <small>
           {sunPreview
             ? sunPreview.altitudeDegrees > 0
-              ? `Sun ${Math.round(sunPreview.altitudeDegrees)} degrees above the horizon`
+              ? `Sun ${sunBearing?.label} / ${Math.round(sunBearing?.degrees ?? 0)}Â° geographic azimuth / ${Math.round(sunPreview.altitudeDegrees)}Â° above the horizon`
               : sunPreview.isNight
                 ? 'Night sky / stadium floodlights on'
                 : 'Twilight / floodlights warming up'

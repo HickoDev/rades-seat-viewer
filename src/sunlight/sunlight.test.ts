@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { BoxGeometry, Mesh, MeshBasicMaterial, Vector3 } from 'three';
 
+import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { calculateGlareRisk } from './calculateGlareRisk';
 import { calculateSeatShadow } from './calculateSeatShadow';
 import {
@@ -34,6 +35,36 @@ describe('sunlight calculations', () => {
     expect(northAtZero.z).toBeCloseTo(1, 6);
     expect(northRotatedEast.x).toBeCloseTo(1, 6);
     expect(northRotatedEast.z).toBeCloseTo(0, 6);
+  });
+
+  it('aligns the scene pitch axis with the mapped Radès long-axis bearing', () => {
+    // OpenStreetMap way 26235346 has a long pitch edge at 165.23°.
+    const mappedPitchBearingRadians = 165.23 * (Math.PI / 180);
+    const mappedAxisInWorld = createSunDirection(
+      0,
+      mappedPitchBearingRadians,
+      radesStadiumConfig.identity.northRotationDegrees,
+    );
+
+    expect(mappedAxisInWorld.x).toBeGreaterThan(0.999);
+    expect(Math.abs(mappedAxisInWorld.z)).toBeLessThan(0.001);
+  });
+
+  it('places a late-August afternoon sun on the map-west side of the scene', () => {
+    const sun = calculateSunPosition(
+      '2026-08-25T17:00:00+01:00',
+      radesStadiumConfig.identity.latitude,
+      radesStadiumConfig.identity.longitude,
+      radesStadiumConfig.identity.timezone,
+    );
+    const direction = createSunDirection(
+      sun.altitudeRadians,
+      sun.azimuthRadians,
+      radesStadiumConfig.identity.northRotationDegrees,
+    );
+
+    expect(sun.azimuthRadians * (180 / Math.PI)).toBeCloseTo(266.51, 1);
+    expect(direction.z).toBeLessThan(-0.9);
   });
 
   it('returns stadium-shadow when a roof intersects the sun ray', () => {

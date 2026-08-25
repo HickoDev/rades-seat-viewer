@@ -130,6 +130,7 @@ export function StadiumBowl() {
           castShadow
           geometry={lowerFrontWallGeometry ?? undefined}
           name="lower-tier-front-wall"
+          receiveShadow
           userData={{
             shadowOccluder: true,
             occluderType: 'lower-tier-front-wall',
@@ -152,12 +153,13 @@ export function StadiumBowl() {
               tier={tier}
             />
             <Vomitories tier={tier} />
-            <mesh geometry={walkwayGeometries[tierIndex]}>
+            <mesh geometry={walkwayGeometries[tierIndex]} receiveShadow>
               <meshStandardMaterial color="#7f8b85" roughness={0.96} />
             </mesh>
             <mesh
               castShadow
               geometry={structuralWallGeometries[tierIndex]}
+              receiveShadow
               userData={{
                 shadowOccluder: true,
                 occluderType: 'large-structural-wall',

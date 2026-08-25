@@ -85,6 +85,7 @@ export function createRoofTrussMatrices({
       createCylinderBetweenMatrix(lower, nextLower, trussRadius),
       createCylinderBetweenMatrix(upper, lower, trussRadius * 0.78),
       createCylinderBetweenMatrix(upper, nextLower, trussRadius * 0.78),
+      createCylinderBetweenMatrix(lower, nextUpper, trussRadius * 0.72),
     );
   }
 

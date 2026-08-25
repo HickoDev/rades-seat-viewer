@@ -32,7 +32,9 @@ export function createRoofGeometry({
   membraneSag = 0,
 }: RoofGeometryOptions): BufferGeometry {
   const positions: number[] = [];
-  const indices: number[] = [];
+  const topIndices: number[] = [];
+  const undersideIndices: number[] = [];
+  const edgeIndices: number[] = [];
   const middleRatio = 0.56;
 
   for (let index = 0; index <= segments; index += 1) {
@@ -76,7 +78,7 @@ export function createRoofGeometry({
     if (index < segments) {
       const base = index * 6;
       const next = base + 6;
-      indices.push(
+      topIndices.push(
         base,
         next,
         base + 1,
@@ -89,6 +91,8 @@ export function createRoofGeometry({
         base + 2,
         next + 1,
         next + 2,
+      );
+      undersideIndices.push(
         base + 3,
         base + 4,
         next + 3,
@@ -101,6 +105,8 @@ export function createRoofGeometry({
         base + 5,
         next + 5,
         next + 4,
+      );
+      edgeIndices.push(
         base,
         base + 3,
         next,
@@ -119,7 +125,14 @@ export function createRoofGeometry({
 
   const geometry = new BufferGeometry();
   geometry.setAttribute('position', new Float32BufferAttribute(positions, 3));
-  geometry.setIndex(indices);
+  geometry.setIndex([...topIndices, ...undersideIndices, ...edgeIndices]);
+  geometry.addGroup(0, topIndices.length, 0);
+  geometry.addGroup(topIndices.length, undersideIndices.length, 1);
+  geometry.addGroup(
+    topIndices.length + undersideIndices.length,
+    edgeIndices.length,
+    2,
+  );
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();
   geometry.computeBoundingSphere();

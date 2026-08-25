@@ -30,7 +30,7 @@ describe('procedural bowl details', () => {
     expect(features.signs).toHaveLength(portalCount);
   });
 
-  it('fills the tier break with repeated concourse portals and lights', () => {
+  it('fills the tier break with repeated framed concourse portals and lights', () => {
     const features = createConcourseFeatureMatrices(
       upperTier,
       lowerTier,
@@ -39,6 +39,7 @@ describe('procedural bowl details', () => {
 
     expect(features.concourse.height).toBeGreaterThan(0);
     expect(features.portals).toHaveLength(upperTier.sectionCount);
+    expect(features.portalFrames).toHaveLength(upperTier.sectionCount * 3);
     expect(features.signs).toHaveLength(upperTier.sectionCount);
     expect(features.lights).toHaveLength(upperTier.sectionCount);
   });

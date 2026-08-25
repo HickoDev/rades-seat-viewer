@@ -38,6 +38,10 @@ export type StadiumConfig = {
     laneWidth: number;
     straightLength: number;
     innerCurveRadius: number;
+    endApronStartOffset: number;
+    endApronRunwayLength: number;
+    endApronRunwayWidth: number;
+    endApronRunwayLineCount: number;
   };
   fieldFurniture: {
     goalPostRadius: number;
@@ -81,10 +85,17 @@ export type StadiumConfig = {
     concourseWallInset: number;
     concoursePortalWidth: number;
     concoursePortalHeight: number;
-    concoursePortalArchRise: number;
     concoursePortalDepth: number;
+    concoursePortalFrameThickness: number;
+    concourseFasciaHeight: number;
+    concourseAccentBandHeight: number;
     concourseSignWidth: number;
     concourseSignHeight: number;
+    tracksideRailInset: number;
+    tracksideRailHeight: number;
+    tracksideRailMidRatio: number;
+    tracksideRailRadius: number;
+    tracksideRailSegmentCount: number;
   };
   roof: {
     innerRadiusX: number;

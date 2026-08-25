@@ -15,13 +15,13 @@ This document separates source-backed stadium facts from visual calibration esti
 The implementation uses the following features because they recur across photographs from different dates and viewpoints:
 
 - a two-level pale-blue seating bowl;
-- a dark intermediate concourse articulated by repeated arched openings;
+- a pale intermediate concourse articulated by repeated dark rectangular openings, light frames, and a blue accent strip;
 - radial light-concrete aisles, metal barriers, and framed vomitories;
 - a long glazed honor/press frontage on one sideline;
 - a white tensile roof with visibly sagged radial membrane bays, a scalloped outer edge, and a dense white inner space truss;
 - tall external roof masts with cable stays and roof-edge floodlight arrays;
 - four detached circular spiral-ramp towers grouped as two pairs on the ceremonial long side and connected to the concourse, plus an open dark upper façade with repeated pale X-braces;
-- red athletics surfacing, a warm concrete service apron, paired segmented translucent-blue team shelters on the main-stand side, white goal nets, and event-dependent pitch-side advertising hoardings;
+- red athletics surfacing, warm field-event aprons inside both bends with parallel runway markings, a continuous inner safety rail, paired segmented translucent-blue team shelters on the main-stand side, white goal nets, and event-dependent pitch-side advertising hoardings;
 - a cream ceremonial entrance with deep-blue arched glazing, blue trim, a yellow patterned band, a taller central gateway, flagpoles, palms, and a broad processional plaza.
 
 Advertising artwork changes by competition and sponsor. The application therefore uses neutral Radès/Tunisia match-day graphics instead of claiming that one photographed sponsor layout is permanent.
@@ -30,9 +30,11 @@ Advertising artwork changes by competition and sponsor. The application therefor
 
 The project owner reports that 3D artist Hassene Alaya granted permission to use the publicly displayed model as a visual reference, provided its original model file is not used. This project therefore independently recreates observed forms with procedural TypeScript geometry. It does not download, import, extract, trace, redistribute, or include any mesh or texture from the reference model.
 
+The owner-supplied interior and aerial renders used in the August 2026 calibration pass remain outside the repository. They were used to compare proportions and recurring structural relationships only: tier separation, rectangular concourse rhythm, seating color blocks, track-bend aprons, honor/press frontage, scoreboard placement, and roof-lattice depth.
+
 ## Configurable estimates
 
-No public architectural plan or survey was located for the bowl section, honor suite envelope, roof opening, façade bays, advertising-board offsets, spiral ramps, entrance landscaping, or technical-area shelters. Their dimensions live in `radesStadiumConfig.ts` and are explicitly classified as `estimate-requires-calibration`. Roof waves and seams, truss depth, mast positions, window bay counts, ramp turns, cross-brace spacing, ceremonial entrance dimensions, and the dugout geometry and position were calibrated visually against the sources below. Crowd and player motion is illustrative rather than a reconstruction of a particular match.
+No public architectural plan or survey was located for the bowl section, honor suite envelope, roof opening, façade bays, advertising-board offsets, spiral ramps, entrance landscaping, field-event apron, safety rail, or technical-area shelters. Their dimensions live in `radesStadiumConfig.ts` and are explicitly classified as estimates or authorized-reference calibrations. Roof waves and seams, underside color, truss depth, mast positions, concourse bays, window counts, ramp turns, cross-brace spacing, ceremonial entrance dimensions, and dugout position were calibrated visually against the sources below. Crowd and player motion is illustrative rather than a reconstruction of a particular match.
 
 ## Reference set
 

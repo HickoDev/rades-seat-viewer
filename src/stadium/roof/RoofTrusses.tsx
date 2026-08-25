@@ -15,7 +15,7 @@ export function RoofTrusses() {
   const material = useMemo(
     () =>
       new MeshStandardMaterial({
-        color: '#dce2df',
+        color: '#f0f1ec',
         metalness: 0.42,
         roughness: 0.4,
       }),

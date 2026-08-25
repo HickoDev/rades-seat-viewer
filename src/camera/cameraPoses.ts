@@ -36,10 +36,15 @@ export function getSectionCameraPose(sectionId: string): CameraPose {
     Math.sin(angle) * targetRadiusZ,
   );
   const outward = new Vector3(Math.cos(angle), 0, Math.sin(angle));
-  const position = target
-    .clone()
-    .addScaledVector(outward, radesStadiumConfig.roof.outerRadiusX * 0.34)
-    .add(new Vector3(0, radesStadiumConfig.roof.innerHeight * 0.3, 0));
+  const focusDistance =
+    tier.id === 'upper'
+      ? radesStadiumConfig.pitch.width * 1.18
+      : radesStadiumConfig.pitch.width * 1.02;
+  const position = target.clone().addScaledVector(outward, -focusDistance);
+  position.y = Math.max(
+    target.y + 13,
+    radesStadiumConfig.roof.innerHeight * 0.6,
+  );
 
   return { position, target };
 }

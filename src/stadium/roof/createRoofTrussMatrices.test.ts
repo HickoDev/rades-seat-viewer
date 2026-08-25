@@ -17,7 +17,7 @@ describe('createRoofTrussMatrices', () => {
       trussRadius: 0.18,
     });
 
-    expect(matrices).toHaveLength(64 * 6);
+    expect(matrices).toHaveLength(64 * 7);
     expect(
       matrices.every((matrix) => matrix.elements.every(Number.isFinite)),
     ).toBe(true);

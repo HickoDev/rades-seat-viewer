@@ -2,9 +2,7 @@ import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import {
   BoxGeometry,
   DoubleSide,
-  ExtrudeGeometry,
   MeshStandardMaterial,
-  Shape,
   type InstancedMesh,
 } from 'three';
 
@@ -13,36 +11,6 @@ import { createConcourseFeatureMatrices } from './createConcourseFeatureMatrices
 
 type TierConfig = StadiumConfig['tiers'][number];
 type BowlDetails = StadiumConfig['bowlDetails'];
-
-function createPortalGeometry(details: BowlDetails) {
-  const halfWidth = details.concoursePortalWidth / 2;
-  const springHeight =
-    details.concoursePortalHeight - details.concoursePortalArchRise;
-  const shape = new Shape();
-  shape.moveTo(-halfWidth, 0);
-  shape.lineTo(halfWidth, 0);
-  shape.lineTo(halfWidth, springHeight);
-  shape.quadraticCurveTo(
-    halfWidth,
-    details.concoursePortalHeight,
-    0,
-    details.concoursePortalHeight,
-  );
-  shape.quadraticCurveTo(
-    -halfWidth,
-    details.concoursePortalHeight,
-    -halfWidth,
-    springHeight,
-  );
-  shape.closePath();
-  const geometry = new ExtrudeGeometry(shape, {
-    bevelEnabled: false,
-    depth: details.concoursePortalDepth,
-    steps: 1,
-  });
-  geometry.computeVertexNormals();
-  return geometry;
-}
 
 export function ConcourseRing({
   details,
@@ -54,33 +22,39 @@ export function ConcourseRing({
   upperTier: TierConfig;
 }) {
   const portalRef = useRef<InstancedMesh>(null);
+  const frameRef = useRef<InstancedMesh>(null);
   const signRef = useRef<InstancedMesh>(null);
   const lightRef = useRef<InstancedMesh>(null);
   const features = useMemo(
     () => createConcourseFeatureMatrices(upperTier, lowerTier, details),
     [details, lowerTier, upperTier],
   );
-  const portalGeometry = useMemo(
-    () => createPortalGeometry(details),
-    [details],
-  );
   const boxGeometry = useMemo(() => new BoxGeometry(1, 1, 1), []);
   const portalMaterial = useMemo(
     () =>
       new MeshStandardMaterial({
-        color: '#4c5a58',
-        emissive: '#263d3b',
-        emissiveIntensity: 0.2,
+        color: '#233b43',
+        emissive: '#163d4b',
+        emissiveIntensity: 0.24,
         roughness: 0.82,
+      }),
+    [],
+  );
+  const frameMaterial = useMemo(
+    () =>
+      new MeshStandardMaterial({
+        color: '#e6e5db',
+        metalness: 0.08,
+        roughness: 0.86,
       }),
     [],
   );
   const signMaterial = useMemo(
     () =>
       new MeshStandardMaterial({
-        color: '#d8ede8',
-        emissive: '#7eaaa2',
-        emissiveIntensity: 0.34,
+        color: '#287fc1',
+        emissive: '#164f86',
+        emissiveIntensity: 0.46,
         roughness: 0.55,
       }),
     [],
@@ -98,12 +72,16 @@ export function ConcourseRing({
 
   useLayoutEffect(() => {
     const portalMesh = portalRef.current;
+    const frameMesh = frameRef.current;
     const signMesh = signRef.current;
     const lightMesh = lightRef.current;
-    if (!portalMesh || !signMesh || !lightMesh) return;
+    if (!portalMesh || !frameMesh || !signMesh || !lightMesh) return;
 
     features.portals.forEach((matrix, instanceId) =>
       portalMesh.setMatrixAt(instanceId, matrix),
+    );
+    features.portalFrames.forEach((matrix, instanceId) =>
+      frameMesh.setMatrixAt(instanceId, matrix),
     );
     features.signs.forEach((matrix, instanceId) =>
       signMesh.setMatrixAt(instanceId, matrix),
@@ -111,7 +89,7 @@ export function ConcourseRing({
     features.lights.forEach((matrix, instanceId) =>
       lightMesh.setMatrixAt(instanceId, matrix),
     );
-    [portalMesh, signMesh, lightMesh].forEach((mesh) => {
+    [portalMesh, frameMesh, signMesh, lightMesh].forEach((mesh) => {
       mesh.instanceMatrix.needsUpdate = true;
       mesh.computeBoundingSphere();
     });
@@ -119,13 +97,13 @@ export function ConcourseRing({
 
   useEffect(
     () => () => {
-      portalGeometry.dispose();
       boxGeometry.dispose();
       portalMaterial.dispose();
+      frameMaterial.dispose();
       signMaterial.dispose();
       lightMaterial.dispose();
     },
-    [boxGeometry, lightMaterial, portalGeometry, portalMaterial, signMaterial],
+    [boxGeometry, frameMaterial, lightMaterial, portalMaterial, signMaterial],
   );
 
   return (
@@ -149,10 +127,62 @@ export function ConcourseRing({
           side={DoubleSide}
         />
       </mesh>
+      {[features.concourse.bottom, upperTier.baseHeight].map(
+        (height, bandIndex) => (
+          <mesh
+            key={height}
+            position={[
+              0,
+              height +
+                ((bandIndex === 0 ? 1 : -1) * details.concourseFasciaHeight) /
+                  2,
+              0,
+            ]}
+            scale={[
+              features.concourse.radiusX - 0.08,
+              details.concourseFasciaHeight,
+              features.concourse.radiusZ - 0.08,
+            ]}
+          >
+            <cylinderGeometry args={[1, 1, 1, 192, 1, true]} />
+            <meshStandardMaterial
+              color="#ebe7dc"
+              roughness={0.88}
+              side={DoubleSide}
+            />
+          </mesh>
+        ),
+      )}
+      <mesh
+        position={[
+          0,
+          features.concourse.bottom + features.concourse.height * 0.53,
+          0,
+        ]}
+        scale={[
+          features.concourse.radiusX - 0.11,
+          details.concourseAccentBandHeight,
+          features.concourse.radiusZ - 0.11,
+        ]}
+      >
+        <cylinderGeometry args={[1, 1, 1, 192, 1, true]} />
+        <meshStandardMaterial
+          color="#236eb3"
+          emissive="#123b6d"
+          emissiveIntensity={0.22}
+          roughness={0.7}
+          side={DoubleSide}
+        />
+      </mesh>
       <instancedMesh
         ref={portalRef}
-        args={[portalGeometry, portalMaterial, upperTier.sectionCount]}
-        name="concourse-arched-portals"
+        args={[boxGeometry, portalMaterial, upperTier.sectionCount]}
+        name="concourse-rectangular-portals"
+      />
+      <instancedMesh
+        ref={frameRef}
+        args={[boxGeometry, frameMaterial, features.portalFrames.length]}
+        name="concourse-portal-frames"
       />
       <instancedMesh
         ref={signRef}

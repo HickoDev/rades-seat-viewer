@@ -5,8 +5,6 @@ import type { StadiumConfig } from '../types/stadium.types';
 type TierConfig = StadiumConfig['tiers'][number];
 type BowlDetails = StadiumConfig['bowlDetails'];
 
-const unitScale = new Vector3(1, 1, 1);
-
 export type ConcourseGeometry = {
   bottom: number;
   height: number;
@@ -39,6 +37,7 @@ export function createConcourseFeatureMatrices(
     concourse.bottom +
     Math.max((concourse.height - details.concoursePortalHeight) / 2, 0);
   const portals: Matrix4[] = [];
+  const portalFrames: Matrix4[] = [];
   const signs: Matrix4[] = [];
   const lights: Matrix4[] = [];
 
@@ -55,16 +54,63 @@ export function createConcourseFeatureMatrices(
     const inwardOffset = details.concoursePortalDepth * 0.65;
     const position = new Vector3(
       Math.cos(angle) * (concourse.radiusX - inwardOffset),
-      portalBase,
+      portalBase + details.concoursePortalHeight / 2,
       Math.sin(angle) * (concourse.radiusZ - inwardOffset),
     );
-    portals.push(new Matrix4().compose(position, rotation, unitScale));
+    portals.push(
+      new Matrix4().compose(
+        position,
+        rotation,
+        new Vector3(
+          details.concoursePortalWidth,
+          details.concoursePortalHeight,
+          details.concoursePortalDepth,
+        ),
+      ),
+    );
+
+    const frameThickness = details.concoursePortalFrameThickness;
+    const frameDepth = details.concoursePortalDepth * 1.8;
+    const tangent = new Vector3(1, 0, 0).applyQuaternion(rotation);
+    const sideOffset = details.concoursePortalWidth / 2 + frameThickness / 2;
+    for (const side of [-1, 1] as const) {
+      portalFrames.push(
+        new Matrix4().compose(
+          position.clone().addScaledVector(tangent, side * sideOffset),
+          rotation,
+          new Vector3(
+            frameThickness,
+            details.concoursePortalHeight + frameThickness * 2,
+            frameDepth,
+          ),
+        ),
+      );
+    }
+    portalFrames.push(
+      new Matrix4().compose(
+        position
+          .clone()
+          .add(
+            new Vector3(
+              0,
+              details.concoursePortalHeight / 2 + frameThickness / 2,
+              0,
+            ),
+          ),
+        rotation,
+        new Vector3(
+          details.concoursePortalWidth + frameThickness * 2,
+          frameThickness,
+          frameDepth,
+        ),
+      ),
+    );
 
     signs.push(
       new Matrix4().compose(
         new Vector3(
           Math.cos(angle) * (concourse.radiusX - inwardOffset * 1.2),
-          portalBase + details.concoursePortalHeight * 0.72,
+          portalBase + details.concoursePortalHeight + frameThickness * 1.8,
           Math.sin(angle) * (concourse.radiusZ - inwardOffset * 1.2),
         ),
         rotation,
@@ -93,5 +139,5 @@ export function createConcourseFeatureMatrices(
     );
   }
 
-  return { concourse, lights, portals, signs };
+  return { concourse, lights, portalFrames, portals, signs };
 }

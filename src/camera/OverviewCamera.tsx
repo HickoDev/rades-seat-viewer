@@ -33,7 +33,12 @@ export function OverviewCamera() {
       destinationPosition: pose.position,
       destinationTarget: pose.target,
       reducedMotion,
-      onUpdate: () => controlsRef.current?.update(),
+      onUpdate: () => {
+        const controls = controlsRef.current;
+        if (!controls) return;
+        controls.target.copy(currentTarget);
+        controls.update();
+      },
     });
 
     return () => {

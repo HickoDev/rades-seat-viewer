@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-7',
+  version: 'rades-procedural-8',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -39,6 +39,11 @@ export const radesStadiumConfig = {
     laneWidth: 1.22,
     straightLength: 84.39,
     innerCurveRadius: 36.5,
+    // Photo-calibrated field-event aprons inside the two track bends.
+    endApronStartOffset: 3.5,
+    endApronRunwayLength: 18,
+    endApronRunwayWidth: 10.2,
+    endApronRunwayLineCount: 6,
   },
   fieldFurniture: {
     goalPostRadius: 0.06,
@@ -106,10 +111,17 @@ export const radesStadiumConfig = {
     concourseWallInset: 0.55,
     concoursePortalWidth: 5.2,
     concoursePortalHeight: 2.65,
-    concoursePortalArchRise: 0.62,
     concoursePortalDepth: 0.16,
+    concoursePortalFrameThickness: 0.24,
+    concourseFasciaHeight: 0.42,
+    concourseAccentBandHeight: 0.24,
     concourseSignWidth: 0.95,
     concourseSignHeight: 0.24,
+    tracksideRailInset: 0.72,
+    tracksideRailHeight: 1.05,
+    tracksideRailMidRatio: 0.54,
+    tracksideRailRadius: 0.035,
+    tracksideRailSegmentCount: 128,
   },
   roof: {
     innerRadiusX: 108,
@@ -125,7 +137,7 @@ export const radesStadiumConfig = {
     outerWaveRadius: 1.35,
     innerWaveHeight: 0.38,
     membraneSag: 1.45,
-    innerTrussDepth: 4.2,
+    innerTrussDepth: 5.2,
     mastCount: 8,
     mastHeight: 50,
     mastBaseOffset: 11,
@@ -252,10 +264,13 @@ export const radesStadiumConfig = {
       'pitch.markings': 'estimate-requires-calibration',
       'track.laneCount': 'corroborated-secondary-source',
       'track.dimensions': 'estimate-requires-calibration',
+      'track.fieldEventAprons': 'calibrated-from-authorized-visual-reference',
       fieldFurniture: 'estimate-requires-calibration',
       tiers: 'estimate-requires-calibration',
       'tiers.reportedCapacities': 'corroborated-secondary-source',
       bowlDetails: 'estimate-requires-calibration',
+      'bowlDetails.interiorVisualForm':
+        'calibrated-from-authorized-visual-reference',
       roof: 'estimate-requires-calibration',
       'roof.visualForm': 'calibrated-from-authorized-visual-reference',
       'structure.frameCount': 'verified-from-contractor',
@@ -292,6 +307,7 @@ export const radesStadiumConfig = {
       'Crowd and player motion is a lightweight illustrative match-day simulation, not motion-captured behavior or a reconstruction of a real match.',
       'Four circular access-ramp towers, the open X-braced upper facade, membrane seams, and suspended scoreboards are photo-calibrated visual estimates.',
       'The paired ramp arrangement, faceted roof character, and ceremonial-side massing were independently rebuilt from an authorized public visual reference; no reference mesh or texture is included.',
+      'The rectangular concourse bays, tier-separator fascia, track-bend event aprons, inner safety rail, and denser roof-edge lattice are visually calibrated from owner-supplied reference renders; their dimensions are not surveyed.',
     ],
   },
 } satisfies StadiumConfig;

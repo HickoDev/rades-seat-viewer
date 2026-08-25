@@ -2,6 +2,7 @@ import { radesStadiumConfig } from './config/radesStadiumConfig';
 import { MatchPlayers } from '../people/MatchPlayers';
 import { StadiumCrowd } from '../people/StadiumCrowd';
 import { TechnicalAreaPeople } from '../people/TechnicalAreaPeople';
+import { VirageCrowd } from '../people/VirageCrowd';
 import { SeatInstances } from '../seats/SeatInstances';
 import { AccessRamps } from './exterior/AccessRamps';
 import { ExteriorColumns } from './exterior/ExteriorColumns';
@@ -46,6 +47,7 @@ export function RadesStadium() {
       <StadiumBowl />
       <SeatInstances />
       <StadiumCrowd />
+      <VirageCrowd />
       <StadiumRoof />
       <RoofMembraneDetails />
       <RoofTrusses />

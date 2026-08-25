@@ -3,9 +3,11 @@ import { MeshStandardMaterial } from 'three';
 
 import { findRepresentativeTerracePosition } from '../../seats/viewingPositions';
 import { useStadiumStore } from '../../state/useStadiumStore';
+import { radesStadiumConfig } from '../config/radesStadiumConfig';
 import type { StadiumConfig } from '../types/stadium.types';
 import { createTierGeometry } from './createTierGeometry';
 import { getSectionId } from './sectionIds';
+import { getInteriorSectionZone } from './sectionZones';
 import { getTierAccessOpening, getTierAisleWidth } from './tierAccess';
 
 type TierConfig = StadiumConfig['tiers'][number];
@@ -93,6 +95,11 @@ export function StadiumTier({ tier }: StadiumTierProps) {
         const sectionId = getSectionId(tier.id, sectionIndex);
         const isSelected = selectedSectionId === sectionId;
         const isTerrace = tier.seatlessSectionIndices.includes(sectionIndex);
+        const zone = getInteriorSectionZone(
+          tier,
+          sectionIndex,
+          radesStadiumConfig.grandstand,
+        );
 
         return (
           <mesh
@@ -125,6 +132,8 @@ export function StadiumTier({ tier }: StadiumTierProps) {
             userData={{
               sectionId,
               tierId: tier.id,
+              sectionZoneId: zone.id,
+              sectionLabel: zone.label,
               viewingArea: isTerrace ? 'terrace' : 'seated',
             }}
           />

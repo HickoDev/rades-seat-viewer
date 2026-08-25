@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
 import { createConcourseFeatureMatrices } from './createConcourseFeatureMatrices';
+import { createSectionDividerPanelGeometry } from './createSectionDividerPanelGeometry';
 import { createSectionBarrierMatrices } from './createSectionBarrierMatrices';
 import { createVomitoryFeatureMatrices } from './createVomitoryFeatureMatrices';
 import { getTierAccessOpening, getTierAisleWidth } from './tierAccess';
@@ -18,6 +19,15 @@ describe('procedural bowl details', () => {
     expect(
       matrices.every((matrix) => matrix.elements.every(Number.isFinite)),
     ).toBe(true);
+  });
+
+  it('adds solid divider panels between every section', () => {
+    const geometry = createSectionDividerPanelGeometry(lowerTier, details);
+    const positions = geometry.getAttribute('position');
+
+    expect(positions.count).toBe(lowerTier.sectionCount * 2 * 4);
+    expect(Array.from(positions.array).every(Number.isFinite)).toBe(true);
+    geometry.dispose();
   });
 
   it('creates one framed, lit vomitory treatment per configured portal', () => {

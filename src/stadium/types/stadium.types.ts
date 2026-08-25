@@ -257,10 +257,12 @@ export type StadiumConfig = {
     upperPrimaryColor: string;
     upperAccentColor: string;
     accentRowInterval: number;
+    colorSectionBandSize: number;
   };
   occupants: {
     playerCount: number;
     standingPlayerHeight: number;
+    standingSpectatorHeight: number;
     seatedPersonHeight: number;
     highQualityCrowdOccupancy: number;
     lowQualityCrowdOccupancy: number;

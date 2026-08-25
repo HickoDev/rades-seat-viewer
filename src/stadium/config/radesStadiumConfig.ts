@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-12',
+  version: 'rades-procedural-13',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -318,11 +318,13 @@ export const radesStadiumConfig = {
     lowerAccentColor: '#c8478c',
     upperPrimaryColor: '#25aebd',
     upperAccentColor: '#bd3c82',
-    accentRowInterval: 7,
+    accentRowInterval: 14,
+    colorSectionBandSize: 4,
   },
   occupants: {
     playerCount: 22,
     standingPlayerHeight: 1.78,
+    standingSpectatorHeight: 1.72,
     seatedPersonHeight: 1.24,
     highQualityCrowdOccupancy: 0.52,
     lowQualityCrowdOccupancy: 0.14,
@@ -394,6 +396,7 @@ export const radesStadiumConfig = {
       'The main-stand player route includes the approximately 30 m retractable covered tunnel reported in January 2023; width, frame spacing, and exact endpoints remain visual estimates.',
       'The honor, press, control-room, and service-core volumes are modeled separately from interior references; their envelope and window rhythm remain unsurveyed estimates.',
       'The two athletics bends have independent apron, runway, sand-pit, and throwing-circle layouts derived from interior views; they are intentionally not mirrored.',
+      'Seat colors use broad section and row blocks rather than a fine checkerboard, while chairless virages use separate standing spectator instances.',
     ],
   },
 } satisfies StadiumConfig;

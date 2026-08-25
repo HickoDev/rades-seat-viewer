@@ -33,11 +33,13 @@ const heatmapColors = {
 
 function getDefaultSeatColor(seat: SeatLayout['metadata'][number]): Color {
   const sectionNumber = Number(seat.sectionId.split('-').at(-1)) || 1;
-  const sectionBand = Math.floor((sectionNumber - 1) / 3);
+  const sectionBand = Math.floor(
+    (sectionNumber - 1) / radesStadiumConfig.seats.colorSectionBandSize,
+  );
   const rowBand = Math.floor(
     (seat.rowNumber - 1) / radesStadiumConfig.seats.accentRowInterval,
   );
-  const accented = (sectionBand + rowBand) % 4 < 2;
+  const accented = (sectionBand + rowBand) % 2 === 0;
   if (seat.tierId === 'lower') {
     return accented ? lowerAccentColor : lowerSeatColor;
   }

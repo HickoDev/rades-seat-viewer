@@ -1,6 +1,7 @@
 import { findRepresentativeTerracePosition } from '../seats/viewingPositions';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { getSectionId } from '../stadium/bowl/sectionIds';
+import { getInteriorSectionZone } from '../stadium/bowl/sectionZones';
 import { useStadiumStore } from '../state/useStadiumStore';
 
 export function SectionSelector() {
@@ -38,17 +39,14 @@ export function SectionSelector() {
           <optgroup key={tier.id} label={tier.name}>
             {Array.from({ length: tier.sectionCount }, (_, sectionIndex) => {
               const sectionId = getSectionId(tier.id, sectionIndex);
-              const isVirageTerrace =
-                tier.seatlessSectionIndices.includes(sectionIndex);
-              const isHonorTribune =
-                radesStadiumConfig.grandstand.sectionIndices.includes(
-                  sectionIndex,
-                );
+              const zone = getInteriorSectionZone(
+                tier,
+                sectionIndex,
+                radesStadiumConfig.grandstand,
+              );
               return (
                 <option key={sectionId} value={sectionId}>
-                  {tier.name} · Section {sectionIndex + 1}
-                  {isVirageTerrace ? ' · Virage terrace' : ''}
-                  {isHonorTribune ? ' · Honor / press stand' : ''}
+                  {tier.name} · {zone.label} · Section {sectionIndex + 1}
                 </option>
               );
             })}

@@ -2,6 +2,7 @@ import { useLayoutEffect, useMemo, useRef } from 'react';
 import { Object3D, Vector3, type InstancedMesh } from 'three';
 
 import { createCylinderBetweenMatrix } from '../../utils/geometry';
+import { useSunPreview } from '../../sunlight/useSunPreview';
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
 import {
   getStadiumPerimeterFrame,
@@ -9,6 +10,7 @@ import {
 } from '../geometry/stadiumPerimeter';
 
 export function LightingStructures() {
+  const sunPreview = useSunPreview();
   const cableRef = useRef<InstancedMesh>(null);
   const floodlightRef = useRef<InstancedMesh>(null);
   const floodlightSupportRef = useRef<InstancedMesh>(null);
@@ -153,6 +155,7 @@ export function LightingStructures() {
       {mastPlacements.map(({ angle, x, z }, mastIndex) => (
         <group key={mastIndex} position={[x, 0, z]} rotation={[0, -angle, 0]}>
           <mesh
+            castShadow
             position={[0, roof.mastHeight / 2, 0]}
             userData={{ shadowOccluder: true, occluderType: 'roof-mast' }}
           >
@@ -211,9 +214,9 @@ export function LightingStructures() {
       >
         <boxGeometry args={[1, 1, 1]} />
         <meshStandardMaterial
-          color="#e8eee5"
+          color={sunPreview?.floodlightFactor ? '#fffbed' : '#e8eee5'}
           emissive="#fff6d5"
-          emissiveIntensity={0.78}
+          emissiveIntensity={0.22 + (sunPreview?.floodlightFactor ?? 0) * 5.2}
           metalness={0.18}
           roughness={0.36}
         />

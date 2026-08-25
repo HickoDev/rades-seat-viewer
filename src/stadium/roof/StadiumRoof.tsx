@@ -59,6 +59,7 @@ export function StadiumRoof() {
 
   return (
     <mesh
+      castShadow
       geometry={geometry}
       material={[materials.top, materials.underside, materials.edge]}
       name="roof-occluder"

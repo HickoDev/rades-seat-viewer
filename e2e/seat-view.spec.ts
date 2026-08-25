@@ -62,6 +62,21 @@ test('keeps upper virage sections closed to public selection', async ({
   await expect(lowerVirageOptions).not.toHaveAttribute('disabled', '');
 });
 
+test('uses the selected Tunis time for day, twilight, and night lighting', async ({
+  page,
+}) => {
+  await page.goto('/', { waitUntil: 'domcontentloaded' });
+  await page.getByLabel('Rendering quality').selectOption('low');
+  await page.getByLabel('Match kickoff time').fill('2026-08-24T22:00');
+  await page.getByLabel('Expected match end time').fill('2026-08-24T23:30');
+  await page.getByRole('button', { name: 'Enable sun simulation' }).click();
+
+  await expect(
+    page.getByText('Night sky / stadium floodlights on', { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByLabel('Sun preview time')).toBeVisible();
+});
+
 test('selects a section, row, and seat from accessible controls', async ({
   page,
 }) => {

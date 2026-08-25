@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import type { SunExposureSimulation } from '../sunlight/sunlight.types';
 import type {
   HeatmapResolution,
+  HeatmapTimeMode,
   SunHeatmapResult,
 } from '../sunlight/sunlightHeatmap.types';
 import type { ViewingPositionKind } from '../seats/viewingPositions';
@@ -20,12 +21,14 @@ export type StadiumState = {
   calibrationViewId: InteriorCalibrationViewId | null;
   matchStartIso: string | null;
   matchEndIso: string | null;
+  sunPreviewIso: string | null;
   showSunSimulation: boolean;
   showWeather: boolean;
   showSunHeatmap: boolean;
   showDebugGuides: boolean;
   sunExposureResult: SunExposureSimulation | null;
   heatmapResolution: HeatmapResolution;
+  heatmapTimeMode: HeatmapTimeMode;
   sunHeatmapResult: SunHeatmapResult | null;
   qualityMode: QualityMode;
   selectSection: (sectionId: string) => void;
@@ -38,12 +41,14 @@ export type StadiumState = {
   ) => void;
   selectCalibrationView: (viewId: InteriorCalibrationViewId) => void;
   setMatchTime: (startIso: string, endIso: string) => void;
+  setSunPreviewTime: (timestampIso: string) => void;
   returnToOverview: () => void;
   toggleDebugGuides: () => void;
   toggleSunSimulation: () => void;
   toggleWeather: () => void;
   toggleSunHeatmap: () => void;
   setHeatmapResolution: (resolution: HeatmapResolution) => void;
+  setHeatmapTimeMode: (timeMode: HeatmapTimeMode) => void;
   setSunExposureResult: (result: SunExposureSimulation | null) => void;
   setSunHeatmapResult: (result: SunHeatmapResult | null) => void;
   setQualityMode: (qualityMode: QualityMode) => void;
@@ -58,12 +63,14 @@ const initialState = {
   calibrationViewId: null,
   matchStartIso: null,
   matchEndIso: null,
+  sunPreviewIso: null,
   showSunSimulation: false,
   showWeather: false,
   showSunHeatmap: false,
   showDebugGuides: false,
   sunExposureResult: null,
   heatmapResolution: 'section' as const,
+  heatmapTimeMode: 'match' as const,
   sunHeatmapResult: null,
   qualityMode: 'auto' as const,
 };
@@ -117,8 +124,11 @@ export const useStadiumStore = create<StadiumState>((set) => ({
     set({
       matchStartIso: startIso,
       matchEndIso: endIso,
+      sunPreviewIso: startIso,
       sunHeatmapResult: null,
     }),
+  setSunPreviewTime: (sunPreviewIso) =>
+    set({ sunPreviewIso, sunHeatmapResult: null }),
   returnToOverview: () =>
     set({
       cameraMode: 'overview',
@@ -137,6 +147,8 @@ export const useStadiumStore = create<StadiumState>((set) => ({
     set((state) => ({ showSunHeatmap: !state.showSunHeatmap })),
   setHeatmapResolution: (heatmapResolution) =>
     set({ heatmapResolution, sunHeatmapResult: null }),
+  setHeatmapTimeMode: (heatmapTimeMode) =>
+    set({ heatmapTimeMode, sunHeatmapResult: null }),
   setSunExposureResult: (sunExposureResult) => set({ sunExposureResult }),
   setSunHeatmapResult: (sunHeatmapResult) => set({ sunHeatmapResult }),
   setQualityMode: (qualityMode) => set({ qualityMode }),

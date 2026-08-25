@@ -41,6 +41,7 @@ export function ExteriorColumns() {
   return (
     <instancedMesh
       ref={meshRef}
+      castShadow
       args={[undefined, undefined, structure.frameCount]}
       name="exterior-columns"
       userData={{ shadowOccluder: true, occluderType: 'major-column' }}

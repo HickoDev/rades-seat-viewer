@@ -2,6 +2,7 @@ import { DateTime } from 'luxon';
 
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { useStadiumStore } from '../state/useStadiumStore';
+import { useSunPreview } from '../sunlight/useSunPreview';
 
 const inputFormat = "yyyy-LL-dd'T'HH:mm";
 
@@ -23,10 +24,43 @@ export function MatchTimeControls() {
   const matchStartIso = useStadiumStore((state) => state.matchStartIso);
   const matchEndIso = useStadiumStore((state) => state.matchEndIso);
   const showSunSimulation = useStadiumStore((state) => state.showSunSimulation);
+  const sunPreviewIso = useStadiumStore((state) => state.sunPreviewIso);
   const setMatchTime = useStadiumStore((state) => state.setMatchTime);
+  const setSunPreviewTime = useStadiumStore((state) => state.setSunPreviewTime);
   const toggleSunSimulation = useStadiumStore(
     (state) => state.toggleSunSimulation,
   );
+  const sunPreview = useSunPreview();
+  const previewWindowStart = matchStartIso
+    ? DateTime.fromISO(matchStartIso, { setZone: true }).minus({ minutes: 30 })
+    : null;
+  const previewWindowEnd = matchEndIso
+    ? DateTime.fromISO(matchEndIso, { setZone: true })
+    : null;
+  const previewTime = sunPreviewIso
+    ? DateTime.fromISO(sunPreviewIso, { setZone: true })
+    : matchStartIso
+      ? DateTime.fromISO(matchStartIso, { setZone: true })
+      : null;
+  const previewMaximum =
+    previewWindowStart && previewWindowEnd
+      ? Math.max(
+          0,
+          Math.round(
+            previewWindowEnd.diff(previewWindowStart, 'minutes').minutes,
+          ),
+        )
+      : 0;
+  const previewValue =
+    previewWindowStart && previewTime
+      ? Math.min(
+          previewMaximum,
+          Math.max(
+            0,
+            Math.round(previewTime.diff(previewWindowStart, 'minutes').minutes),
+          ),
+        )
+      : 0;
 
   const useExampleTime = () => {
     const start = DateTime.now()
@@ -86,6 +120,41 @@ export function MatchTimeControls() {
         <span aria-hidden="true">☀</span>
         {showSunSimulation ? 'Sun simulation on' : 'Enable sun simulation'}
       </button>
+      {showSunSimulation && previewWindowStart && previewWindowEnd && (
+        <label className="sun-preview-control">
+          <span>
+            Preview time
+            <strong>
+              {previewTime
+                ?.setZone(radesStadiumConfig.identity.timezone)
+                .toFormat('HH:mm') ?? '--:--'}
+            </strong>
+          </span>
+          <input
+            aria-label="Sun preview time"
+            type="range"
+            min={0}
+            max={previewMaximum}
+            step={5}
+            value={previewValue}
+            onChange={(event) => {
+              const next = previewWindowStart.plus({
+                minutes: Number(event.target.value),
+              });
+              setSunPreviewTime(next.toISO() ?? '');
+            }}
+          />
+          <small>
+            {sunPreview
+              ? sunPreview.altitudeDegrees > 0
+                ? `Sun ${Math.round(sunPreview.altitudeDegrees)} degrees above the horizon`
+                : sunPreview.isNight
+                  ? 'Night sky / stadium floodlights on'
+                  : 'Twilight / floodlights warming up'
+              : 'Move through the event to preview daylight.'}
+          </small>
+        </label>
+      )}
     </div>
   );
 }

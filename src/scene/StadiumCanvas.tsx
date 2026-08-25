@@ -1,6 +1,6 @@
 import { Canvas } from '@react-three/fiber';
 import { Suspense } from 'react';
-import { ACESFilmicToneMapping, SRGBColorSpace } from 'three';
+import { ACESFilmicToneMapping, PCFShadowMap, SRGBColorSpace } from 'three';
 
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { RadesStadium } from '../stadium/RadesStadium';
@@ -13,6 +13,7 @@ import { Environment } from './Environment';
 import { PerformanceMonitor } from './PerformanceMonitor';
 import { SceneLighting } from './SceneLighting';
 import { SceneGuides } from './SceneGuides';
+import { StadiumFloodlights } from './StadiumFloodlights';
 import { SunSimulation } from './SunSimulation';
 
 export function StadiumCanvas() {
@@ -39,6 +40,7 @@ export function StadiumCanvas() {
           position: [siteRadius * 1.2, siteRadius * 1.55, siteRadius * 3.25],
         }}
         dpr={renderQuality === 'low' ? [0.75, 1] : [1, 1.75]}
+        shadows={renderQuality === 'high'}
         fallback={
           <LoadingScreen message="WebGL is required to display the stadium view." />
         }
@@ -50,11 +52,13 @@ export function StadiumCanvas() {
           gl.outputColorSpace = SRGBColorSpace;
           gl.toneMapping = ACESFilmicToneMapping;
           gl.toneMappingExposure = 1.05;
+          gl.shadowMap.type = PCFShadowMap;
         }}
       >
         <Suspense fallback={null}>
           <SceneLighting />
           <Environment />
+          <StadiumFloodlights />
           <RadesStadium />
           <SceneGuides />
           <SunSimulation />

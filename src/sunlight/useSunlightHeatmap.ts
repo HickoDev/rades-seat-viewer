@@ -16,6 +16,8 @@ export function useSunlightHeatmap() {
   const matchStartIso = useStadiumStore((state) => state.matchStartIso);
   const matchEndIso = useStadiumStore((state) => state.matchEndIso);
   const resolution = useStadiumStore((state) => state.heatmapResolution);
+  const timeMode = useStadiumStore((state) => state.heatmapTimeMode);
+  const sunPreviewIso = useStadiumStore((state) => state.sunPreviewIso);
   const result = useStadiumStore((state) => state.sunHeatmapResult);
   const setResult = useStadiumStore((state) => state.setSunHeatmapResult);
   const [status, setStatus] = useState<HeatmapStatus>('idle');
@@ -42,6 +44,8 @@ export function useSunlightHeatmap() {
       matchStartIso,
       matchEndIso,
       resolution,
+      timeMode,
+      sunPreviewIso ?? matchStartIso,
     );
     const cached = readHeatmapCache(cacheKey);
     if (cached) {
@@ -64,6 +68,8 @@ export function useSunlightHeatmap() {
       matchStartIso,
       matchEndIso,
       resolution,
+      timeMode,
+      previewIso: sunPreviewIso ?? matchStartIso,
     };
 
     worker.onmessage = (event: MessageEvent<SunHeatmapWorkerResponse>) => {
@@ -89,7 +95,15 @@ export function useSunlightHeatmap() {
       active = false;
       worker.terminate();
     };
-  }, [matchEndIso, matchStartIso, resolution, setResult, showSunHeatmap]);
+  }, [
+    matchEndIso,
+    matchStartIso,
+    resolution,
+    setResult,
+    showSunHeatmap,
+    sunPreviewIso,
+    timeMode,
+  ]);
 
   return {
     result,

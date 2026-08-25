@@ -61,6 +61,7 @@ export function StructuralFrames() {
   return (
     <instancedMesh
       ref={meshRef}
+      castShadow
       args={[geometry, material, structure.frameCount]}
       name="structural-frames"
       userData={{ shadowOccluder: true, occluderType: 'structural-frame' }}

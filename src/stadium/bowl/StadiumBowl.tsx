@@ -127,6 +127,7 @@ export function StadiumBowl() {
       <HonorPressTribune />
       {lowerTier && (
         <mesh
+          castShadow
           geometry={lowerFrontWallGeometry ?? undefined}
           name="lower-tier-front-wall"
           userData={{
@@ -155,6 +156,7 @@ export function StadiumBowl() {
               <meshStandardMaterial color="#7f8b85" roughness={0.96} />
             </mesh>
             <mesh
+              castShadow
               geometry={structuralWallGeometries[tierIndex]}
               userData={{
                 shadowOccluder: true,
@@ -174,6 +176,7 @@ export function StadiumBowl() {
       })}
       {upperSlabOccluder && (
         <mesh
+          castShadow
           geometry={upperSlabOccluder}
           name="upper-tier-shadow-proxy"
           userData={{

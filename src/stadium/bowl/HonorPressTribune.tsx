@@ -75,6 +75,7 @@ function FacilityVolume({
   return (
     <group name={facility.id}>
       <mesh
+        castShadow
         material={isServiceCore ? materials.core : materials.shell}
         position={[
           facility.centerX,
@@ -194,6 +195,7 @@ function ContinuousGrandstandFacade({
   return (
     <group name="continuous-main-stand-facade">
       <mesh
+        castShadow
         material={materials.shell}
         position={[0, grandstand.baseHeight + grandstand.height / 2, centerZ]}
         userData={{

@@ -65,7 +65,10 @@ export function Scoreboards() {
           ]}
           rotation={[0, side === -1 ? Math.PI / 2 : -Math.PI / 2, 0]}
         >
-          <mesh userData={{ shadowOccluder: true, occluderType: 'scoreboard' }}>
+          <mesh
+            castShadow
+            userData={{ shadowOccluder: true, occluderType: 'scoreboard' }}
+          >
             <boxGeometry
               args={[
                 structure.scoreboardWidth + 0.7,

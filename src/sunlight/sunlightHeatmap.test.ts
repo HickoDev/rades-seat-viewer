@@ -31,6 +31,28 @@ describe('sunlight heatmap', () => {
     expect(sectionKey).toContain('geometry-2');
   });
 
+  it('invalidates instant snapshots when the preview time changes', () => {
+    const morningKey = createHeatmapCacheKey(
+      'geometry-2',
+      '2026-08-24T16:00:00+01:00',
+      '2026-08-24T18:00:00+01:00',
+      'section',
+      'instant',
+      '2026-08-24T09:00:00+01:00',
+    );
+    const eveningKey = createHeatmapCacheKey(
+      'geometry-2',
+      '2026-08-24T16:00:00+01:00',
+      '2026-08-24T18:00:00+01:00',
+      'section',
+      'instant',
+      '2026-08-24T18:00:00+01:00',
+    );
+
+    expect(morningKey).not.toBe(eveningKey);
+    expect(morningKey).toContain('physics-2');
+  });
+
   it('uses section and row group keys at their requested resolution', () => {
     expect(getHeatmapGroupKey('lower-01', 4, 'section')).toBe('lower-01');
     expect(getHeatmapGroupKey('lower-01', 4, 'row')).toBe('lower-01:row-4');

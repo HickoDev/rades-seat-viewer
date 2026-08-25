@@ -1,31 +1,23 @@
 /// <reference lib="webworker" />
 
 import { DateTime } from 'luxon';
-import {
-  BoxGeometry,
-  DoubleSide,
-  Mesh,
-  MeshBasicMaterial,
-  type BufferGeometry,
-  type Object3D,
-  type Vector3,
-} from 'three';
+import type { Vector3 } from 'three';
 
 import { calculateSeatView } from '../camera/calculateSeatView';
 import { radesSeatLayout } from '../seats/seatMetadata';
 import type { SeatMetadata } from '../seats/seat.types';
-import { createEllipticalRingGeometry } from '../stadium/bowl/createTierGeometry';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
-import { createStadiumPerimeterWallGeometry } from '../stadium/geometry/createStadiumPerimeterWallGeometry';
 import { getSectionId } from '../stadium/bowl/sectionIds';
-import { createRoofGeometry } from '../stadium/roof/createRoofGeometry';
-import { enableBvhRaycasting } from '../utils/setupBvh';
 import { calculateSeatShadow } from '../sunlight/calculateSeatShadow';
 import {
   calculateSunPosition,
   toStadiumDateTime,
 } from '../sunlight/calculateSunPosition';
 import { createSunDirection } from '../sunlight/createSunDirection';
+import {
+  createStadiumSunOccluders,
+  disposeStadiumSunOccluders,
+} from '../sunlight/createStadiumSunOccluders';
 import {
   classifyHeatmapExposure,
   getHeatmapGroupKey,
@@ -37,90 +29,11 @@ import type {
   SunHeatmapWorkerResponse,
 } from '../sunlight/sunlightHeatmap.types';
 
-enableBvhRaycasting();
-
-const occluderMaterial = new MeshBasicMaterial({ side: DoubleSide });
-
-function createOccluder(geometry: BufferGeometry) {
-  geometry.computeBoundsTree();
-  return new Mesh(geometry, occluderMaterial);
-}
-
-function createStaticOccluders(): Object3D[] {
-  const { roof, structure, tiers } = radesStadiumConfig;
-  const roofMesh = createOccluder(
-    createRoofGeometry({
-      innerRadiusX: roof.innerRadiusX,
-      innerRadiusZ: roof.innerRadiusZ,
-      outerRadiusX: roof.outerRadiusX,
-      outerRadiusZ: roof.outerRadiusZ,
-      innerHeight: roof.innerHeight,
-      outerHeight: roof.outerHeight,
-      thickness: roof.panelThickness,
-      segments: 192,
-    }),
-  );
-  roofMesh.name = 'heatmap-roof-occluder';
-
-  const occluders: Object3D[] = [roofMesh];
-  const upperTier = tiers.find((tier) => tier.id === 'upper');
-  if (upperTier) {
-    const upperSlab = createOccluder(
-      createEllipticalRingGeometry({
-        innerRadiusX: upperTier.startRadiusX,
-        innerRadiusZ: upperTier.startRadiusZ,
-        outerRadiusX:
-          upperTier.startRadiusX + upperTier.rowCount * upperTier.rowDepth,
-        outerRadiusZ:
-          upperTier.startRadiusZ + upperTier.rowCount * upperTier.rowDepth,
-        height: upperTier.baseHeight,
-      }),
-    );
-    upperSlab.name = 'heatmap-upper-tier-slab';
-    occluders.push(upperSlab);
-  }
-
-  tiers.forEach((tier) => {
-    const outerRadiusX =
-      tier.startRadiusX + tier.rowCount * tier.rowDepth + tier.walkwayWidth;
-    const outerRadiusZ =
-      tier.startRadiusZ + tier.rowCount * tier.rowDepth + tier.walkwayWidth;
-    const height = tier.baseHeight + tier.rowCount * tier.rowHeight;
-    const wall = createOccluder(
-      createStadiumPerimeterWallGeometry({
-        bottom: 0,
-        extentX: outerRadiusX,
-        extentZ: outerRadiusZ,
-        height,
-        segments: 192,
-      }),
-    );
-    wall.name = `heatmap-${tier.id}-outer-wall`;
-    wall.updateMatrixWorld(true);
-    occluders.push(wall);
-  });
-
-  ([-1, 1] as const).forEach((side) => {
-    const scoreboard = createOccluder(
-      new BoxGeometry(
-        structure.scoreboardWidth,
-        structure.scoreboardHeight,
-        structure.scoreboardDepth,
-      ),
-    );
-    scoreboard.position.set(
-      side * (roof.innerRadiusX - structure.scoreboardDepth),
-      roof.innerHeight - structure.scoreboardHeight,
-      0,
-    );
-    scoreboard.rotation.y = side === -1 ? Math.PI / 2 : -Math.PI / 2;
-    scoreboard.name = `heatmap-scoreboard-${side}`;
-    scoreboard.updateMatrixWorld(true);
-    occluders.push(scoreboard);
-  });
-
-  occluders.forEach((occluder) => occluder.updateMatrixWorld(true));
-  return occluders;
+function selectRepresentativeSeats(seats: SeatMetadata[]) {
+  const indices = [0, Math.floor((seats.length - 1) / 2), seats.length - 1];
+  return [...new Set(indices)]
+    .map((index) => seats[index])
+    .filter((seat): seat is SeatMetadata => seat !== undefined);
 }
 
 function getRepresentativeSeats(resolution: HeatmapResolution) {
@@ -142,7 +55,7 @@ function getRepresentativeSeats(resolution: HeatmapResolution) {
 
   return [...groups.entries()].map(([key, seats]) => ({
     key,
-    seat: seats[Math.floor(seats.length / 2)],
+    seats: selectRepresentativeSeats(seats),
   }));
 }
 
@@ -152,14 +65,36 @@ type DirectionSample = {
 };
 
 function createDirectionSamples(
-  matchStartIso: string,
-  matchEndIso: string,
+  request: SunHeatmapWorkerRequest,
 ): DirectionSample[] {
   const { identity } = radesStadiumConfig;
-  let cursor = toStadiumDateTime(matchStartIso, identity.timezone).minus({
+  if (request.timeMode === 'instant') {
+    const timestampIso = request.previewIso ?? request.matchStartIso;
+    const sun = calculateSunPosition(
+      timestampIso,
+      identity.latitude,
+      identity.longitude,
+      identity.timezone,
+    );
+    return [
+      {
+        direction: createSunDirection(
+          sun.altitudeRadians,
+          sun.azimuthRadians,
+          identity.northRotationDegrees,
+        ),
+        minutes: 1,
+      },
+    ];
+  }
+
+  let cursor = toStadiumDateTime(
+    request.matchStartIso,
+    identity.timezone,
+  ).minus({
     minutes: 30,
   });
-  const end = toStadiumDateTime(matchEndIso, identity.timezone);
+  const end = toStadiumDateTime(request.matchEndIso, identity.timezone);
   const samples: DirectionSample[] = [];
 
   while (cursor < end) {
@@ -187,48 +122,67 @@ function createDirectionSamples(
 }
 
 function runSimulation(request: SunHeatmapWorkerRequest) {
-  const occluders = createStaticOccluders();
-  const directionSamples = createDirectionSamples(
-    request.matchStartIso,
-    request.matchEndIso,
-  );
-  const representatives = getRepresentativeSeats(request.resolution);
-  const cells: SunHeatmapCell[] = representatives.map(({ key, seat }) => {
-    const view = calculateSeatView(seat, radesStadiumConfig.seats.eyeHeight);
-    let directSunMinutes = 0;
-    let shadedMinutes = 0;
+  const occluders = createStadiumSunOccluders();
+  try {
+    const directionSamples = createDirectionSamples(request);
+    const representatives = getRepresentativeSeats(request.resolution);
+    const cells: SunHeatmapCell[] = representatives.map(({ key, seats }) => {
+      let directSunMinutes = 0;
+      let shadedMinutes = 0;
 
-    directionSamples.forEach((sample) => {
-      const exposure = calculateSeatShadow(
-        view.eyePosition,
-        sample.direction,
-        occluders,
-      );
-      if (exposure === 'direct-sun') directSunMinutes += sample.minutes;
-      else shadedMinutes += sample.minutes;
+      seats.forEach((seat) => {
+        const view = calculateSeatView(
+          seat,
+          radesStadiumConfig.seats.eyeHeight,
+        );
+        directionSamples.forEach((sample) => {
+          const exposure = calculateSeatShadow(
+            view.eyePosition,
+            sample.direction,
+            occluders,
+          );
+          if (exposure === 'direct-sun') directSunMinutes += sample.minutes;
+          else shadedMinutes += sample.minutes;
+        });
+      });
+
+      const sampleCount = Math.max(seats.length, 1);
+      directSunMinutes /= sampleCount;
+      shadedMinutes /= sampleCount;
+      const totalMinutes = directSunMinutes + shadedMinutes;
+      const representativeSeat = seats[Math.floor(seats.length / 2)];
+      if (!representativeSeat) {
+        throw new Error(`No representative seat for ${key}.`);
+      }
+      return {
+        key,
+        sectionId: representativeSeat.sectionId,
+        tierId: representativeSeat.tierId,
+        rowNumber:
+          request.resolution === 'row' ? representativeSeat.rowNumber : null,
+        representativeSeatId: representativeSeat.id,
+        classification: classifyHeatmapExposure(
+          directSunMinutes,
+          shadedMinutes,
+        ),
+        directSunMinutes,
+        shadedMinutes,
+        exposedPercent:
+          totalMinutes > 0 ? (directSunMinutes / totalMinutes) * 100 : 0,
+      };
     });
 
-    const totalMinutes = directSunMinutes + shadedMinutes;
     return {
-      key,
-      sectionId: seat.sectionId,
-      tierId: seat.tierId,
-      rowNumber: request.resolution === 'row' ? seat.rowNumber : null,
-      representativeSeatId: seat.id,
-      classification: classifyHeatmapExposure(directSunMinutes, shadedMinutes),
-      directSunMinutes,
-      shadedMinutes,
-      exposedPercent:
-        totalMinutes > 0 ? (directSunMinutes / totalMinutes) * 100 : 0,
+      cacheKey: request.cacheKey,
+      resolution: request.resolution,
+      timeMode: request.timeMode,
+      previewIso: request.previewIso,
+      generatedAtIso: new Date().toISOString(),
+      cells,
     };
-  });
-
-  return {
-    cacheKey: request.cacheKey,
-    resolution: request.resolution,
-    generatedAtIso: new Date().toISOString(),
-    cells,
-  };
+  } finally {
+    disposeStadiumSunOccluders(occluders);
+  }
 }
 
 self.onmessage = (event: MessageEvent<SunHeatmapWorkerRequest>) => {

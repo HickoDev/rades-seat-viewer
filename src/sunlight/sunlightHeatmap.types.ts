@@ -1,4 +1,5 @@
 export type HeatmapResolution = 'section' | 'row';
+export type HeatmapTimeMode = 'instant' | 'match';
 
 export type HeatmapClassification =
   'mostly-sunny' | 'partially-sunny' | 'mostly-shaded' | 'fully-shaded';
@@ -18,6 +19,8 @@ export type SunHeatmapCell = {
 export type SunHeatmapResult = {
   cacheKey: string;
   resolution: HeatmapResolution;
+  timeMode: HeatmapTimeMode;
+  previewIso: string | null;
   generatedAtIso: string;
   cells: SunHeatmapCell[];
 };
@@ -28,6 +31,8 @@ export type SunHeatmapWorkerRequest = {
   matchStartIso: string;
   matchEndIso: string;
   resolution: HeatmapResolution;
+  timeMode: HeatmapTimeMode;
+  previewIso: string | null;
 };
 
 export type SunHeatmapWorkerResponse =

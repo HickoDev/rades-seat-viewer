@@ -58,6 +58,7 @@ export function RoofTrusses() {
   return (
     <instancedMesh
       ref={meshRef}
+      castShadow
       args={[geometry, material, matrices.length]}
       name="roof-trusses"
       userData={{ shadowOccluder: true, occluderType: 'roof-truss' }}

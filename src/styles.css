@@ -527,6 +527,47 @@ a:focus-visible {
   background: #ffda7c;
 }
 
+.sun-preview-control {
+  display: grid;
+  gap: 7px;
+  padding: 10px;
+  border: 1px solid rgba(255, 218, 124, 0.16);
+  border-radius: 10px;
+  background: rgba(255, 218, 124, 0.035);
+}
+
+.sun-preview-control > span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 8px;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.sun-preview-control strong {
+  color: #ffdf91;
+  font-size: 10px;
+}
+
+.sun-preview-control input {
+  width: 100%;
+  accent-color: #ffda7c;
+}
+
+.sun-preview-control input:focus-visible {
+  outline: 3px solid var(--lime);
+  outline-offset: 3px;
+}
+
+.sun-preview-control small {
+  color: #819c90;
+  font-size: 8px;
+  line-height: 1.4;
+}
+
 .simulation-message {
   margin: 0;
   padding: 11px 12px;
@@ -716,6 +757,11 @@ a:focus-visible {
 .heatmap-panel {
   display: grid;
   gap: 9px;
+}
+
+.heatmap-options {
+  display: grid;
+  gap: 8px;
 }
 
 .heatmap-resolution {

@@ -1,6 +1,7 @@
 import type {
   HeatmapClassification,
   HeatmapResolution,
+  HeatmapTimeMode,
   SunHeatmapCell,
 } from './sunlightHeatmap.types';
 
@@ -29,13 +30,16 @@ export function createHeatmapCacheKey(
   matchStartIso: string,
   matchEndIso: string,
   resolution: HeatmapResolution,
+  timeMode: HeatmapTimeMode = 'match',
+  previewIso: string | null = null,
 ) {
   return [
     'rades-sun-heatmap',
+    'physics-2',
     configVersion,
     resolution,
-    matchStartIso,
-    matchEndIso,
+    timeMode,
+    timeMode === 'instant' ? previewIso : `${matchStartIso}/${matchEndIso}`,
   ].join(':');
 }
 

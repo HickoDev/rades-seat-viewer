@@ -1,5 +1,12 @@
 import { gsap } from 'gsap';
-import type { Camera, Vector3 } from 'three';
+import { PerspectiveCamera, type Camera, type Vector3 } from 'three';
+
+export function setCameraDepthRange(camera: Camera, near: number, far: number) {
+  if (!(camera instanceof PerspectiveCamera)) return;
+  camera.near = near;
+  camera.far = far;
+  camera.updateProjectionMatrix();
+}
 
 export type CameraTransitionOptions = {
   camera: Camera;

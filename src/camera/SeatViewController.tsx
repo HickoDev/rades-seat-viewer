@@ -7,7 +7,7 @@ import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { useStadiumStore } from '../state/useStadiumStore';
 import { useReducedMotion } from '../utils/useReducedMotion';
 import { calculateSeatView } from './calculateSeatView';
-import { flyCamera } from './cameraTransitions';
+import { flyCamera, setCameraDepthRange } from './cameraTransitions';
 
 export function SeatViewController() {
   const camera = useThree((state) => state.camera);
@@ -29,6 +29,7 @@ export function SeatViewController() {
 
   useEffect(() => {
     if (cameraMode !== 'seat' || !view) return;
+    setCameraDepthRange(camera, 0.06, radesStadiumConfig.roof.outerRadiusX * 6);
     isReady.current = false;
     currentTarget.copy(view.pitchTarget);
     const transition = flyCamera({

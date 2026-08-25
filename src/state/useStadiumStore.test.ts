@@ -3,7 +3,19 @@ import { afterEach, describe, expect, it } from 'vitest';
 import { useStadiumStore } from './useStadiumStore';
 
 describe('stadium selection state', () => {
-  afterEach(() => useStadiumStore.getState().returnToOverview());
+  afterEach(() => {
+    useStadiumStore.getState().returnToOverview();
+    useStadiumStore.setState({
+      matchSetupOpen: true,
+      matchStartIso: null,
+      matchEndIso: null,
+      sunPreviewIso: null,
+      showSunSimulation: false,
+      showWeather: false,
+      showSunHeatmap: false,
+      heatmapTimeMode: 'instant',
+    });
+  });
 
   it('enters first-person mode for a serializable terrace position', () => {
     useStadiumStore.getState().selectTerracePosition('lower-01', 16, 12);
@@ -35,6 +47,21 @@ describe('stadium selection state', () => {
       calibrationViewId: 'honor-balcony',
       selectedSectionId: null,
       selectedViewKind: null,
+    });
+  });
+
+  it('starts every match condition automatically after setup', () => {
+    useStadiumStore
+      .getState()
+      .setMatchTime('2026-08-26T16:00:00+01:00', '2026-08-26T18:00:00+01:00');
+
+    expect(useStadiumStore.getState()).toMatchObject({
+      matchSetupOpen: false,
+      sunPreviewIso: '2026-08-26T16:00:00+01:00',
+      showSunSimulation: true,
+      showWeather: true,
+      showSunHeatmap: true,
+      heatmapTimeMode: 'instant',
     });
   });
 });

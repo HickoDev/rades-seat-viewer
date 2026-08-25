@@ -8,7 +8,7 @@ import { useStadiumStore } from '../state/useStadiumStore';
 import { useReducedMotion } from '../utils/useReducedMotion';
 import { getOverviewCameraPose, getSectionCameraPose } from './cameraPoses';
 import { getInteriorCalibrationCameraPose } from './interiorCalibrationViews';
-import { flyCamera } from './cameraTransitions';
+import { flyCamera, setCameraDepthRange } from './cameraTransitions';
 
 export function OverviewCamera() {
   const camera = useThree((state) => state.camera);
@@ -25,6 +25,11 @@ export function OverviewCamera() {
 
   useEffect(() => {
     if (cameraMode === 'seat') return;
+    setCameraDepthRange(
+      camera,
+      cameraMode === 'overview' ? 1 : 0.15,
+      siteRadius * 6,
+    );
     const pose = calibrationViewId
       ? getInteriorCalibrationCameraPose(calibrationViewId)
       : cameraMode === 'section' && selectedSectionId
@@ -54,6 +59,7 @@ export function OverviewCamera() {
     currentTarget,
     reducedMotion,
     selectedSectionId,
+    siteRadius,
   ]);
 
   if (cameraMode === 'seat') return null;

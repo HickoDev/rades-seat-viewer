@@ -21,7 +21,12 @@ export function FootballPitch() {
           position={[-pitch.length / 2 + stripeWidth * (index + 0.5), 0.061, 0]}
         >
           <boxGeometry args={[stripeWidth, 0.01, pitch.width]} />
-          <meshBasicMaterial color={index % 2 === 0 ? '#2f7049' : '#286542'} />
+          <meshBasicMaterial
+            color={index % 2 === 0 ? '#2f7049' : '#286542'}
+            polygonOffset
+            polygonOffsetFactor={-1}
+            polygonOffsetUnits={-1}
+          />
         </mesh>
       ))}
 

@@ -1,6 +1,65 @@
 import { DateTime } from 'luxon';
 
-import type { ExpectedIntensity, WeatherHour } from './weather.types';
+import type {
+  ExpectedIntensity,
+  ThermalComfort,
+  WeatherHour,
+} from './weather.types';
+
+export function classifyThermalComfort(
+  apparentTemperatureCelsius: number | null,
+): ThermalComfort {
+  if (apparentTemperatureCelsius === null) {
+    return {
+      level: 'unavailable',
+      label: 'Not available',
+      description: 'No feels-like temperature is available for kickoff.',
+    };
+  }
+  if (apparentTemperatureCelsius >= 40) {
+    return {
+      level: 'extreme-heat',
+      label: 'Extreme heat',
+      description:
+        'Strong heat discomfort is likely, especially in direct sun.',
+    };
+  }
+  if (apparentTemperatureCelsius >= 35) {
+    return {
+      level: 'very-hot',
+      label: 'Very hot',
+      description: 'Shade will make a meaningful difference during the match.',
+    };
+  }
+  if (apparentTemperatureCelsius >= 30) {
+    return {
+      level: 'hot',
+      label: 'Hot',
+      description: 'Direct sun may feel uncomfortable over a full match.',
+    };
+  }
+  if (apparentTemperatureCelsius >= 24) {
+    return {
+      level: 'warm',
+      label: 'Warm',
+      description:
+        'Conditions should feel warm, with extra heat in direct sun.',
+    };
+  }
+  if (apparentTemperatureCelsius >= 16) {
+    return {
+      level: 'comfortable',
+      label: 'Comfortable',
+      description:
+        'The expected feels-like temperature is generally comfortable.',
+    };
+  }
+  return {
+    level: 'cool',
+    label: 'Cool',
+    description: 'Conditions may feel cool while seated or in stadium shade.',
+  };
+}
 
 export function isWithinForecastHorizon(
   matchStartIso: string,

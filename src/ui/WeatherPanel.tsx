@@ -3,6 +3,7 @@ import { useStadiumStore } from '../state/useStadiumStore';
 import { useMatchWeather } from '../weather/useMatchWeather';
 import {
   classifyExpectedIntensity,
+  classifyThermalComfort,
   describeWeatherCode,
   findWeatherAtTime,
 } from '../weather/weatherAssessment';
@@ -14,103 +15,110 @@ function formatValue(value: number | null, unit: string, digits = 0) {
 export function WeatherPanel() {
   const matchStartIso = useStadiumStore((state) => state.matchStartIso);
   const matchEndIso = useStadiumStore((state) => state.matchEndIso);
-  const showWeather = useStadiumStore((state) => state.showWeather);
-  const toggleWeather = useStadiumStore((state) => state.toggleWeather);
   const sunExposure = useStadiumStore((state) => state.sunExposureResult);
-  const weather = useMatchWeather(matchStartIso, matchEndIso, showWeather);
+  const weather = useMatchWeather(
+    matchStartIso,
+    matchEndIso,
+    Boolean(matchStartIso && matchEndIso),
+  );
 
-  const kickoffWeather =
-    weather.data && matchStartIso
-      ? findWeatherAtTime(
-          weather.data.hours,
-          matchStartIso,
-          radesStadiumConfig.identity.timezone,
-        )
-      : null;
-  const kickoffExposure = matchStartIso
-    ? sunExposure?.samples.find(
-        (sample) => sample.timestampIso >= matchStartIso,
-      )?.geometricExposure
-    : undefined;
+  if (!matchStartIso || !matchEndIso) return null;
+
+  const kickoffWeather = weather.data
+    ? findWeatherAtTime(
+        weather.data.hours,
+        matchStartIso,
+        radesStadiumConfig.identity.timezone,
+      )
+    : null;
+  const kickoffExposure = sunExposure?.samples.find(
+    (sample) => sample.timestampIso >= matchStartIso,
+  )?.geometricExposure;
   const intensity = kickoffWeather
-    ? kickoffExposure === 'direct-sun'
-      ? classifyExpectedIntensity(
+    ? kickoffExposure === 'stadium-shadow' ||
+      kickoffExposure === 'sun-below-horizon'
+      ? 'none'
+      : classifyExpectedIntensity(
           kickoffWeather.directNormalIrradianceWattsPerSquareMetre,
           kickoffWeather.directRadiationWattsPerSquareMetre,
         )
-      : kickoffExposure
-        ? 'none'
-        : null
     : null;
+  const comfort = classifyThermalComfort(
+    kickoffWeather?.apparentTemperatureCelsius ?? null,
+  );
 
   return (
-    <div className="weather-panel">
-      <button
-        className={`simulation-toggle ${showWeather ? 'simulation-toggle--active' : ''}`}
-        type="button"
-        aria-pressed={showWeather}
-        onClick={toggleWeather}
-      >
-        <span aria-hidden="true">☁</span>
-        {showWeather ? 'Weather forecast on' : 'Enable weather forecast'}
-      </button>
+    <div className="weather-panel" aria-live="polite">
+      <div className="condition-card__title">
+        <div>
+          <span className="condition-icon" aria-hidden="true">
+            ◌
+          </span>
+          <div>
+            <strong>Kickoff weather</strong>
+            <small>Automatic forecast</small>
+          </div>
+        </div>
+        <span className="automatic-badge">Live</span>
+      </div>
 
-      {showWeather && !matchStartIso && (
-        <p className="simulation-message">Choose a match date and time.</p>
-      )}
-      {showWeather && matchStartIso && !weather.isForecastAvailable && (
+      {!weather.isForecastAvailable && (
         <p className="forecast-unavailable">
-          Astronomical sun simulation available.
-          <br />
-          Weather forecast not yet available.
+          <strong>Forecast not available yet</strong>
+          Astronomical sun and stadium shade remain available. Live weather
+          appears inside the 15-day forecast window.
         </p>
       )}
-      {showWeather && weather.isLoading && (
+      {weather.isLoading && (
         <p className="simulation-message">Loading expected conditions…</p>
       )}
-      {showWeather && weather.isError && (
+      {weather.isError && (
         <p className="forecast-unavailable">
-          The live forecast is temporarily unavailable. Astronomical and
-          geometric sunlight results are unaffected.
+          <strong>Weather temporarily unavailable</strong>
+          Sun and stadium-shadow results are unaffected.
         </p>
       )}
-      {showWeather && weather.isSuccess && !kickoffWeather && (
+      {weather.isSuccess && !kickoffWeather && (
         <p className="forecast-unavailable">
           No hourly forecast matched the selected kickoff.
         </p>
       )}
-      {showWeather && kickoffWeather && (
-        <div className="weather-card" aria-live="polite">
+      {kickoffWeather && (
+        <article className="weather-card">
+          <div className={`weather-comfort weather-comfort--${comfort.level}`}>
+            <span>How it may feel</span>
+            <strong>{comfort.label}</strong>
+            <p>{comfort.description}</p>
+          </div>
+
           <div className="weather-card__lead">
-            <span>Kickoff forecast</span>
-            <strong>
-              {formatValue(kickoffWeather.temperatureCelsius, '°C')}
-            </strong>
+            <div>
+              <span>Air temperature</span>
+              <strong>
+                {formatValue(kickoffWeather.temperatureCelsius, '°C')}
+              </strong>
+            </div>
+            <div>
+              <span>Feels like</span>
+              <strong>
+                {formatValue(kickoffWeather.apparentTemperatureCelsius, '°C')}
+              </strong>
+            </div>
             <small>{describeWeatherCode(kickoffWeather.weatherCode)}</small>
           </div>
+
           <dl>
             <div>
-              <dt>Feels like</dt>
+              <dt>At your place</dt>
               <dd>
-                {formatValue(kickoffWeather.apparentTemperatureCelsius, '°C')}
+                {kickoffExposure
+                  ? kickoffExposure.replaceAll('-', ' ')
+                  : 'Select a place'}
               </dd>
             </div>
             <div>
-              <dt>Cloud cover</dt>
-              <dd>{formatValue(kickoffWeather.cloudCoverPercent, '%')}</dd>
-            </div>
-            <div>
-              <dt>Direct radiation</dt>
-              <dd>
-                {formatValue(
-                  kickoffWeather.directRadiationWattsPerSquareMetre,
-                  ' W/m²',
-                )}
-              </dd>
-            </div>
-            <div>
-              <dt>Expected intensity</dt>
-              <dd>{intensity ?? 'Run sun simulation'}</dd>
+              <dt>Sun strength</dt>
+              <dd>{intensity ?? 'Calculating'}</dd>
             </div>
             <div>
               <dt>Rain chance</dt>
@@ -122,6 +130,10 @@ export function WeatherPanel() {
               </dd>
             </div>
             <div>
+              <dt>Cloud cover</dt>
+              <dd>{formatValue(kickoffWeather.cloudCoverPercent, '%')}</dd>
+            </div>
+            <div>
               <dt>Wind</dt>
               <dd>
                 {formatValue(
@@ -130,12 +142,21 @@ export function WeatherPanel() {
                 )}
               </dd>
             </div>
+            <div>
+              <dt>Direct radiation</dt>
+              <dd>
+                {formatValue(
+                  kickoffWeather.directRadiationWattsPerSquareMetre,
+                  ' W/m²',
+                )}
+              </dd>
+            </div>
           </dl>
           <p>
-            Geometry answers whether the stadium blocks the sun. Radiation
-            estimates how strong unobstructed sunlight may feel.
+            “Feels like” includes atmospheric conditions. Seat shade comes from
+            the stadium geometry and is calculated separately.
           </p>
-        </div>
+        </article>
       )}
     </div>
   );

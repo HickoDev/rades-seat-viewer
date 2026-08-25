@@ -19,6 +19,7 @@ export type StadiumState = {
   selectedSeat: number | null;
   selectedViewKind: ViewingPositionKind | null;
   calibrationViewId: InteriorCalibrationViewId | null;
+  matchSetupOpen: boolean;
   matchStartIso: string | null;
   matchEndIso: string | null;
   sunPreviewIso: string | null;
@@ -41,6 +42,8 @@ export type StadiumState = {
   ) => void;
   selectCalibrationView: (viewId: InteriorCalibrationViewId) => void;
   setMatchTime: (startIso: string, endIso: string) => void;
+  openMatchSetup: () => void;
+  closeMatchSetup: () => void;
   setSunPreviewTime: (timestampIso: string) => void;
   returnToOverview: () => void;
   toggleDebugGuides: () => void;
@@ -61,6 +64,7 @@ const initialState = {
   selectedSeat: null,
   selectedViewKind: null,
   calibrationViewId: null,
+  matchSetupOpen: true,
   matchStartIso: null,
   matchEndIso: null,
   sunPreviewIso: null,
@@ -70,7 +74,7 @@ const initialState = {
   showDebugGuides: false,
   sunExposureResult: null,
   heatmapResolution: 'section' as const,
-  heatmapTimeMode: 'match' as const,
+  heatmapTimeMode: 'instant' as const,
   sunHeatmapResult: null,
   qualityMode: 'auto' as const,
 };
@@ -125,8 +129,14 @@ export const useStadiumStore = create<StadiumState>((set) => ({
       matchStartIso: startIso,
       matchEndIso: endIso,
       sunPreviewIso: startIso,
+      matchSetupOpen: false,
+      showSunSimulation: true,
+      showWeather: true,
+      showSunHeatmap: true,
       sunHeatmapResult: null,
     }),
+  openMatchSetup: () => set({ matchSetupOpen: true }),
+  closeMatchSetup: () => set({ matchSetupOpen: false }),
   setSunPreviewTime: (sunPreviewIso) =>
     set({ sunPreviewIso, sunHeatmapResult: null }),
   returnToOverview: () =>

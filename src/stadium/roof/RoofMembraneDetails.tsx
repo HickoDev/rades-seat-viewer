@@ -18,6 +18,9 @@ export function RoofMembraneDetails() {
       new MeshStandardMaterial({
         color: '#f7f4ec',
         metalness: 0.08,
+        polygonOffset: true,
+        polygonOffsetFactor: -1,
+        polygonOffsetUnits: -1,
         roughness: 0.7,
       }),
     [],

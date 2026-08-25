@@ -6,37 +6,52 @@ import type {
 import { useSunlightHeatmap } from '../sunlight/useSunlightHeatmap';
 import { useStadiumStore } from '../state/useStadiumStore';
 
-const labels = {
+const matchLabels = {
   'mostly-sunny': 'Mostly sunny',
-  'partially-sunny': 'Partially sunny',
+  'partially-sunny': 'Partly sunny',
   'mostly-shaded': 'Mostly shaded',
   'fully-shaded': 'Fully shaded',
 } as const;
 
+const instantLabels = {
+  'mostly-sunny': 'Direct sunlight',
+  'partially-sunny': 'Mixed sun and shade',
+  'mostly-shaded': 'Mostly in shade',
+  'fully-shaded': 'In stadium shade',
+} as const;
+
 export function SunHeatmapPanel() {
-  const showSunHeatmap = useStadiumStore((state) => state.showSunHeatmap);
   const matchStartIso = useStadiumStore((state) => state.matchStartIso);
   const resolution = useStadiumStore((state) => state.heatmapResolution);
   const timeMode = useStadiumStore((state) => state.heatmapTimeMode);
-  const toggleSunHeatmap = useStadiumStore((state) => state.toggleSunHeatmap);
   const setResolution = useStadiumStore((state) => state.setHeatmapResolution);
   const setTimeMode = useStadiumStore((state) => state.setHeatmapTimeMode);
   const { errorMessage, result, status } = useSunlightHeatmap();
   const counts = result ? countHeatmapClasses(result.cells) : null;
+  const labels = timeMode === 'instant' ? instantLabels : matchLabels;
+
+  if (!matchStartIso) return null;
 
   return (
     <div className="heatmap-panel">
-      <button
-        className={`simulation-toggle ${showSunHeatmap ? 'simulation-toggle--active' : ''}`}
-        type="button"
-        aria-pressed={showSunHeatmap}
-        onClick={toggleSunHeatmap}
-      >
-        <span aria-hidden="true">◫</span>
-        {showSunHeatmap ? 'Sunlight heatmap on' : 'Enable sunlight heatmap'}
-      </button>
+      <div className="condition-card__title">
+        <div>
+          <span
+            className="condition-icon condition-icon--map"
+            aria-hidden="true"
+          >
+            ◫
+          </span>
+          <div>
+            <strong>Stadium exposure map</strong>
+            <small>Shown on seats and spectators</small>
+          </div>
+        </div>
+        <span className="automatic-badge">Automatic</span>
+      </div>
 
-      {showSunHeatmap && (
+      <details className="heatmap-settings">
+        <summary>Map settings</summary>
         <div className="heatmap-options">
           <label className="heatmap-resolution">
             <span>Time basis</span>
@@ -47,12 +62,12 @@ export function SunHeatmapPanel() {
                 setTimeMode(event.target.value as HeatmapTimeMode)
               }
             >
-              <option value="instant">Preview-time snapshot</option>
+              <option value="instant">Current preview time</option>
               <option value="match">Whole-match exposure</option>
             </select>
           </label>
           <label className="heatmap-resolution">
-            <span>Representative detail</span>
+            <span>Detail</span>
             <select
               aria-label="Heatmap representative detail"
               value={resolution}
@@ -60,29 +75,29 @@ export function SunHeatmapPanel() {
                 setResolution(event.target.value as HeatmapResolution)
               }
             >
-              <option value="section">Section samples</option>
-              <option value="row">Row samples</option>
+              <option value="section">By section</option>
+              <option value="row">By row</option>
             </select>
           </label>
         </div>
-      )}
-      {showSunHeatmap && !matchStartIso && (
-        <p className="simulation-message">Choose a match date and time.</p>
-      )}
-      {showSunHeatmap && status === 'loading' && (
+      </details>
+
+      {status === 'loading' && (
         <p className="simulation-message">
-          Calculating representative shade in the background…
+          Calculating stadium sun and shade in the background…
         </p>
       )}
-      {showSunHeatmap && status === 'error' && (
+      {status === 'error' && (
         <p className="forecast-unavailable">{errorMessage}</p>
       )}
-      {showSunHeatmap && status === 'ready' && result && counts && (
+      {status === 'ready' && result && counts && (
         <div className="heatmap-result" aria-live="polite">
           <p>
-            <strong>{result.cells.length}</strong> representative groups /{' '}
-            {resolution === 'section' ? 'section' : 'row'} detail /{' '}
-            {result.timeMode === 'instant' ? 'preview snapshot' : 'whole match'}
+            <strong>{result.cells.length}</strong> mapped groups /{' '}
+            {result.resolution === 'section' ? 'section' : 'row'} detail /{' '}
+            {result.timeMode === 'instant'
+              ? 'current preview time'
+              : 'whole match'}
           </p>
           <ul aria-label="Sunlight heatmap classifications">
             {Object.entries(labels).map(([classification, label]) => (
@@ -96,9 +111,9 @@ export function SunHeatmapPanel() {
             ))}
           </ul>
           <small>
-            Three representative positions are sampled per group. Cached by
-            time, physics, and geometry version. This represents geometric sun
-            exposure, not measured temperature; results remain estimates.
+            Color is applied to spectator clothing as well as chairs so the map
+            remains visible in occupied stands. Labels—not color alone—carry the
+            meaning. This is sunlight exposure, not measured temperature.
           </small>
         </div>
       )}

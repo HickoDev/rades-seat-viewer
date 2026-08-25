@@ -17,6 +17,8 @@ import {
 } from 'three';
 
 import { useStadiumStore } from '../state/useStadiumStore';
+import { heatmapColorValues } from '../sunlight/heatmapColors';
+import { getHeatmapGroupKey } from '../sunlight/sunlightHeatmap';
 import {
   isTerraceSection,
   isVisitorClosedSection,
@@ -61,6 +63,12 @@ const hiddenScale = new Vector3(0, 0, 0);
 const unitScale = new Vector3(1, 1, 1);
 const upAxis = new Vector3(0, 1, 0);
 const ignoreRaycast = () => undefined;
+const heatmapColors = {
+  'mostly-sunny': new Color(heatmapColorValues['mostly-sunny']),
+  'partially-sunny': new Color(heatmapColorValues['partially-sunny']),
+  'mostly-shaded': new Color(heatmapColorValues['mostly-shaded']),
+  'fully-shaded': new Color(heatmapColorValues['fully-shaded']),
+} as const;
 
 type CrowdPartition = 'static' | 'animated';
 type InstanceLocation = { partition: CrowdPartition; instanceId: number };
@@ -86,6 +94,8 @@ export function StadiumCrowd() {
   const selectedSectionId = useStadiumStore((state) => state.selectedSectionId);
   const selectedRow = useStadiumStore((state) => state.selectedRow);
   const selectedSeat = useStadiumStore((state) => state.selectedSeat);
+  const showSunHeatmap = useStadiumStore((state) => state.showSunHeatmap);
+  const sunHeatmapResult = useStadiumStore((state) => state.sunHeatmapResult);
   const { occupants } = radesStadiumConfig;
   const occupancy =
     renderQuality === 'high'
@@ -122,6 +132,29 @@ export function StadiumCrowd() {
     });
     return index;
   }, [animatedMembers, staticMembers]);
+  const heatmapColorByGroup = useMemo(() => {
+    const colors = new Map<string, Color>();
+    if (!showSunHeatmap || !sunHeatmapResult) return colors;
+    sunHeatmapResult.cells.forEach((cell) => {
+      colors.set(cell.key, heatmapColors[cell.classification]);
+    });
+    return colors;
+  }, [showSunHeatmap, sunHeatmapResult]);
+  const getMemberColor = useCallback(
+    (member: CrowdMember) => {
+      const placement = member.placement;
+      const groupKey = getHeatmapGroupKey(
+        placement.sectionId,
+        placement.rowNumber,
+        sunHeatmapResult?.resolution ?? 'section',
+      );
+      return (
+        heatmapColorByGroup.get(groupKey) ??
+        clothingColors[member.clothingColorIndex]
+      );
+    },
+    [heatmapColorByGroup, sunHeatmapResult?.resolution],
+  );
   const bodyGeometry = useMemo(
     () =>
       createPersonBodyGeometry('seated', occupants.seatedPersonHeight, 'low'),
@@ -235,10 +268,7 @@ export function StadiumCrowd() {
       staticBody.setMatrixAt(instanceId, matrix);
       staticHead.setMatrixAt(instanceId, matrix);
       staticHair?.setMatrixAt(instanceId, matrix);
-      staticBody.setColorAt(
-        instanceId,
-        clothingColors[member.clothingColorIndex],
-      );
+      staticBody.setColorAt(instanceId, getMemberColor(member));
       staticHead.setColorAt(instanceId, skinColors[member.skinColorIndex]);
       staticHair?.setColorAt(
         instanceId,
@@ -246,10 +276,7 @@ export function StadiumCrowd() {
       );
     });
     animatedMembers.forEach((member, instanceId) => {
-      animatedBody.setColorAt(
-        instanceId,
-        clothingColors[member.clothingColorIndex],
-      );
+      animatedBody.setColorAt(instanceId, getMemberColor(member));
       animatedHead.setColorAt(instanceId, skinColors[member.skinColorIndex]);
       animatedHair?.setColorAt(
         instanceId,
@@ -272,7 +299,7 @@ export function StadiumCrowd() {
       mesh.computeBoundingSphere();
     });
     hiddenLocationRef.current = null;
-  }, [animatedMembers, staticMembers, updateAnimatedMatrices]);
+  }, [animatedMembers, getMemberColor, staticMembers, updateAnimatedMatrices]);
 
   useEffect(() => {
     const staticBody = staticBodyRef.current;

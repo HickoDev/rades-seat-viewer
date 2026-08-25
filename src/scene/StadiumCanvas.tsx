@@ -8,6 +8,7 @@ import { useStadiumStore } from '../state/useStadiumStore';
 import { useRenderQuality } from '../utils/useRenderQuality';
 import { useReducedMotion } from '../utils/useReducedMotion';
 import { LoadingScreen } from '../ui/LoadingScreen';
+import { CurrentExposureBadge } from '../ui/CurrentExposureBadge';
 import { CameraRig } from './CameraRig';
 import { Environment } from './Environment';
 import { PerformanceMonitor } from './PerformanceMonitor';
@@ -34,9 +35,9 @@ export function StadiumCanvas() {
         key={renderQuality}
         frameloop={prefersReducedMotion ? 'demand' : 'always'}
         camera={{
-          far: siteRadius * 8,
+          far: siteRadius * 6,
           fov: 42,
-          near: 0.1,
+          near: 0.5,
           position: [siteRadius * 1.2, siteRadius * 1.55, siteRadius * 3.25],
         }}
         dpr={renderQuality === 'low' ? [0.75, 1] : [1, 1.75]}
@@ -66,6 +67,8 @@ export function StadiumCanvas() {
         <CameraRig />
         <PerformanceMonitor />
       </Canvas>
+
+      <CurrentExposureBadge />
 
       <div className="viewport-hud" aria-hidden="true">
         <span className="viewport-hud__eyebrow">{renderQuality} quality</span>

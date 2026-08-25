@@ -12,6 +12,8 @@ import {
   isVisitorClosedSection,
 } from '../seats/viewingPositions';
 import { useStadiumStore } from '../state/useStadiumStore';
+import { heatmapColorValues } from '../sunlight/heatmapColors';
+import { getHeatmapGroupKey } from '../sunlight/sunlightHeatmap';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { useRenderQuality } from '../utils/useRenderQuality';
 import {
@@ -42,6 +44,12 @@ const hairColors = [
 ];
 const hiddenMatrix = new Matrix4().makeScale(0, 0, 0);
 const ignoreRaycast = () => undefined;
+const heatmapColors = {
+  'mostly-sunny': new Color(heatmapColorValues['mostly-sunny']),
+  'partially-sunny': new Color(heatmapColorValues['partially-sunny']),
+  'mostly-shaded': new Color(heatmapColorValues['mostly-shaded']),
+  'fully-shaded': new Color(heatmapColorValues['fully-shaded']),
+} as const;
 
 function memberKey(member: ReturnType<typeof generateCrowdMembers>[number]) {
   const placement = member.placement;
@@ -58,6 +66,8 @@ export function VirageCrowd() {
   const selectedSectionId = useStadiumStore((state) => state.selectedSectionId);
   const selectedRow = useStadiumStore((state) => state.selectedRow);
   const selectedSeat = useStadiumStore((state) => state.selectedSeat);
+  const showSunHeatmap = useStadiumStore((state) => state.showSunHeatmap);
+  const sunHeatmapResult = useStadiumStore((state) => state.sunHeatmapResult);
   const { occupants } = radesStadiumConfig;
   const occupancy =
     renderQuality === 'high'
@@ -83,6 +93,14 @@ export function VirageCrowd() {
       ),
     [members],
   );
+  const heatmapColorByGroup = useMemo(() => {
+    const colors = new Map<string, Color>();
+    if (!showSunHeatmap || !sunHeatmapResult) return colors;
+    sunHeatmapResult.cells.forEach((cell) => {
+      colors.set(cell.key, heatmapColors[cell.classification]);
+    });
+    return colors;
+  }, [showSunHeatmap, sunHeatmapResult]);
   const bodyGeometry = useMemo(
     () =>
       createPersonBodyGeometry(
@@ -141,9 +159,15 @@ export function VirageCrowd() {
       body.setMatrixAt(instanceId, matrix);
       head.setMatrixAt(instanceId, matrix);
       hair?.setMatrixAt(instanceId, matrix);
+      const groupKey = getHeatmapGroupKey(
+        member.placement.sectionId,
+        member.placement.rowNumber,
+        sunHeatmapResult?.resolution ?? 'section',
+      );
       body.setColorAt(
         instanceId,
-        clothingColors[member.clothingColorIndex % clothingColors.length],
+        heatmapColorByGroup.get(groupKey) ??
+          clothingColors[member.clothingColorIndex % clothingColors.length],
       );
       head.setColorAt(
         instanceId,
@@ -161,7 +185,7 @@ export function VirageCrowd() {
       mesh.computeBoundingSphere();
     }
     hiddenInstanceRef.current = null;
-  }, [members]);
+  }, [heatmapColorByGroup, members, sunHeatmapResult?.resolution]);
 
   useEffect(() => {
     const meshes = [bodyRef.current, headRef.current, hairRef.current].filter(

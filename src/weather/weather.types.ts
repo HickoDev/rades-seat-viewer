@@ -1,6 +1,20 @@
 import type { GeometricExposure, GlareRisk } from '../sunlight/sunlight.types';
 
 export type ExpectedIntensity = 'strong' | 'moderate' | 'weak' | 'none';
+export type ThermalComfortLevel =
+  | 'extreme-heat'
+  | 'very-hot'
+  | 'hot'
+  | 'warm'
+  | 'comfortable'
+  | 'cool'
+  | 'unavailable';
+
+export type ThermalComfort = {
+  level: ThermalComfortLevel;
+  label: string;
+  description: string;
+};
 
 export type WeatherHour = {
   timestampLocal: string;

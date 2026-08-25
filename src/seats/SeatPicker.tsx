@@ -9,6 +9,7 @@ import {
 } from 'three';
 
 import { getHeatmapGroupKey } from '../sunlight/sunlightHeatmap';
+import { heatmapColorValues } from '../sunlight/heatmapColors';
 import { useStadiumStore } from '../state/useStadiumStore';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
 import { isVisitorClosedSection } from './viewingPositions';
@@ -25,12 +26,12 @@ const lowerAccentColor = new Color(radesStadiumConfig.seats.lowerAccentColor);
 const upperSeatColor = new Color(radesStadiumConfig.seats.upperPrimaryColor);
 const upperAccentColor = new Color(radesStadiumConfig.seats.upperAccentColor);
 const vipSeatColor = new Color(radesStadiumConfig.seats.vipColor);
-const selectedSeatColor = new Color('#d9ff70');
+const selectedSeatColor = new Color('#dbeafe');
 const heatmapColors = {
-  'mostly-sunny': new Color('#ffcb55'),
-  'partially-sunny': new Color('#d9a94a'),
-  'mostly-shaded': new Color('#4d927b'),
-  'fully-shaded': new Color('#344a58'),
+  'mostly-sunny': new Color(heatmapColorValues['mostly-sunny']),
+  'partially-sunny': new Color(heatmapColorValues['partially-sunny']),
+  'mostly-shaded': new Color(heatmapColorValues['mostly-shaded']),
+  'fully-shaded': new Color(heatmapColorValues['fully-shaded']),
 } as const;
 
 function getDefaultSeatColor(seat: SeatLayout['metadata'][number]): Color {

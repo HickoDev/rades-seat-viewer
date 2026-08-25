@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { buildOpenMeteoUrl, requestedHourlyFields } from './openMeteoClient';
 import {
   classifyExpectedIntensity,
+  classifyThermalComfort,
   isWithinForecastHorizon,
 } from './weatherAssessment';
 import { openMeteoResponseSchema } from './weatherSchema';
@@ -42,5 +43,12 @@ describe('weather integration', () => {
     expect(classifyExpectedIntensity(310, 250)).toBe('moderate');
     expect(classifyExpectedIntensity(80, 40)).toBe('weak');
     expect(classifyExpectedIntensity(0, 0)).toBe('none');
+  });
+
+  it('translates feels-like temperature into plain-language comfort', () => {
+    expect(classifyThermalComfort(37).label).toBe('Very hot');
+    expect(classifyThermalComfort(32).label).toBe('Hot');
+    expect(classifyThermalComfort(19).label).toBe('Comfortable');
+    expect(classifyThermalComfort(null).level).toBe('unavailable');
   });
 });

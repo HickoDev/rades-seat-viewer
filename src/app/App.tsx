@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { StadiumCanvas } from '../scene/StadiumCanvas';
 import { useStadiumStore } from '../state/useStadiumStore';
 import { StadiumSidebar } from '../ui/StadiumSidebar';
+import { MatchSetupDialog } from '../ui/MatchSetupDialog';
 import { MobileBottomSheet } from '../ui/MobileBottomSheet';
 
 export function App() {
@@ -21,6 +22,7 @@ export function App() {
 
   return (
     <main className="app-shell">
+      <MatchSetupDialog />
       <MobileBottomSheet>
         <StadiumSidebar />
       </MobileBottomSheet>

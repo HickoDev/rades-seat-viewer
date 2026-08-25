@@ -211,6 +211,56 @@ export function PlayerEntranceTunnel() {
         />
       </mesh>
 
+      <group
+        name="main-stand-player-portal-surround"
+        position={[
+          0,
+          0,
+          grandstand.playerTunnelLength / 2 +
+            grandstand.playerTunnelFrameRadius * 1.9,
+        ]}
+      >
+        {([-1, 1] as const).map((side) => (
+          <mesh
+            key={side}
+            position={[
+              (side * (grandstand.playerTunnelWidth + 0.55)) / 2,
+              grandstand.playerTunnelEaveHeight / 2,
+              0,
+            ]}
+          >
+            <boxGeometry
+              args={[0.42, grandstand.playerTunnelEaveHeight + 0.45, 0.5]}
+            />
+            <meshStandardMaterial color="#d5d3c8" roughness={0.9} />
+          </mesh>
+        ))}
+        <mesh position={[0, grandstand.playerTunnelEaveHeight + 0.18, 0]}>
+          <boxGeometry
+            args={[grandstand.playerTunnelWidth + 0.95, 0.42, 0.5]}
+          />
+          <meshStandardMaterial color="#d5d3c8" roughness={0.9} />
+        </mesh>
+        {([-1, 1] as const).map((side) => (
+          <mesh
+            key={`service-${side}`}
+            position={[
+              side * (grandstand.playerTunnelWidth / 2 + 1.25),
+              1.05,
+              0.04,
+            ]}
+          >
+            <boxGeometry args={[1.25, 2.1, 0.12]} />
+            <meshStandardMaterial
+              color="#244a66"
+              emissive="#132c3d"
+              emissiveIntensity={0.1}
+              roughness={0.68}
+            />
+          </mesh>
+        ))}
+      </group>
+
       <instancedMesh
         ref={frameRef}
         args={[frameGeometry, frameMaterial, layout.frameMembers.length]}

@@ -185,6 +185,16 @@ export type StadiumConfig = {
     frontInset: number;
     balconyDepth: number;
     balconyRailHeight: number;
+    centralSuiteWidth: number;
+    centralSuiteHeight: number;
+    pressSuiteWidth: number;
+    pressSuiteHeight: number;
+    controlRoomWidth: number;
+    controlRoomHeight: number;
+    serviceCoreWidth: number;
+    serviceCoreHeight: number;
+    suiteGap: number;
+    upperTierSeatClearanceRows: number;
     playerTunnelLength: number;
     playerTunnelWidth: number;
     playerTunnelEaveHeight: number;

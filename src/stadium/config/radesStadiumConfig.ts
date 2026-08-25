@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-10',
+  version: 'rades-procedural-11',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -211,7 +211,7 @@ export const radesStadiumConfig = {
     benchBayCount: 8,
     benchFrameThickness: 0.08,
     benchSidelineOffset: 9.2,
-    benchSeparation: 6.2,
+    benchSeparation: 8.4,
     benchSeatCount: 12,
   },
   grandstand: {
@@ -219,7 +219,7 @@ export const radesStadiumConfig = {
     officialCapacity: 7_000,
     pressDeskCount: 300,
     sectionIndices: [6, 7, 8, 9],
-    width: 72,
+    width: 90,
     depth: 5.8,
     baseHeight: 13.8,
     height: 5.2,
@@ -228,6 +228,16 @@ export const radesStadiumConfig = {
     frontInset: 1.9,
     balconyDepth: 1.7,
     balconyRailHeight: 0.95,
+    centralSuiteWidth: 24,
+    centralSuiteHeight: 6.4,
+    pressSuiteWidth: 16,
+    pressSuiteHeight: 4.8,
+    controlRoomWidth: 7,
+    controlRoomHeight: 3.7,
+    serviceCoreWidth: 5.5,
+    serviceCoreHeight: 7.4,
+    suiteGap: 1,
+    upperTierSeatClearanceRows: 4,
     // The current retractable covered route was reported as roughly 30 m.
     playerTunnelLength: 30,
     playerTunnelWidth: 5.2,
@@ -350,6 +360,7 @@ export const radesStadiumConfig = {
       'The rectangular concourse bays, tier-separator fascia, track-bend event aprons, inner safety rail, and denser roof-edge lattice are visually calibrated from owner-supplied reference renders; their dimensions are not surveyed.',
       'Vomitories and wide stair wedges use explicit per-section access data instead of an evenly repeated rule; their locations remain visual estimates pending seating plans.',
       'The main-stand player route includes the approximately 30 m retractable covered tunnel reported in January 2023; width, frame spacing, and exact endpoints remain visual estimates.',
+      'The honor, press, control-room, and service-core volumes are modeled separately from interior references; their envelope and window rhythm remain unsurveyed estimates.',
     ],
   },
 } satisfies StadiumConfig;

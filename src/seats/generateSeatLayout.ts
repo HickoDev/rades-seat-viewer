@@ -106,6 +106,13 @@ export function generateSeatLayout(
           if (isInsidePlayerTunnelClearance) {
             continue;
           }
+          const isInsideGrandstandFacilityClearance =
+            tier.id === 'upper' &&
+            rowIndex < config.grandstand.upperTierSeatClearanceRows &&
+            config.grandstand.sectionIndices.includes(sectionIndex);
+          if (isInsideGrandstandFacilityClearance) {
+            continue;
+          }
 
           seatNumber += 1;
           const rotationY = Math.atan2(-x, -z);

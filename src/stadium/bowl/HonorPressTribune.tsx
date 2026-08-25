@@ -7,6 +7,10 @@ import {
 } from 'three';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import {
+  createGrandstandFacilityLayout,
+  type GrandstandFacilityVolume,
+} from './grandstandLayout';
 
 function createTribuneSignMaterial() {
   const canvas = document.createElement('canvas');
@@ -22,24 +26,156 @@ function createTribuneSignMaterial() {
   context.fillStyle = gradient;
   context.fillRect(0, 0, canvas.width, canvas.height);
   context.fillStyle = '#f5f7ef';
-  context.font = '700 78px Arial';
+  context.font = '700 66px Arial';
   context.textAlign = 'center';
   context.textBaseline = 'middle';
   context.fillText(
-    'STADE OLYMPIQUE  ·  HAMMADI AGREBI',
+    "TRIBUNE D'HONNEUR  ·  منصة شرفية",
     canvas.width / 2,
     canvas.height / 2,
   );
 
   const texture = new CanvasTexture(canvas);
   texture.colorSpace = SRGBColorSpace;
-  const material = new MeshStandardMaterial({
-    map: texture,
-    emissive: '#174e8b',
-    emissiveIntensity: 0.1,
-    roughness: 0.58,
-  });
-  return { material, texture };
+  return {
+    texture,
+    material: new MeshStandardMaterial({
+      map: texture,
+      emissive: '#174e8b',
+      emissiveIntensity: 0.12,
+      roughness: 0.58,
+    }),
+  };
+}
+
+type FacilityMaterials = {
+  shell: MeshStandardMaterial;
+  frame: MeshStandardMaterial;
+  glass: MeshPhysicalMaterial;
+  core: MeshStandardMaterial;
+  accent: MeshStandardMaterial;
+};
+
+function FacilityVolume({
+  facility,
+  frontZ,
+  materials,
+  side,
+}: {
+  facility: GrandstandFacilityVolume;
+  frontZ: number;
+  materials: FacilityMaterials;
+  side: -1 | 1;
+}) {
+  const isServiceCore = facility.kind === 'service-core';
+  const windowHeight = Math.max(1.8, facility.height - 1.25);
+  const windowWidth = facility.width / facility.windowBayCount;
+  const centerZ = frontZ + (side * facility.depth) / 2;
+
+  return (
+    <group name={facility.id}>
+      <mesh
+        material={isServiceCore ? materials.core : materials.shell}
+        position={[
+          facility.centerX,
+          facility.baseHeight + facility.height / 2,
+          centerZ,
+        ]}
+        userData={{
+          shadowOccluder: true,
+          occluderType: `grandstand-${facility.kind}`,
+        }}
+      >
+        <boxGeometry args={[facility.width, facility.height, facility.depth]} />
+      </mesh>
+
+      {!isServiceCore &&
+        Array.from({ length: facility.windowBayCount }, (_, bayIndex) => (
+          <mesh
+            key={bayIndex}
+            material={materials.glass}
+            position={[
+              facility.centerX -
+                facility.width / 2 +
+                windowWidth * (bayIndex + 0.5),
+              facility.baseHeight + windowHeight / 2 + 0.32,
+              frontZ - side * 0.065,
+            ]}
+          >
+            <boxGeometry args={[windowWidth - 0.16, windowHeight, 0.1]} />
+          </mesh>
+        ))}
+
+      {!isServiceCore &&
+        Array.from({ length: facility.windowBayCount + 1 }, (_, frameIndex) => (
+          <mesh
+            key={`frame-${frameIndex}`}
+            material={materials.frame}
+            position={[
+              facility.centerX - facility.width / 2 + windowWidth * frameIndex,
+              facility.baseHeight + windowHeight / 2 + 0.32,
+              frontZ - side * 0.12,
+            ]}
+          >
+            <boxGeometry args={[0.1, windowHeight + 0.18, 0.13]} />
+          </mesh>
+        ))}
+
+      {isServiceCore && (
+        <>
+          <mesh
+            material={materials.glass}
+            position={[
+              facility.centerX,
+              facility.baseHeight + facility.height * 0.7,
+              frontZ - side * 0.075,
+            ]}
+          >
+            <boxGeometry
+              args={[facility.width * 0.34, facility.height * 0.34, 0.1]}
+            />
+          </mesh>
+          <mesh
+            material={materials.accent}
+            position={[
+              facility.centerX,
+              facility.baseHeight + 1.2,
+              frontZ - side * 0.08,
+            ]}
+          >
+            <boxGeometry args={[facility.width * 0.48, 2.4, 0.12]} />
+          </mesh>
+          {[-0.48, 0.48].map((rotationZ, index) => (
+            <mesh
+              key={rotationZ}
+              material={materials.frame}
+              position={[
+                facility.centerX,
+                facility.baseHeight + 3.2 + index * 1.4,
+                frontZ - side * 0.16,
+              ]}
+              rotation={[0, 0, rotationZ]}
+            >
+              <boxGeometry args={[facility.width * 0.72, 0.1, 0.12]} />
+            </mesh>
+          ))}
+        </>
+      )}
+
+      <mesh
+        material={materials.frame}
+        position={[
+          facility.centerX,
+          facility.baseHeight + facility.height + 0.12,
+          centerZ,
+        ]}
+      >
+        <boxGeometry
+          args={[facility.width + 0.32, 0.24, facility.depth + 0.3]}
+        />
+      </mesh>
+    </group>
+  );
 }
 
 export function HonorPressTribune() {
@@ -47,166 +183,73 @@ export function HonorPressTribune() {
   const upperTier = tiers.find((tier) => tier.id === 'upper') ?? tiers[1];
   const side = grandstand.side;
   const frontZ = side * (upperTier.startRadiusZ - grandstand.frontInset);
-  const centerZ = frontZ + (side * grandstand.depth) / 2;
-  const windowHeight = grandstand.height - grandstand.signBandHeight - 0.72;
-  const windowWidth = grandstand.width / grandstand.windowBayCount;
-  const shellMaterial = useMemo(
-    () =>
-      new MeshStandardMaterial({
-        color: '#e4e0d2',
-        roughness: 0.84,
-      }),
-    [],
+  const facilities = useMemo(
+    () => createGrandstandFacilityLayout(grandstand),
+    [grandstand],
   );
-  const frameMaterial = useMemo(
-    () =>
-      new MeshStandardMaterial({
-        color: '#e9eeeb',
-        metalness: 0.38,
-        roughness: 0.44,
+  const materials = useMemo<FacilityMaterials>(
+    () => ({
+      shell: new MeshStandardMaterial({ color: '#ddd9cc', roughness: 0.86 }),
+      frame: new MeshStandardMaterial({
+        color: '#eef1ed',
+        metalness: 0.32,
+        roughness: 0.46,
       }),
-    [],
-  );
-  const glassMaterial = useMemo(
-    () =>
-      new MeshPhysicalMaterial({
-        color: '#4d849b',
-        emissive: '#183c50',
-        emissiveIntensity: 0.16,
-        metalness: 0.05,
-        opacity: 0.84,
-        roughness: 0.24,
+      glass: new MeshPhysicalMaterial({
+        color: '#477b92',
+        emissive: '#173a4b',
+        emissiveIntensity: 0.15,
+        opacity: 0.86,
+        roughness: 0.22,
         transparent: true,
-        transmission: 0,
       }),
+      core: new MeshStandardMaterial({ color: '#c9c6bb', roughness: 0.92 }),
+      accent: new MeshStandardMaterial({
+        color: '#245f91',
+        emissive: '#143b5e',
+        emissiveIntensity: 0.12,
+        roughness: 0.58,
+      }),
+    }),
     [],
   );
-  const woodMaterial = useMemo(
-    () =>
-      new MeshStandardMaterial({
-        color: '#7a4a27',
-        roughness: 0.74,
-      }),
+  const deskMaterial = useMemo(
+    () => new MeshStandardMaterial({ color: '#744624', roughness: 0.76 }),
     [],
   );
-  const railMaterial = useMemo(
-    () =>
-      new MeshStandardMaterial({
-        color: '#d9e0de',
-        metalness: 0.56,
-        roughness: 0.38,
-      }),
-    [],
-  );
-  const signResource = useMemo(() => createTribuneSignMaterial(), []);
+  const sign = useMemo(() => createTribuneSignMaterial(), []);
 
   useEffect(
     () => () => {
-      shellMaterial.dispose();
-      frameMaterial.dispose();
-      glassMaterial.dispose();
-      woodMaterial.dispose();
-      railMaterial.dispose();
-      signResource.material.dispose();
-      signResource.texture.dispose();
+      Object.values(materials).forEach((material) => material.dispose());
+      deskMaterial.dispose();
+      sign.material.dispose();
+      sign.texture.dispose();
     },
-    [
-      frameMaterial,
-      glassMaterial,
-      railMaterial,
-      shellMaterial,
-      signResource,
-      woodMaterial,
-    ],
+    [deskMaterial, materials, sign],
   );
 
   return (
     <group
-      name="honor-and-press-tribune"
+      name="honor-press-and-control-complex"
       userData={{
         officialCapacity: grandstand.officialCapacity,
         pressDeskCount: grandstand.pressDeskCount,
         dimensionsAreEstimates: true,
       }}
     >
-      <mesh
-        material={shellMaterial}
-        position={[0, grandstand.baseHeight + grandstand.height / 2, centerZ]}
-        userData={{
-          shadowOccluder: true,
-          occluderType: 'honor-press-tribune',
-        }}
-      >
-        <boxGeometry
-          args={[grandstand.width, grandstand.height, grandstand.depth]}
+      {facilities.map((facility) => (
+        <FacilityVolume
+          key={facility.id}
+          facility={facility}
+          frontZ={frontZ}
+          materials={materials}
+          side={side}
         />
-      </mesh>
-
-      {Array.from({ length: grandstand.windowBayCount }, (_, bayIndex) => {
-        const x = -grandstand.width / 2 + windowWidth * (bayIndex + 0.5);
-        return (
-          <mesh
-            key={bayIndex}
-            material={glassMaterial}
-            position={[
-              x,
-              grandstand.baseHeight + windowHeight / 2,
-              frontZ - side * 0.045,
-            ]}
-          >
-            <boxGeometry args={[windowWidth - 0.14, windowHeight, 0.08]} />
-          </mesh>
-        );
-      })}
-
-      {Array.from(
-        { length: grandstand.windowBayCount + 1 },
-        (_, frameIndex) => (
-          <mesh
-            key={frameIndex}
-            material={frameMaterial}
-            position={[
-              -grandstand.width / 2 + windowWidth * frameIndex,
-              grandstand.baseHeight + windowHeight / 2,
-              frontZ - side * 0.095,
-            ]}
-          >
-            <boxGeometry args={[0.1, windowHeight + 0.18, 0.12]} />
-          </mesh>
-        ),
-      )}
-
-      {[0.34, 0.67].map((heightRatio) => (
-        <mesh
-          key={heightRatio}
-          material={frameMaterial}
-          position={[
-            0,
-            grandstand.baseHeight + windowHeight * heightRatio,
-            frontZ - side * 0.1,
-          ]}
-        >
-          <boxGeometry args={[grandstand.width, 0.1, 0.13]} />
-        </mesh>
       ))}
 
       <mesh
-        material={signResource.material}
-        position={[
-          0,
-          grandstand.baseHeight +
-            grandstand.height -
-            grandstand.signBandHeight / 2,
-          frontZ - side * 0.11,
-        ]}
-      >
-        <boxGeometry
-          args={[grandstand.width, grandstand.signBandHeight, 0.14]}
-        />
-      </mesh>
-
-      <mesh
-        material={woodMaterial}
+        material={deskMaterial}
         position={[
           0,
           grandstand.baseHeight - 0.08,
@@ -216,7 +259,7 @@ export function HonorPressTribune() {
         <boxGeometry args={[grandstand.width, 0.18, grandstand.balconyDepth]} />
       </mesh>
       <mesh
-        material={railMaterial}
+        material={materials.frame}
         position={[
           0,
           grandstand.baseHeight + grandstand.balconyRailHeight,
@@ -225,24 +268,57 @@ export function HonorPressTribune() {
       >
         <boxGeometry args={[grandstand.width, 0.08, 0.08]} />
       </mesh>
-      {Array.from(
-        { length: grandstand.windowBayCount + 1 },
-        (_, frameIndex) => (
+      {Array.from({ length: 25 }, (_, postIndex) => (
+        <mesh
+          key={postIndex}
+          material={materials.frame}
+          position={[
+            -grandstand.width / 2 + (postIndex * grandstand.width) / 24,
+            grandstand.baseHeight + grandstand.balconyRailHeight / 2,
+            frontZ - side * grandstand.balconyDepth,
+          ]}
+        >
+          <cylinderGeometry
+            args={[0.035, 0.035, grandstand.balconyRailHeight, 6]}
+          />
+        </mesh>
+      ))}
+
+      {([-1, 1] as const).flatMap((pressSide) =>
+        Array.from({ length: 8 }, (_, deskIndex) => (
           <mesh
-            key={`balcony-${frameIndex}`}
-            material={railMaterial}
+            key={`${pressSide}:${deskIndex}`}
+            material={deskMaterial}
             position={[
-              -grandstand.width / 2 + windowWidth * frameIndex,
-              grandstand.baseHeight + grandstand.balconyRailHeight / 2,
-              frontZ - side * grandstand.balconyDepth,
+              pressSide *
+                (grandstand.centralSuiteWidth / 2 +
+                  grandstand.suiteGap +
+                  ((deskIndex + 0.5) / 8) * grandstand.pressSuiteWidth),
+              grandstand.baseHeight + 0.38,
+              frontZ - side * grandstand.balconyDepth * 0.55,
             ]}
           >
-            <cylinderGeometry
-              args={[0.035, 0.035, grandstand.balconyRailHeight, 6]}
-            />
+            <boxGeometry args={[grandstand.pressSuiteWidth / 9, 0.12, 0.58]} />
           </mesh>
-        ),
+        )),
       )}
+
+      <mesh
+        material={sign.material}
+        position={[
+          0,
+          grandstand.baseHeight + grandstand.centralSuiteHeight - 0.5,
+          frontZ - side * 0.16,
+        ]}
+      >
+        <boxGeometry
+          args={[
+            grandstand.centralSuiteWidth - 0.6,
+            grandstand.signBandHeight,
+            0.14,
+          ]}
+        />
+      </mesh>
     </group>
   );
 }

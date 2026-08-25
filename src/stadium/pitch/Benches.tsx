@@ -61,6 +61,26 @@ function TeamBench({ centerX, centerZ, team }: TeamBenchProps) {
       name={`${team}-technical-area-shelter`}
       position={[centerX, 0.14, centerZ]}
     >
+      <group name={`${team}-technical-area-markings`} position={[0, -0.105, 0]}>
+        {([-1, 1] as const).map((side) => (
+          <mesh
+            key={`long-${side}`}
+            position={[0, 0, (side * (structure.benchDepth + 2.4)) / 2]}
+          >
+            <boxGeometry args={[structure.benchLength + 1.4, 0.025, 0.08]} />
+            <meshBasicMaterial color="#f2eee0" />
+          </mesh>
+        ))}
+        {([-1, 1] as const).map((side) => (
+          <mesh
+            key={`end-${side}`}
+            position={[(side * (structure.benchLength + 1.4)) / 2, 0, 0]}
+          >
+            <boxGeometry args={[0.08, 0.025, structure.benchDepth + 2.4]} />
+            <meshBasicMaterial color="#f2eee0" />
+          </mesh>
+        ))}
+      </group>
       <mesh geometry={shelterGeometry} receiveShadow>
         <meshPhysicalMaterial
           color="#5db7d7"

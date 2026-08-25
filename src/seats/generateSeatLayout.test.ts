@@ -67,6 +67,20 @@ describe('generateSeatLayout', () => {
     expect(conflictingSeats).toHaveLength(0);
   });
 
+  it('leaves the upper main-stand facility envelope clear', () => {
+    const conflictingSeats = layout.metadata.filter((seat) => {
+      const sectionIndex = Number(seat.sectionId.split('-')[1]) - 1;
+      return (
+        seat.tierId === 'upper' &&
+        seat.rowNumber <=
+          radesStadiumConfig.grandstand.upperTierSeatClearanceRows &&
+        radesStadiumConfig.grandstand.sectionIndices.includes(sectionIndex)
+      );
+    });
+
+    expect(conflictingSeats).toHaveLength(0);
+  });
+
   it('keeps physical seat spacing approximately uniform within a row', () => {
     const seats = layout.metadata
       .filter((seat) => seat.sectionId === 'upper-09' && seat.rowNumber === 5)

@@ -3,6 +3,10 @@ import { Matrix4, Quaternion, Vector3 } from 'three';
 import type { StadiumConfig } from '../stadium/types/stadium.types';
 import { getSectionId } from '../stadium/bowl/sectionIds';
 import {
+  getTierAccessOpening,
+  getTierAisleWidth,
+} from '../stadium/bowl/tierAccess';
+import {
   angleAtArcLength,
   arcLengthAtAngle,
   createEllipticalArcTable,
@@ -29,13 +33,11 @@ export function generateSeatLayout(
 
   for (const tier of config.tiers) {
     const sectionAngle = (Math.PI * 2) / tier.sectionCount;
-    const portalRowCount = Math.ceil(tier.vomitoryHeight / tier.rowHeight);
 
     for (let rowIndex = 0; rowIndex < tier.rowCount; rowIndex += 1) {
       const radiusX = tier.startRadiusX + (rowIndex + 0.5) * tier.rowDepth;
       const radiusZ = tier.startRadiusZ + (rowIndex + 0.5) * tier.rowDepth;
       const averageRadius = (radiusX + radiusZ) / 2;
-      const aisleAngle = tier.aisleWidth / averageRadius;
       const arcTable = createEllipticalArcTable(
         radiusX,
         radiusZ,
@@ -56,9 +58,18 @@ export function generateSeatLayout(
         }
 
         const sectionId = getSectionId(tier.id, sectionIndex);
-        const sectionStartAngle = sectionIndex * sectionAngle + aisleAngle / 2;
+        const startAisleAngle =
+          getTierAisleWidth(tier, sectionIndex) / averageRadius;
+        const endAisleAngle =
+          getTierAisleWidth(tier, sectionIndex + 1) / averageRadius;
+        const sectionStartAngle =
+          sectionIndex * sectionAngle + startAisleAngle / 2;
         const sectionEndAngle =
-          (sectionIndex + 1) * sectionAngle - aisleAngle / 2;
+          (sectionIndex + 1) * sectionAngle - endAisleAngle / 2;
+        const opening = getTierAccessOpening(tier, sectionIndex);
+        const portalRowCount = opening
+          ? Math.ceil(opening.height / tier.rowHeight)
+          : 0;
         const startDistance = arcLengthAtAngle(arcTable, sectionStartAngle);
         const endDistance = arcLengthAtAngle(arcTable, sectionEndAngle);
         const sectionLength = endDistance - startDistance;
@@ -73,13 +84,13 @@ export function generateSeatLayout(
           const distance = startDistance + (seatIndex + 0.5) * physicalSpacing;
           const angle = angleAtArcLength(arcTable, distance);
           const isPortalRow =
-            sectionIndex % tier.vomitoryEverySections === 0 &&
-            rowIndex >= tier.vomitoryRow &&
-            rowIndex < tier.vomitoryRow + portalRowCount;
+            opening !== null &&
+            rowIndex >= opening.row &&
+            rowIndex < opening.row + portalRowCount;
           const portalCenterDistance = (startDistance + endDistance) / 2;
           const isInsidePortal =
             isPortalRow &&
-            Math.abs(distance - portalCenterDistance) < tier.vomitoryWidth / 2;
+            Math.abs(distance - portalCenterDistance) < opening.width / 2;
 
           if (isInsidePortal) {
             continue;

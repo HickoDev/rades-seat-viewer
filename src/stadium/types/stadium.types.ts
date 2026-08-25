@@ -68,13 +68,25 @@ export type StadiumConfig = {
     rowDepth: number;
     rowHeight: number;
     aisleWidth: number;
+    aisleWidthOverrides: Array<{
+      boundaryIndex: number;
+      width: number;
+    }>;
     walkwayWidth: number;
-    vomitoryEverySections: number;
+    vomitorySectionIndices: number[];
     vomitoryRow: number;
     vomitoryWidth: number;
     vomitoryHeight: number;
     vomitoryDepth: number;
     vomitoryFrameThickness: number;
+    vomitoryOverrides: Array<{
+      sectionIndex: number;
+      row?: number;
+      width?: number;
+      height?: number;
+      depth?: number;
+      frameThickness?: number;
+    }>;
     seatlessSectionIndices: number[];
   }>;
   bowlDetails: {

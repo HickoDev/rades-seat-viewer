@@ -2,6 +2,7 @@ import { Vector3, type Matrix4 } from 'three';
 
 import { createCylinderBetweenMatrix } from '../../utils/geometry';
 import type { StadiumConfig } from '../types/stadium.types';
+import { getTierAisleWidth } from './tierAccess';
 
 type TierConfig = StadiumConfig['tiers'][number];
 type BarrierConfig = StadiumConfig['bowlDetails'];
@@ -28,7 +29,6 @@ export function createSectionBarrierMatrices(
   const matrices: Matrix4[] = [];
   const sectionAngle = (Math.PI * 2) / tier.sectionCount;
   const averageRadius = (tier.startRadiusX + tier.startRadiusZ) / 2;
-  const aisleAngle = tier.aisleWidth / averageRadius;
   const postRows = Array.from(
     { length: Math.ceil(tier.rowCount / barrier.sectionBarrierPostEveryRows) },
     (_, index) =>
@@ -44,6 +44,7 @@ export function createSectionBarrierMatrices(
     sectionIndex += 1
   ) {
     const boundaryAngle = sectionIndex * sectionAngle;
+    const aisleAngle = getTierAisleWidth(tier, sectionIndex) / averageRadius;
 
     for (const side of [-1, 1] as const) {
       const angle = boundaryAngle + side * aisleAngle * 0.54;

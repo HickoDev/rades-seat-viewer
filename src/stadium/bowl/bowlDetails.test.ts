@@ -4,6 +4,7 @@ import { radesStadiumConfig } from '../config/radesStadiumConfig';
 import { createConcourseFeatureMatrices } from './createConcourseFeatureMatrices';
 import { createSectionBarrierMatrices } from './createSectionBarrierMatrices';
 import { createVomitoryFeatureMatrices } from './createVomitoryFeatureMatrices';
+import { getTierAccessOpening, getTierAisleWidth } from './tierAccess';
 
 const lowerTier = radesStadiumConfig.tiers[0];
 const upperTier = radesStadiumConfig.tiers[1];
@@ -21,13 +22,27 @@ describe('procedural bowl details', () => {
 
   it('creates one framed, lit vomitory treatment per configured portal', () => {
     const features = createVomitoryFeatureMatrices(lowerTier);
-    const portalCount =
-      lowerTier.sectionCount / lowerTier.vomitoryEverySections;
+    const portalCount = lowerTier.vomitorySectionIndices.length;
 
     expect(features.panels).toHaveLength(portalCount);
     expect(features.floors).toHaveLength(portalCount);
     expect(features.frames).toHaveLength(portalCount * 3);
     expect(features.signs).toHaveLength(portalCount);
+  });
+
+  it('supports explicit wide portals and stair wedges per section', () => {
+    const standardOpening = getTierAccessOpening(lowerTier, 1);
+    const wideOpening = getTierAccessOpening(lowerTier, 6);
+
+    expect(standardOpening?.width).toBe(lowerTier.vomitoryWidth);
+    expect(wideOpening?.width).toBeGreaterThan(lowerTier.vomitoryWidth);
+    expect(getTierAccessOpening(lowerTier, 2)).toBeNull();
+    expect(getTierAisleWidth(lowerTier, 4)).toBeGreaterThan(
+      lowerTier.aisleWidth,
+    );
+    expect(getTierAisleWidth(lowerTier, lowerTier.sectionCount + 4)).toBe(
+      getTierAisleWidth(lowerTier, 4),
+    );
   });
 
   it('fills the tier break with repeated framed concourse portals and lights', () => {

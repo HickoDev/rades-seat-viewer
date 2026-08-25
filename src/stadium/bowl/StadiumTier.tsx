@@ -6,6 +6,7 @@ import { useStadiumStore } from '../../state/useStadiumStore';
 import type { StadiumConfig } from '../types/stadium.types';
 import { createTierGeometry } from './createTierGeometry';
 import { getSectionId } from './sectionIds';
+import { getTierAccessOpening, getTierAisleWidth } from './tierAccess';
 
 type TierConfig = StadiumConfig['tiers'][number];
 
@@ -21,20 +22,23 @@ export function StadiumTier({ tier }: StadiumTierProps) {
   );
   const sectionAngle = (Math.PI * 2) / tier.sectionCount;
   const averageRadius = (tier.startRadiusX + tier.startRadiusZ) / 2;
-  const aisleAngle = tier.aisleWidth / averageRadius;
 
   const geometries = useMemo(
     () =>
       Array.from({ length: tier.sectionCount }, (_, sectionIndex) => {
         const startAngle = sectionIndex * sectionAngle;
         const centerAngle = startAngle + sectionAngle / 2;
-        const hasVomitory = sectionIndex % tier.vomitoryEverySections === 0;
+        const opening = getTierAccessOpening(tier, sectionIndex);
+        const startAisleAngle =
+          getTierAisleWidth(tier, sectionIndex) / averageRadius;
+        const endAisleAngle =
+          getTierAisleWidth(tier, sectionIndex + 1) / averageRadius;
         const portalRadius =
           (tier.startRadiusX + tier.startRadiusZ) / 2 +
-          tier.vomitoryRow * tier.rowDepth;
+          (opening?.row ?? 0) * tier.rowDepth;
         return createTierGeometry({
-          startAngle: startAngle + aisleAngle / 2,
-          endAngle: startAngle + sectionAngle - aisleAngle / 2,
+          startAngle: startAngle + startAisleAngle / 2,
+          endAngle: startAngle + sectionAngle - endAisleAngle / 2,
           startRadiusX: tier.startRadiusX,
           startRadiusZ: tier.startRadiusZ,
           baseHeight: tier.baseHeight,
@@ -42,17 +46,17 @@ export function StadiumTier({ tier }: StadiumTierProps) {
           rowDepth: tier.rowDepth,
           rowHeight: tier.rowHeight,
           angularSegments: 24,
-          opening: hasVomitory
+          opening: opening
             ? {
                 centerAngle,
-                angularWidth: tier.vomitoryWidth / portalRadius,
-                startRow: tier.vomitoryRow,
-                rowCount: Math.ceil(tier.vomitoryHeight / tier.rowHeight),
+                angularWidth: opening.width / portalRadius,
+                startRow: opening.row,
+                rowCount: Math.ceil(opening.height / tier.rowHeight),
               }
             : undefined,
         });
       }),
-    [aisleAngle, sectionAngle, tier],
+    [averageRadius, sectionAngle, tier],
   );
 
   const materials = useMemo(

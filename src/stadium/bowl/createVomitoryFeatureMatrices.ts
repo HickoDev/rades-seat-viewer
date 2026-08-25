@@ -1,6 +1,7 @@
 import { Matrix4, Quaternion, Vector3 } from 'three';
 
 import type { StadiumConfig } from '../types/stadium.types';
+import { getTierAccessOpening } from './tierAccess';
 
 type TierConfig = StadiumConfig['tiers'][number];
 
@@ -34,15 +35,14 @@ export function createVomitoryFeatureMatrices(tier: TierConfig) {
     sectionIndex < tier.sectionCount;
     sectionIndex += 1
   ) {
-    if (sectionIndex % tier.vomitoryEverySections !== 0) continue;
+    const opening = getTierAccessOpening(tier, sectionIndex);
+    if (!opening) continue;
 
     const angle = ((sectionIndex + 0.5) / tier.sectionCount) * Math.PI * 2;
-    const radiusX = tier.startRadiusX + tier.vomitoryRow * tier.rowDepth;
-    const radiusZ = tier.startRadiusZ + tier.vomitoryRow * tier.rowDepth;
+    const radiusX = tier.startRadiusX + opening.row * tier.rowDepth;
+    const radiusZ = tier.startRadiusZ + opening.row * tier.rowDepth;
     const height =
-      tier.baseHeight +
-      tier.vomitoryRow * tier.rowHeight +
-      tier.vomitoryHeight / 2;
+      tier.baseHeight + opening.row * tier.rowHeight + opening.height / 2;
     const rotation = new Quaternion().setFromAxisAngle(
       new Vector3(0, 1, 0),
       -angle + Math.PI / 2,
@@ -52,45 +52,45 @@ export function createVomitoryFeatureMatrices(tier: TierConfig) {
       rotation,
       unitScale,
     );
-    const frame = tier.vomitoryFrameThickness;
-    const frameDepth = tier.vomitoryDepth * 0.22;
+    const frame = opening.frameThickness;
+    const frameDepth = opening.depth * 0.22;
 
     panels.push(
       composePortalPart(
         portalTransform,
-        [0, 0, tier.vomitoryDepth * 0.36],
-        [tier.vomitoryWidth, tier.vomitoryHeight, tier.vomitoryDepth * 0.1],
+        [0, 0, opening.depth * 0.36],
+        [opening.width, opening.height, opening.depth * 0.1],
       ),
     );
     floors.push(
       composePortalPart(
         portalTransform,
-        [0, -tier.vomitoryHeight / 2 + frame * 0.2, 0],
-        [tier.vomitoryWidth + frame * 2, frame * 0.4, tier.vomitoryDepth],
+        [0, -opening.height / 2 + frame * 0.2, 0],
+        [opening.width + frame * 2, frame * 0.4, opening.depth],
       ),
     );
     frames.push(
       composePortalPart(
         portalTransform,
-        [-(tier.vomitoryWidth + frame) / 2, 0, 0],
-        [frame, tier.vomitoryHeight + frame * 2, frameDepth],
+        [-(opening.width + frame) / 2, 0, 0],
+        [frame, opening.height + frame * 2, frameDepth],
       ),
       composePortalPart(
         portalTransform,
-        [(tier.vomitoryWidth + frame) / 2, 0, 0],
-        [frame, tier.vomitoryHeight + frame * 2, frameDepth],
+        [(opening.width + frame) / 2, 0, 0],
+        [frame, opening.height + frame * 2, frameDepth],
       ),
       composePortalPart(
         portalTransform,
-        [0, (tier.vomitoryHeight + frame) / 2, 0],
-        [tier.vomitoryWidth + frame * 2, frame, frameDepth],
+        [0, (opening.height + frame) / 2, 0],
+        [opening.width + frame * 2, frame, frameDepth],
       ),
     );
     signs.push(
       composePortalPart(
         portalTransform,
-        [0, tier.vomitoryHeight * 0.32, -frameDepth * 0.58],
-        [tier.vomitoryWidth * 0.27, frame * 0.72, frame * 0.14],
+        [0, opening.height * 0.32, -frameDepth * 0.58],
+        [opening.width * 0.27, frame * 0.72, frame * 0.14],
       ),
     );
   }

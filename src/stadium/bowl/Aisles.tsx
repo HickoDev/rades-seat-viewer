@@ -3,13 +3,13 @@ import { MeshStandardMaterial } from 'three';
 
 import type { StadiumConfig } from '../types/stadium.types';
 import { createTierGeometry } from './createTierGeometry';
+import { getTierAisleWidth } from './tierAccess';
 
 type TierConfig = StadiumConfig['tiers'][number];
 
 export function Aisles({ tier }: { tier: TierConfig }) {
   const sectionAngle = (Math.PI * 2) / tier.sectionCount;
   const averageRadius = (tier.startRadiusX + tier.startRadiusZ) / 2;
-  const aisleAngle = tier.aisleWidth / averageRadius;
   const material = useMemo(
     () => new MeshStandardMaterial({ color: '#aeb7b1', roughness: 0.96 }),
     [],
@@ -18,6 +18,8 @@ export function Aisles({ tier }: { tier: TierConfig }) {
     () =>
       Array.from({ length: tier.sectionCount }, (_, sectionIndex) => {
         const boundary = sectionIndex * sectionAngle;
+        const aisleAngle =
+          getTierAisleWidth(tier, sectionIndex) / averageRadius;
         return createTierGeometry({
           startAngle: boundary - aisleAngle / 2,
           endAngle: boundary + aisleAngle / 2,
@@ -30,7 +32,7 @@ export function Aisles({ tier }: { tier: TierConfig }) {
           angularSegments: 2,
         });
       }),
-    [aisleAngle, sectionAngle, tier],
+    [averageRadius, sectionAngle, tier],
   );
 
   useEffect(

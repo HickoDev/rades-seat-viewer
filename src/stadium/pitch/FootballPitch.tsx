@@ -12,7 +12,7 @@ export function FootballPitch() {
     <group name="football-pitch">
       <mesh position={[0, 0, 0]} receiveShadow>
         <boxGeometry args={[pitch.length, 0.1, pitch.width]} />
-        <meshStandardMaterial color="#245d3c" roughness={0.92} />
+        <meshStandardMaterial color="#246f43" roughness={0.92} />
       </mesh>
 
       {Array.from({ length: pitch.mowingStripeCount }, (_, index) => (
@@ -23,7 +23,7 @@ export function FootballPitch() {
         >
           <boxGeometry args={[stripeWidth, 0.01, pitch.width]} />
           <meshStandardMaterial
-            color={index % 2 === 0 ? '#2f7049' : '#286542'}
+            color={index % 2 === 0 ? '#338653' : '#287647'}
             polygonOffset
             polygonOffsetFactor={-1}
             polygonOffsetUnits={-1}

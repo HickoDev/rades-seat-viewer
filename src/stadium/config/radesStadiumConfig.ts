@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-18',
+  version: 'rades-procedural-19',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -451,6 +451,7 @@ export const radesStadiumConfig = {
       'The bowl, seating rows, walkways, and front safety rail now follow a rounded-stadium capsule perimeter with flat long sides instead of a continuous mathematical ellipse.',
       'Four full-depth lower-tier corridors separate the two virages from the lateral stands; the ramp widths and portal dimensions are calibrated from the supplied reference model and remain unsurveyed.',
       'Upper-virage sections remain physically modeled but are marked closed to visitors; they are excluded from public POV selection, crowds, and visitor-facing simulations.',
+      'The membrane, inner truss, fascia, lighting supports, and static shadow meshes now share the rounded-stadium plan visible in the supplied interior reference; the yellow scoreboard housings and diagonal hangers are visual estimates.',
     ],
   },
 } satisfies StadiumConfig;

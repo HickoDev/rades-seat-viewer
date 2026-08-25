@@ -1,5 +1,7 @@
 import { BufferGeometry, Float32BufferAttribute } from 'three';
 
+import { getStadiumPerimeterPoint } from '../geometry/stadiumPerimeter';
+
 export type RoofGeometryOptions = {
   innerRadiusX: number;
   innerRadiusZ: number;
@@ -39,8 +41,6 @@ export function createRoofGeometry({
 
   for (let index = 0; index <= segments; index += 1) {
     const angle = (index / segments) * Math.PI * 2;
-    const cos = Math.cos(angle);
-    const sin = Math.sin(angle);
     const outerWave = waveCount > 0 ? Math.cos(angle * waveCount) : 0;
     const wavedOuterRadiusX = outerRadiusX + outerWave * outerWaveRadius;
     const wavedOuterRadiusZ = outerRadiusZ + outerWave * outerWaveRadius;
@@ -54,25 +54,40 @@ export function createRoofGeometry({
       wavedInnerHeight + (wavedOuterHeight - wavedInnerHeight) * middleRatio;
     const baySag = membraneSag * (0.68 + ((1 - outerWave) / 2) * 0.32);
     const middleHeight = middleBaseHeight - baySag;
+    const innerPoint = getStadiumPerimeterPoint(
+      angle,
+      innerRadiusX,
+      innerRadiusZ,
+    );
+    const middlePoint = getStadiumPerimeterPoint(
+      angle,
+      middleRadiusX,
+      middleRadiusZ,
+    );
+    const outerPoint = getStadiumPerimeterPoint(
+      angle,
+      wavedOuterRadiusX,
+      wavedOuterRadiusZ,
+    );
     positions.push(
-      cos * innerRadiusX,
+      innerPoint.x,
       wavedInnerHeight,
-      sin * innerRadiusZ,
-      cos * middleRadiusX,
+      innerPoint.z,
+      middlePoint.x,
       middleHeight,
-      sin * middleRadiusZ,
-      cos * wavedOuterRadiusX,
+      middlePoint.z,
+      outerPoint.x,
       wavedOuterHeight,
-      sin * wavedOuterRadiusZ,
-      cos * innerRadiusX,
+      outerPoint.z,
+      innerPoint.x,
       wavedInnerHeight - thickness,
-      sin * innerRadiusZ,
-      cos * middleRadiusX,
+      innerPoint.z,
+      middlePoint.x,
       middleHeight - thickness,
-      sin * middleRadiusZ,
-      cos * wavedOuterRadiusX,
+      middlePoint.z,
+      outerPoint.x,
       wavedOuterHeight - thickness,
-      sin * wavedOuterRadiusZ,
+      outerPoint.z,
     );
 
     if (index < segments) {

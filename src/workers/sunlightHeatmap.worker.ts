@@ -3,7 +3,6 @@
 import { DateTime } from 'luxon';
 import {
   BoxGeometry,
-  CylinderGeometry,
   DoubleSide,
   Mesh,
   MeshBasicMaterial,
@@ -17,6 +16,7 @@ import { radesSeatLayout } from '../seats/seatMetadata';
 import type { SeatMetadata } from '../seats/seat.types';
 import { createEllipticalRingGeometry } from '../stadium/bowl/createTierGeometry';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
+import { createStadiumPerimeterWallGeometry } from '../stadium/geometry/createStadiumPerimeterWallGeometry';
 import { getSectionId } from '../stadium/bowl/sectionIds';
 import { createRoofGeometry } from '../stadium/roof/createRoofGeometry';
 import { enableBvhRaycasting } from '../utils/setupBvh';
@@ -86,9 +86,15 @@ function createStaticOccluders(): Object3D[] {
     const outerRadiusZ =
       tier.startRadiusZ + tier.rowCount * tier.rowDepth + tier.walkwayWidth;
     const height = tier.baseHeight + tier.rowCount * tier.rowHeight;
-    const wall = createOccluder(new CylinderGeometry(1, 1, 1, 128, 1, true));
-    wall.position.y = height / 2;
-    wall.scale.set(outerRadiusX, height, outerRadiusZ);
+    const wall = createOccluder(
+      createStadiumPerimeterWallGeometry({
+        bottom: 0,
+        extentX: outerRadiusX,
+        extentZ: outerRadiusZ,
+        height,
+        segments: 192,
+      }),
+    );
     wall.name = `heatmap-${tier.id}-outer-wall`;
     wall.updateMatrixWorld(true);
     occluders.push(wall);

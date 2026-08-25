@@ -1,6 +1,7 @@
 import { Matrix4, Vector3 } from 'three';
 
 import { createCylinderBetweenMatrix } from '../../utils/geometry';
+import { getStadiumPerimeterPoint } from '../geometry/stadiumPerimeter';
 
 export type RoofMembraneSeamOptions = {
   seamCount: number;
@@ -30,16 +31,18 @@ export function createRoofMembraneSeamMatrices({
   return Array.from({ length: seamCount }, (_, seamIndex) => {
     const angle = (seamIndex / seamCount) * Math.PI * 2;
     const wave = Math.cos(angle * seamCount);
+    const inner = getStadiumPerimeterPoint(angle, innerRadiusX, innerRadiusZ);
+    const outer = getStadiumPerimeterPoint(
+      angle,
+      outerRadiusX + wave * outerWaveRadius,
+      outerRadiusZ + wave * outerWaveRadius,
+    );
     return createCylinderBetweenMatrix(
+      new Vector3(inner.x, innerHeight + radius, inner.z),
       new Vector3(
-        Math.cos(angle) * innerRadiusX,
-        innerHeight + radius,
-        Math.sin(angle) * innerRadiusZ,
-      ),
-      new Vector3(
-        Math.cos(angle) * (outerRadiusX + wave * outerWaveRadius),
+        outer.x,
         outerHeight + wave * outerWaveHeight + radius,
-        Math.sin(angle) * (outerRadiusZ + wave * outerWaveRadius),
+        outer.z,
       ),
       radius,
     );

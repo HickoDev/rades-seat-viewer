@@ -74,9 +74,9 @@ export function Scoreboards() {
               ]}
             />
             <meshStandardMaterial
-              color="#d9ddda"
-              metalness={0.38}
-              roughness={0.5}
+              color="#e2c641"
+              metalness={0.26}
+              roughness={0.56}
             />
           </mesh>
           <mesh
@@ -162,7 +162,7 @@ export function Scoreboards() {
               args={[structure.scoreboardWidth, structure.scoreboardHeight]}
             />
           </mesh>
-          {([-0.34, 0.34] as const).map((xRatio) => (
+          {([-0.42, -0.28, 0.28, 0.42] as const).map((xRatio) => (
             <mesh
               key={xRatio}
               position={[
@@ -171,14 +171,15 @@ export function Scoreboards() {
                   structure.scoreboardSupportDrop / 2,
                 0,
               ]}
+              rotation={[0, 0, xRatio < 0 ? -0.24 : 0.24]}
             >
-              <cylinderGeometry
-                args={[0.09, 0.09, structure.scoreboardSupportDrop, 8]}
+              <boxGeometry
+                args={[0.13, structure.scoreboardSupportDrop * 1.08, 0.13]}
               />
               <meshStandardMaterial
-                color="#dce2df"
-                metalness={0.5}
-                roughness={0.38}
+                color="#222a2b"
+                metalness={0.58}
+                roughness={0.42}
               />
             </mesh>
           ))}

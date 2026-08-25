@@ -3,6 +3,10 @@ import { Object3D, Vector3, type InstancedMesh } from 'three';
 
 import { createCylinderBetweenMatrix } from '../../utils/geometry';
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import {
+  getStadiumPerimeterFrame,
+  getStadiumPerimeterPoint,
+} from '../geometry/stadiumPerimeter';
 
 export function LightingStructures() {
   const cableRef = useRef<InstancedMesh>(null);
@@ -13,10 +17,15 @@ export function LightingStructures() {
     () =>
       Array.from({ length: roof.mastCount }, (_, mastIndex) => {
         const angle = (mastIndex / roof.mastCount) * Math.PI * 2;
+        const point = getStadiumPerimeterPoint(
+          angle,
+          roof.outerRadiusX + roof.mastBaseOffset,
+          roof.outerRadiusZ + roof.mastBaseOffset,
+        );
         return {
           angle,
-          x: Math.cos(angle) * (roof.outerRadiusX + roof.mastBaseOffset),
-          z: Math.sin(angle) * (roof.outerRadiusZ + roof.mastBaseOffset),
+          x: point.x,
+          z: point.z,
         };
       }),
     [roof],
@@ -27,23 +36,23 @@ export function LightingStructures() {
         const top = new Vector3(x, roof.mastHeight * 0.91, z);
         const roofStays = [-1, 0, 1].map((offset) => {
           const roofAngle = angle + (offset * Math.PI * 2) / roof.mastCount / 2;
+          const roofPoint = getStadiumPerimeterPoint(
+            roofAngle,
+            roof.outerRadiusX,
+            roof.outerRadiusZ,
+          );
           return createCylinderBetweenMatrix(
             top,
-            new Vector3(
-              Math.cos(roofAngle) * roof.outerRadiusX,
-              roof.outerHeight,
-              Math.sin(roofAngle) * roof.outerRadiusZ,
-            ),
+            new Vector3(roofPoint.x, roof.outerHeight, roofPoint.z),
             roof.mastCableRadius,
           );
         });
-        const groundAnchor = new Vector3(
-          Math.cos(angle) *
-            (roof.outerRadiusX + roof.mastBaseOffset + roof.mastBackstayOffset),
-          0.7,
-          Math.sin(angle) *
-            (roof.outerRadiusZ + roof.mastBaseOffset + roof.mastBackstayOffset),
+        const groundPoint = getStadiumPerimeterPoint(
+          angle,
+          roof.outerRadiusX + roof.mastBaseOffset + roof.mastBackstayOffset,
+          roof.outerRadiusZ + roof.mastBaseOffset + roof.mastBackstayOffset,
         );
+        const groundAnchor = new Vector3(groundPoint.x, 0.7, groundPoint.z);
         return [
           ...roofStays,
           createCylinderBetweenMatrix(
@@ -59,15 +68,16 @@ export function LightingStructures() {
     () =>
       Array.from({ length: roof.floodlightBankCount }, (_, bankIndex) => {
         const angle = (bankIndex / roof.floodlightBankCount) * Math.PI * 2;
-        const tangent = new Vector3(
-          -roof.innerRadiusX * Math.sin(angle),
-          0,
-          roof.innerRadiusZ * Math.cos(angle),
-        ).normalize();
+        const frame = getStadiumPerimeterFrame(
+          angle,
+          roof.innerRadiusX + 1.2,
+          roof.innerRadiusZ + 1.2,
+        );
+        const tangent = new Vector3(frame.tangentX, 0, frame.tangentZ);
         const center = new Vector3(
-          Math.cos(angle) * (roof.innerRadiusX + 1.2),
+          frame.x,
           roof.innerHeight - roof.innerTrussDepth - roof.floodlightHeight,
-          Math.sin(angle) * (roof.innerRadiusZ + 1.2),
+          frame.z,
         );
         return Array.from(
           { length: roof.floodlightsPerBank },
@@ -94,15 +104,16 @@ export function LightingStructures() {
     () =>
       Array.from({ length: roof.floodlightBankCount }, (_, bankIndex) => {
         const angle = (bankIndex / roof.floodlightBankCount) * Math.PI * 2;
-        const tangent = new Vector3(
-          -roof.innerRadiusX * Math.sin(angle),
-          0,
-          roof.innerRadiusZ * Math.cos(angle),
-        ).normalize();
+        const frame = getStadiumPerimeterFrame(
+          angle,
+          roof.innerRadiusX + 1.45,
+          roof.innerRadiusZ + 1.45,
+        );
+        const tangent = new Vector3(frame.tangentX, 0, frame.tangentZ);
         const center = new Vector3(
-          Math.cos(angle) * (roof.innerRadiusX + 1.45),
+          frame.x,
           roof.innerHeight - roof.innerTrussDepth + 0.18,
-          Math.sin(angle) * (roof.innerRadiusZ + 1.45),
+          frame.z,
         );
         const halfSpan =
           ((roof.floodlightsPerBank - 1) * roof.floodlightSpacing) / 2 +

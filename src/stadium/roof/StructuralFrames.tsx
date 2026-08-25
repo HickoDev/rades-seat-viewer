@@ -8,6 +8,7 @@ import {
 
 import { createCylinderBetweenMatrix } from '../../utils/geometry';
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import { getStadiumPerimeterPoint } from '../geometry/stadiumPerimeter';
 
 export function StructuralFrames() {
   const meshRef = useRef<InstancedMesh>(null);
@@ -21,19 +22,19 @@ export function StructuralFrames() {
     () =>
       Array.from({ length: structure.frameCount }, (_, frameIndex) => {
         const angle = (frameIndex / structure.frameCount) * Math.PI * 2;
+        const base = getStadiumPerimeterPoint(
+          angle,
+          roof.outerRadiusX + structure.exteriorRadiusOffset,
+          roof.outerRadiusZ + structure.exteriorRadiusOffset,
+        );
+        const top = getStadiumPerimeterPoint(
+          angle,
+          roof.outerRadiusX,
+          roof.outerRadiusZ,
+        );
         return createCylinderBetweenMatrix(
-          new Vector3(
-            Math.cos(angle) *
-              (roof.outerRadiusX + structure.exteriorRadiusOffset),
-            structure.facadeHeight * 0.12,
-            Math.sin(angle) *
-              (roof.outerRadiusZ + structure.exteriorRadiusOffset),
-          ),
-          new Vector3(
-            Math.cos(angle) * roof.outerRadiusX,
-            structure.portalFrameHeight,
-            Math.sin(angle) * roof.outerRadiusZ,
-          ),
+          new Vector3(base.x, structure.facadeHeight * 0.12, base.z),
+          new Vector3(top.x, structure.portalFrameHeight, top.z),
           structure.columnRadius * 0.52,
         );
       }),

@@ -1,6 +1,7 @@
 import { Vector3, type Matrix4 } from 'three';
 
 import { createCylinderBetweenMatrix } from '../../utils/geometry';
+import { getStadiumPerimeterPoint } from '../geometry/stadiumPerimeter';
 
 export type RoofCatwalkRailOptions = {
   innerRadiusX: number;
@@ -12,17 +13,14 @@ export type RoofCatwalkRailOptions = {
   radius: number;
 };
 
-function ellipsePoint(
+function perimeterPoint(
   angle: number,
   radiusX: number,
   radiusZ: number,
   height: number,
 ) {
-  return new Vector3(
-    Math.cos(angle) * radiusX,
-    height,
-    Math.sin(angle) * radiusZ,
-  );
+  const point = getStadiumPerimeterPoint(angle, radiusX, radiusZ);
+  return new Vector3(point.x, height, point.z);
 }
 
 export function createRoofCatwalkRailMatrices({
@@ -43,9 +41,9 @@ export function createRoofCatwalkRailMatrices({
     for (const offset of [0, width] as const) {
       const radiusX = innerRadiusX + offset;
       const radiusZ = innerRadiusZ + offset;
-      const bottom = ellipsePoint(angle, radiusX, radiusZ, height);
-      const top = ellipsePoint(angle, radiusX, radiusZ, height + railHeight);
-      const nextTop = ellipsePoint(
+      const bottom = perimeterPoint(angle, radiusX, radiusZ, height);
+      const top = perimeterPoint(angle, radiusX, radiusZ, height + railHeight);
+      const nextTop = perimeterPoint(
         nextAngle,
         radiusX,
         radiusZ,

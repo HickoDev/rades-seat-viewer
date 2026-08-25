@@ -1,6 +1,7 @@
 import { Matrix4, Vector3 } from 'three';
 
 import { createCylinderBetweenMatrix } from '../../utils/geometry';
+import { getStadiumPerimeterPoint } from '../geometry/stadiumPerimeter';
 
 export type RoofTrussMatrixOptions = {
   frameCount: number;
@@ -15,17 +16,14 @@ export type RoofTrussMatrixOptions = {
   trussRadius: number;
 };
 
-function pointOnEllipse(
+function pointOnPerimeter(
   angle: number,
   radiusX: number,
   radiusZ: number,
   height: number,
 ) {
-  return new Vector3(
-    Math.cos(angle) * radiusX,
-    height,
-    Math.sin(angle) * radiusZ,
-  );
+  const point = getStadiumPerimeterPoint(angle, radiusX, radiusZ);
+  return new Vector3(point.x, height, point.z);
 }
 
 export function createRoofTrussMatrices({
@@ -47,31 +45,31 @@ export function createRoofTrussMatrices({
     const nextAngle = ((frameIndex + 1) / frameCount) * Math.PI * 2;
     const upperHeight = innerHeight - panelThickness * 0.45;
     const lowerHeight = upperHeight - innerTrussDepth;
-    const upper = pointOnEllipse(
+    const upper = pointOnPerimeter(
       angle,
       innerRadiusX,
       innerRadiusZ,
       upperHeight,
     );
-    const nextUpper = pointOnEllipse(
+    const nextUpper = pointOnPerimeter(
       nextAngle,
       innerRadiusX,
       innerRadiusZ,
       upperHeight,
     );
-    const lower = pointOnEllipse(
+    const lower = pointOnPerimeter(
       angle,
       innerRadiusX + innerTrussDepth * 0.32,
       innerRadiusZ + innerTrussDepth * 0.32,
       lowerHeight,
     );
-    const nextLower = pointOnEllipse(
+    const nextLower = pointOnPerimeter(
       nextAngle,
       innerRadiusX + innerTrussDepth * 0.32,
       innerRadiusZ + innerTrussDepth * 0.32,
       lowerHeight,
     );
-    const outer = pointOnEllipse(
+    const outer = pointOnPerimeter(
       angle,
       outerRadiusX,
       outerRadiusZ,

@@ -1,12 +1,12 @@
 import { useEffect, useLayoutEffect, useMemo, useRef } from 'react';
 import {
   CylinderGeometry,
-  DoubleSide,
   MeshStandardMaterial,
   type InstancedMesh,
 } from 'three';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import { createStadiumPerimeterWallGeometry } from '../geometry/createStadiumPerimeterWallGeometry';
 import { createRoofMembraneSeamMatrices } from './createRoofMembraneSeamMatrices';
 
 export function RoofMembraneDetails() {
@@ -38,6 +38,17 @@ export function RoofMembraneDetails() {
       }),
     [roof],
   );
+  const fasciaGeometry = useMemo(
+    () =>
+      createStadiumPerimeterWallGeometry({
+        bottom: roof.innerHeight - roof.innerFasciaHeight,
+        extentX: roof.innerRadiusX + 0.18,
+        extentZ: roof.innerRadiusZ + 0.18,
+        height: roof.innerFasciaHeight,
+        segments: roof.membraneBayCount * 4,
+      }),
+    [roof],
+  );
 
   useLayoutEffect(() => {
     const mesh = seamRef.current;
@@ -52,9 +63,10 @@ export function RoofMembraneDetails() {
   useEffect(
     () => () => {
       geometry.dispose();
+      fasciaGeometry.dispose();
       material.dispose();
     },
-    [geometry, material],
+    [fasciaGeometry, geometry, material],
   );
 
   return (
@@ -64,22 +76,12 @@ export function RoofMembraneDetails() {
         args={[geometry, material, matrices.length]}
         name="roof-membrane-radial-seams"
       />
-      <mesh
-        position={[0, roof.innerHeight - roof.innerFasciaHeight / 2, 0]}
-        scale={[
-          roof.innerRadiusX + 0.18,
-          roof.innerFasciaHeight,
-          roof.innerRadiusZ + 0.18,
-        ]}
-      >
-        <cylinderGeometry
-          args={[1, 1, 1, roof.membraneBayCount * 4, 1, true]}
-        />
+      <mesh geometry={fasciaGeometry}>
         <meshStandardMaterial
           color="#f0f1ed"
           metalness={0.2}
           roughness={0.5}
-          side={DoubleSide}
+          side={2}
         />
       </mesh>
     </group>

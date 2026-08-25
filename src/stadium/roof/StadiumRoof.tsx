@@ -33,9 +33,9 @@ export function StadiumRoof() {
         side: DoubleSide,
       }),
       underside: new MeshStandardMaterial({
-        color: '#aeb2ad',
+        color: '#c8c18f',
         metalness: 0.06,
-        roughness: 0.82,
+        roughness: 0.86,
         side: DoubleSide,
       }),
       edge: new MeshStandardMaterial({

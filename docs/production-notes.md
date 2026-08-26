@@ -41,9 +41,9 @@ The production bundle uses explicit vendor groups for React, Three.js, React Thr
 
 ## Demo-video preview
 
-The README uses `docs/assets/demo-preview.svg` as a production-styled poster linked to `docs/assets/rades-view-demo.mp4`. The committed 41.8 MiB recording demonstrates the match setup, stadium exploration, viewing positions, weather, and sunlight-exposure experience. The poster remains a lightweight fallback while the explicit text link makes the video destination clear.
+The README embeds `docs/assets/rades-view-demo.gif`, a 6.0 MiB, 720-pixel, 6-fps animated version of the complete 54-second walkthrough. It plays directly in GitHub's rendered README without requiring a click. The original `docs/assets/rades-view-demo.mp4` remains linked immediately below it for full frame rate and audio.
 
-The repository-hosted MP4 is below GitHub's 100 MiB per-file limit, but it is intentionally labelled with its size. If the walkthrough is replaced with a larger or longer recording, host it on a streaming/CDN service rather than growing the Git history with repeated large binaries.
+GitHub removes HTML `<video>` elements from rendered repository READMEs, so the animated GIF is the inline-compatible presentation layer. The repository-hosted MP4 is below GitHub's 100 MiB per-file limit and is intentionally labelled with its size. If the walkthrough is replaced with a larger or longer recording, host it on a streaming/CDN service rather than growing the Git history with repeated large binaries.
 
 ## Data and calibration boundaries
 

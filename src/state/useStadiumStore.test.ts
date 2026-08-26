@@ -1,6 +1,9 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
-import { useStadiumStore } from './useStadiumStore';
+import {
+  qualityPreferenceStorageKey,
+  useStadiumStore,
+} from './useStadiumStore';
 
 describe('stadium selection state', () => {
   afterEach(() => {
@@ -14,12 +17,22 @@ describe('stadium selection state', () => {
       showWeather: false,
       showSunHeatmap: false,
       heatmapTimeMode: 'instant',
-      qualityMode: 'auto',
+      qualityMode: 'high',
     });
+    window.localStorage.removeItem(qualityPreferenceStorageKey);
   });
 
   it('starts with high-quality graphics', () => {
-    expect(useStadiumStore.getState().qualityMode).toBe('auto');
+    expect(useStadiumStore.getState().qualityMode).toBe('high');
+  });
+
+  it('remembers an explicit rendering-quality choice', () => {
+    useStadiumStore.getState().setQualityMode('low');
+
+    expect(useStadiumStore.getState().qualityMode).toBe('low');
+    expect(window.localStorage.getItem(qualityPreferenceStorageKey)).toBe(
+      'low',
+    );
   });
 
   it('enters first-person mode for a serializable terrace position', () => {

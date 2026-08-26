@@ -10,16 +10,41 @@ import type { ViewingPositionKind } from '../seats/viewingPositions';
 import type { InteriorCalibrationViewId } from '../camera/interiorCalibrationViews';
 
 export type CameraMode = 'overview' | 'section' | 'seat';
-export type QualityMode = 'auto' | 'low' | 'high';
+export type QualityMode = 'low' | 'high';
+
+export const qualityPreferenceStorageKey = 'rades-view-render-quality';
+
+function isQualityMode(value: string | null): value is QualityMode {
+  return value === 'low' || value === 'high';
+}
 
 function getInitialQualityMode(): QualityMode {
-  if (typeof window === 'undefined') return 'auto';
+  if (typeof window === 'undefined') return 'high';
   const requestedQuality = new URLSearchParams(window.location.search).get(
     'quality',
   );
-  return requestedQuality === 'low' || requestedQuality === 'high'
-    ? requestedQuality
-    : 'auto';
+  if (isQualityMode(requestedQuality)) return requestedQuality;
+
+  try {
+    const savedQuality = window.localStorage.getItem(
+      qualityPreferenceStorageKey,
+    );
+    if (isQualityMode(savedQuality)) return savedQuality;
+  } catch {
+    // Storage can be unavailable in privacy-restricted browsing contexts.
+  }
+
+  return 'high';
+}
+
+function persistQualityMode(qualityMode: QualityMode) {
+  if (typeof window === 'undefined') return;
+
+  try {
+    window.localStorage.setItem(qualityPreferenceStorageKey, qualityMode);
+  } catch {
+    // The in-memory selection still works when persistent storage is blocked.
+  }
 }
 
 export type StadiumState = {
@@ -171,5 +196,8 @@ export const useStadiumStore = create<StadiumState>((set) => ({
     set({ heatmapTimeMode, sunHeatmapResult: null }),
   setSunExposureResult: (sunExposureResult) => set({ sunExposureResult }),
   setSunHeatmapResult: (sunHeatmapResult) => set({ sunHeatmapResult }),
-  setQualityMode: (qualityMode) => set({ qualityMode }),
+  setQualityMode: (qualityMode) => {
+    persistQualityMode(qualityMode);
+    set({ qualityMode });
+  },
 }));

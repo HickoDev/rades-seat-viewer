@@ -9,18 +9,15 @@ export function QualityControls() {
     <label className="quality-control">
       <span>
         <strong>Rendering quality</strong>
-        <small>
-          Auto uses high detail on desktop and lighter detail on compact screens
-        </small>
+        <small>High is the default. Choose Low only for a lighter scene.</small>
       </span>
       <select
         aria-label="Rendering quality"
         value={qualityMode}
         onChange={(event) => setQualityMode(event.target.value as QualityMode)}
       >
-        <option value="auto">Auto</option>
-        <option value="low">Low</option>
         <option value="high">High</option>
+        <option value="low">Low</option>
       </select>
     </label>
   );

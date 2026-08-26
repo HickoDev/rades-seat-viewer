@@ -37,7 +37,7 @@ The production bundle uses explicit vendor groups for React, Three.js, React Thr
 - Direct 3D clicks on an open lower virage enter a representative standing-terrace POV. Clicking the larger closed upper-virage surface redirects to the nearest valid lower terrace rather than offering a prohibited upper-virage viewpoint.
 - BVH acceleration is initialized with the deferred 3D bundle and used only for the relevant static occluders.
 - Automatic quality starts high on capable desktop devices and reduces pixel ratio, crowd occupancy, and geometry detail on compact touch devices. A manual quality selector remains available.
-- `?quality=low` and `?quality=high` are explicit diagnostic overrides. The browser suite uses the low override to avoid retaining high-detail GPU allocations across sequential headless cases; normal visits remain on automatic high-capability detection.
+- High-detail rendering is the default on every device. A visitor can explicitly select Low, and that choice is remembered in browser storage. `?quality=low` and `?quality=high` remain diagnostic overrides; the browser suite uses the low override to avoid retaining high-detail GPU allocations across sequential headless cases.
 
 ## Demo-video preview
 

@@ -8,9 +8,11 @@ Radès View is an interactive procedural 3D representation of Stade Olympique Ha
 
 ## Product preview
 
-[![Open the Radès View live demo](docs/assets/demo-preview.svg)](https://rades-seat-viewer.vercel.app)
+[![Watch the Radès View product demo](docs/assets/demo-preview.svg)](docs/assets/rades-view-demo.mp4)
 
-The poster opens the live product today. The reserved repository upload target for the final walkthrough is `docs/assets/rades-view-demo.mp4`; see the [production notes](docs/production-notes.md#demo-video-preview) before adding a large media file.
+**[▶ Watch the product demo (MP4, 41.8 MiB)](docs/assets/rades-view-demo.mp4)**
+
+The recorded walkthrough demonstrates the match setup, interactive stadium, viewing positions, weather, and sunlight-exposure experience. You can also [open the live application](https://rades-seat-viewer.vercel.app) and try it yourself.
 
 This repository contains **Milestones 1–17**: the interactive procedural stadium, source-informed Radès calibration, detailed section barriers and concourses, rounded instanced seats, organic low-poly spectators and a 22-player match scene, populated photo-calibrated technical areas, a covered 30-metre player route with a main-stand opening, guided seat and virage-terrace POV modes, four spiral ramp towers, open exterior cross-bracing, Radès-specific honor/press and ceremonial-entrance architecture, detailed tensile-roof seams, upper-virage-mounted scoreboards, goal nets and synchronized creator-campaign hoardings, structural occluders, astronomical sun direction, selected-view shadow raycasts, five-minute exposure timelines, glare classification, validated short-range weather forecasts, cached section/row sunlight heatmaps, an accessible 2D exposure plan, and a production hardening pass. It is not a ticket-booking application.
 

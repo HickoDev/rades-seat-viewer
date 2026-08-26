@@ -41,12 +41,9 @@ The production bundle uses explicit vendor groups for React, Three.js, React Thr
 
 ## Demo-video preview
 
-The README currently uses `docs/assets/demo-preview.svg` as a production-styled poster and links it to the live application. To publish the final recording:
+The README uses `docs/assets/demo-preview.svg` as a production-styled poster linked to `docs/assets/rades-view-demo.mp4`. The committed 41.8 MiB recording demonstrates the match setup, stadium exploration, viewing positions, weather, and sunlight-exposure experience. The poster remains a lightweight fallback while the explicit text link makes the video destination clear.
 
-1. Export a concise MP4 or WebM walkthrough showing match setup, section selection, seat/terrace POV, live sun/shade, weather, and the 2D exposure plan.
-2. Prefer hosting the video on a streaming/CDN service and replace the poster link in `README.md` with that URL.
-3. If repository hosting is intentional, add `docs/assets/rades-view-demo.mp4` and change the README poster destination to that relative path. Check the file size before committing; GitHub repositories should not become the primary home for large production video assets.
-4. Keep the SVG as the poster/fallback and update its wording if the upload path changes.
+The repository-hosted MP4 is below GitHub's 100 MiB per-file limit, but it is intentionally labelled with its size. If the walkthrough is replaced with a larger or longer recording, host it on a streaming/CDN service rather than growing the Git history with repeated large binaries.
 
 ## Data and calibration boundaries
 

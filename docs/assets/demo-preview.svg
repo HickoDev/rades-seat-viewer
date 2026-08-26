@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-labelledby="title description">
-  <title id="title">Radès View demo video placeholder</title>
-  <desc id="description">A top-view stadium illustration with instructions for adding the final product demonstration video.</desc>
+  <title id="title">Radès View product demo</title>
+  <desc id="description">A top-view stadium illustration linking to the recorded Radès View product walkthrough.</desc>
   <rect width="1200" height="675" fill="#e6e0d6"/>
   <rect x="54" y="54" width="1092" height="567" fill="#f6f2e9" stroke="#a9a196" stroke-width="2"/>
   <path d="M72 54h8v567h-8z" fill="#a54836"/>
@@ -16,11 +16,11 @@
   <g fill="#172126" font-family="Arial, Helvetica, sans-serif">
     <text x="132" y="151" font-size="26" font-weight="700" letter-spacing="3">RADÈS VIEW</text>
     <text x="132" y="224" font-size="52" font-weight="700">Product demo</text>
-    <text x="132" y="276" fill="#5f686c" font-size="24">Video preview slot</text>
+    <text x="132" y="276" fill="#5f686c" font-size="24">Click to watch the walkthrough</text>
     <rect x="132" y="329" width="74" height="74" fill="#a54836"/>
     <path d="M164 349l25 17-25 17z" fill="#fff"/>
-    <text x="132" y="466" fill="#176f71" font-size="18" font-weight="700">UPLOAD TARGET</text>
-    <text x="132" y="500" fill="#5f686c" font-size="18">docs/assets/rades-view-demo.mp4</text>
-    <text x="132" y="561" fill="#7d8485" font-size="15">Until then, this preview opens the live application.</text>
+    <text x="132" y="466" fill="#176f71" font-size="18" font-weight="700">RECORDED PRODUCT DEMO</text>
+    <text x="132" y="500" fill="#5f686c" font-size="18">Match setup / POV / weather / sunlight</text>
+    <text x="132" y="561" fill="#7d8485" font-size="15">Click the poster to open the MP4 walkthrough.</text>
   </g>
 </svg>

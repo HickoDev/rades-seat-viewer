@@ -50,7 +50,7 @@ describe('sunlight heatmap', () => {
     );
 
     expect(morningKey).not.toBe(eveningKey);
-    expect(morningKey).toContain('physics-2');
+    expect(morningKey).toContain('physics-3');
   });
 
   it('uses section and row group keys at their requested resolution', () => {

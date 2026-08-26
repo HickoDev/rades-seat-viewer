@@ -11,13 +11,15 @@ function createCell(
   rowNumber: number,
   directSunMinutes: number,
   shadedMinutes: number,
+  sectionId = 'lower-01',
+  tierId = 'lower',
 ): SunHeatmapCell {
   return {
-    key: `lower-01:row-${rowNumber}`,
-    sectionId: 'lower-01',
-    tierId: 'lower',
+    key: `${sectionId}:row-${rowNumber}`,
+    sectionId,
+    tierId,
     rowNumber,
-    representativeSeatId: `lower-01-r${rowNumber}-s1`,
+    representativeSeatId: `${sectionId}-r${rowNumber}-s1`,
     classification: 'partially-sunny',
     directSunMinutes,
     shadedMinutes,
@@ -64,5 +66,19 @@ describe('stadium exposure map model', () => {
 
     expect(points.split(' ')).toHaveLength(10);
     expect(points).not.toMatch(/NaN|Infinity/);
+  });
+
+  it('keeps a closed upper virage colored when exposure samples exist', () => {
+    const sections = buildExposureMapSections(
+      [createCell(8, 20, 80, 'upper-01', 'upper')],
+      radesStadiumConfig,
+    );
+    const upperVirage = sections.find((section) => section.id === 'upper-01');
+
+    expect(upperVirage).toMatchObject({
+      visitorClosed: true,
+      classification: 'mostly-shaded',
+      exposedPercent: 20,
+    });
   });
 });

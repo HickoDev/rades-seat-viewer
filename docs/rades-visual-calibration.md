@@ -8,7 +8,7 @@ This document separates source-backed stadium facts from visual calibration esti
 - Published stadium summaries historically report 60,000 covered places, with 32,000 in the lower tribune and 28,000 in the upper tribune. This is not treated as a current usable-capacity claim or a plastic-chair instance count.
 - The same summaries report a 7,000-place honor/official tribune and a press tribune equipped with 300 desks.
 - The project owner has confirmed that the lower virages must be represented as chairless terraces. Upper-virage chairs remain physically modeled, while those sections are closed to public POV selection. Exact angular boundaries remain unverified.
-- Two large end scoreboards are visible in interior photographs.
+- Two large end scoreboards are visible within the upper virage seating zone rather than suspended from the roof opening.
 
 ## Repeated visual features
 
@@ -16,7 +16,7 @@ The implementation uses the following features because they recur across photogr
 
 - a two-level pale-blue seating bowl;
 - a pale intermediate concourse articulated by repeated dark arched openings, light surrounds, and a blue accent strip;
-- radial light-concrete aisles, metal barriers, recessed vomitory passages, and four non-walkable barrier-lined cuts separating the lower virages from the lateral stands;
+- radial light-concrete aisles, metal barriers, recessed vomitory passages with open mouths and low side cheeks, and four non-walkable barrier-lined cuts separating the lower virages from the lateral stands;
 - a long glazed honor/press frontage on one sideline;
 - a white tensile roof with visibly sagged radial membrane bays, a scalloped outer edge, and a dense white inner space truss;
 - tall external roof masts with cable stays and roof-edge floodlight arrays;

@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { findSeat } from './seatMetadata';
 import {
+  findClosestOpenTerracePosition,
   findRepresentativeTerracePosition,
   findViewingPosition,
   isTerraceSection,
@@ -44,5 +45,14 @@ describe('stadium viewing positions', () => {
     expect(findRepresentativeTerracePosition('lower-01')).not.toBeNull();
     expect(findRepresentativeTerracePosition('upper-01')).toBeNull();
     expect(findViewingPosition('upper-01', 1, 1, 'terrace')).toBeNull();
+  });
+
+  it('redirects a clicked closed upper virage to the nearest open terrace POV', () => {
+    expect(findClosestOpenTerracePosition('upper-01')?.sectionId).toBe(
+      'lower-01',
+    );
+    expect(findClosestOpenTerracePosition('upper-17')?.sectionId).toBe(
+      'lower-17',
+    );
   });
 });

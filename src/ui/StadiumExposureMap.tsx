@@ -36,7 +36,10 @@ function getSectionDescription(section: ExposureMapSection) {
       : `${section.zoneLabel}, ${section.tierName}, section ${section.sectionNumber}: no representative exposure sample.`;
   }
 
-  return `${section.zoneLabel}, ${section.tierName}, section ${section.sectionNumber}: ${classificationLabels[section.classification]}, ${Math.round(section.exposedPercent)} percent exposed.`;
+  const access = section.visitorClosed
+    ? 'closed to visitors; exposure-map estimate only; '
+    : '';
+  return `${section.zoneLabel}, ${section.tierName}, section ${section.sectionNumber}: ${access}${classificationLabels[section.classification]}, ${Math.round(section.exposedPercent)} percent exposed.`;
 }
 
 type StadiumExposureMapProps = {
@@ -259,6 +262,12 @@ export function StadiumExposureMap({
                 {selectedSection.zoneLabel} · {selectedSection.tierName}
               </p>
               <h3>Section {selectedSection.sectionNumber}</h3>
+              {selectedSection.visitorClosed &&
+                selectedSection.classification && (
+                  <p className="exposure-map-detail__access-status">
+                    Closed to visitors · sunlight map only
+                  </p>
+                )}
               {selectedSection.classification ? (
                 <>
                   <strong>

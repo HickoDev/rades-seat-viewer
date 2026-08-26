@@ -35,7 +35,7 @@ export function createHeatmapCacheKey(
 ) {
   return [
     'rades-sun-heatmap',
-    'physics-2',
+    'physics-3',
     configVersion,
     resolution,
     timeMode,

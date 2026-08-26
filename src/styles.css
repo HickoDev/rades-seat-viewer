@@ -2646,6 +2646,19 @@ summary:focus-visible {
   font-size: 13px;
 }
 
+.exposure-map-detail__access-status {
+  width: fit-content;
+  margin-top: 9px !important;
+  padding: 5px 7px;
+  border: 1px solid #bcb5aa;
+  color: #5d6568 !important;
+  background: #ebe7de;
+  font-size: 8px !important;
+  font-weight: 800;
+  letter-spacing: 0.035em;
+  text-transform: uppercase;
+}
+
 .exposure-map-detail dl {
   display: grid;
   gap: 0;

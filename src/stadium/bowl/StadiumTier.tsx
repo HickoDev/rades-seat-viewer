@@ -1,7 +1,10 @@
 import { useEffect, useMemo } from 'react';
 import { MeshStandardMaterial } from 'three';
 
-import { findRepresentativeTerracePosition } from '../../seats/viewingPositions';
+import {
+  findClosestOpenTerracePosition,
+  findRepresentativeTerracePosition,
+} from '../../seats/viewingPositions';
 import { useStadiumStore } from '../../state/useStadiumStore';
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
 import { getStadiumPerimeterAngleForDistance } from '../geometry/stadiumPerimeter';
@@ -119,6 +122,12 @@ export function StadiumTier({ tier }: StadiumTierProps) {
           sectionIndex,
           radesStadiumConfig.grandstand,
         );
+        const terracePosition = isTerrace
+          ? findRepresentativeTerracePosition(sectionId)
+          : zone.id === 'closed-upper-virage'
+            ? findClosestOpenTerracePosition(sectionId)
+            : null;
+        const isClickable = !isClosedToVisitors || terracePosition !== null;
 
         return (
           <mesh
@@ -136,19 +145,22 @@ export function StadiumTier({ tier }: StadiumTierProps) {
             name={`section-${sectionId}`}
             onClick={(event) => {
               event.stopPropagation();
-              if (isClosedToVisitors) return;
-              const terracePosition = isTerrace
-                ? findRepresentativeTerracePosition(sectionId)
-                : null;
               if (terracePosition) {
                 selectTerracePosition(
-                  sectionId,
+                  terracePosition.sectionId,
                   terracePosition.rowNumber,
                   terracePosition.seatNumber,
                 );
-              } else {
+              } else if (!isClosedToVisitors) {
                 selectSection(sectionId);
               }
+            }}
+            onPointerOut={() => {
+              document.body.style.cursor = '';
+            }}
+            onPointerOver={(event) => {
+              event.stopPropagation();
+              document.body.style.cursor = isClickable ? 'pointer' : '';
             }}
             receiveShadow
             userData={{
@@ -160,6 +172,12 @@ export function StadiumTier({ tier }: StadiumTierProps) {
               accessStatus: isClosedToVisitors
                 ? 'closed-to-visitors'
                 : 'open-to-visitors',
+              clickAction:
+                isClosedToVisitors && terracePosition
+                  ? 'open-nearest-lower-virage-pov'
+                  : isClickable
+                    ? 'open-section'
+                    : 'none',
             }}
           />
         );

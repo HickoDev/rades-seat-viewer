@@ -22,7 +22,7 @@ The production bundle uses explicit vendor groups for React, Three.js, React Thr
 - The sidebar opens a separate accessible SVG top-view plan.
 - Every section is a pointer- and keyboard-selectable zone with a text label and numerical detail; color is never the only carrier of meaning.
 - Row-detail simulations are averaged into a section color for the overview. The selected section also lists its representative row samples.
-- Closed upper-virage areas and unsampled sections remain visible in a neutral unavailable state.
+- All 64 tier sections receive representative sunlight colors, including the chairless lower terraces and the physically modeled closed upper virages. Closed areas remain unavailable for visitor POV selection and are labelled “sunlight map only.”
 - The plan follows the configured scene orientation and includes true north, but it remains a schematic plan rather than a surveyed seating chart.
 - “Exposure” means representative geometric direct-sun duration. It is not measured air or surface temperature.
 
@@ -34,6 +34,7 @@ The production bundle uses explicit vendor groups for React, Three.js, React Thr
 - Virage bounce uses a GPU vertex shader in high-motion mode. Reduced-motion users receive static transforms without animation shader attributes.
 - Player and ball movement reuses stable objects and updates transforms in the render loop without writing frame state to Zustand.
 - Sunlight heatmaps run in a Web Worker and cache by stadium configuration, time basis, resolution, and match window.
+- Direct 3D clicks on an open lower virage enter a representative standing-terrace POV. Clicking the larger closed upper-virage surface redirects to the nearest valid lower terrace rather than offering a prohibited upper-virage viewpoint.
 - BVH acceleration is initialized with the deferred 3D bundle and used only for the relevant static occluders.
 - Automatic quality starts high on capable desktop devices and reduces pixel ratio, crowd occupancy, and geometry detail on compact touch devices. A manual quality selector remains available.
 - `?quality=low` and `?quality=high` are explicit diagnostic overrides. The browser suite uses the low override to avoid retaining high-detail GPU allocations across sequential headless cases; normal visits remain on automatic high-capability detection.

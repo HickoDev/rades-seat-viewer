@@ -72,6 +72,10 @@ export function createVomitoryFeatureMatrices(tier: TierConfig) {
     );
     const passageCenterZ = -passageDepth / 2;
     const backWallDepth = Math.max(frame * 0.52, 0.12);
+    const rearFrameZ = -passageDepth + frameDepth / 2;
+    const sideWallHeight = Math.max(0.82, opening.height * 0.34);
+    const sideWallCenterY =
+      -opening.height / 2 + sideWallHeight / 2 + frame * 0.22;
 
     // Close the rear of the recess so the opening reads as an entrance into
     // the internal concourse, never as a sightline through to the exterior.
@@ -93,48 +97,59 @@ export function createVomitoryFeatureMatrices(tier: TierConfig) {
     ceilings.push(
       composePortalPart(
         portalTransform,
-        [0, opening.height / 2 + frame * 0.3, passageCenterZ],
-        [opening.width + frame * 2, frame * 0.6, passageDepth],
+        [0, opening.height / 2 + frame * 0.3, rearFrameZ],
+        [opening.width + frame * 2, frame * 0.6, frameDepth * 2],
       ),
     );
     for (const side of [-1, 1] as const) {
       walls.push(
         composePortalPart(
           portalTransform,
-          [side * (opening.width / 2 + frame / 2), 0, passageCenterZ],
-          [frame, opening.height + frame * 1.2, passageDepth],
+          [
+            side * (opening.width / 2 + frame / 2),
+            sideWallCenterY,
+            passageCenterZ,
+          ],
+          [frame, sideWallHeight, passageDepth],
         ),
       );
     }
 
+    // The tall portal frame belongs at the recessed concourse door. Keeping
+    // the front of the cut open prevents a concrete box from blocking the
+    // sightline of spectators seated beside it.
     frames.push(
       composePortalPart(
         portalTransform,
-        [-(opening.width + frame) / 2, 0, -frameDepth / 2],
+        [-(opening.width + frame) / 2, 0, rearFrameZ],
         [frame, opening.height + frame * 2, frameDepth],
       ),
       composePortalPart(
         portalTransform,
-        [(opening.width + frame) / 2, 0, -frameDepth / 2],
+        [(opening.width + frame) / 2, 0, rearFrameZ],
         [frame, opening.height + frame * 2, frameDepth],
       ),
       composePortalPart(
         portalTransform,
-        [0, (opening.height + frame) / 2, -frameDepth / 2],
+        [0, (opening.height + frame) / 2, rearFrameZ],
         [opening.width + frame * 2, frame, frameDepth],
       ),
     );
     signs.push(
       composePortalPart(
         portalTransform,
-        [0, opening.height * 0.32, frameDepth * 0.18],
+        [0, opening.height * 0.32, rearFrameZ + frameDepth * 0.62],
         [opening.width * 0.27, frame * 0.72, frame * 0.14],
       ),
     );
     lights.push(
       composePortalPart(
         portalTransform,
-        [0, opening.height / 2 - frame * 0.82, -passageDepth * 0.62],
+        [
+          0,
+          opening.height / 2 - frame * 0.82,
+          -passageDepth + frameDepth * 1.8,
+        ],
         [opening.width * 0.38, frame * 0.18, frame * 0.34],
       ),
     );

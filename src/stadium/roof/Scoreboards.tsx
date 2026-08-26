@@ -2,6 +2,7 @@ import { useEffect, useMemo } from 'react';
 import { CanvasTexture, MeshStandardMaterial, SRGBColorSpace } from 'three';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
+import { createScoreboardPlacements } from './scoreboardPlacements';
 
 function createScoreboardMaterial() {
   const canvas = document.createElement('canvas');
@@ -39,7 +40,11 @@ function createScoreboardMaterial() {
 }
 
 export function Scoreboards() {
-  const { roof, structure } = radesStadiumConfig;
+  const { structure } = radesStadiumConfig;
+  const placements = useMemo(
+    () => createScoreboardPlacements(radesStadiumConfig),
+    [],
+  );
   const display = useMemo(() => createScoreboardMaterial(), []);
 
   useEffect(
@@ -51,19 +56,17 @@ export function Scoreboards() {
   );
 
   return (
-    <group name="suspended-end-scoreboards">
-      {([-1, 1] as const).map((side) => (
+    <group name="upper-virage-scoreboards">
+      {placements.map((placement) => (
         <group
-          key={side}
-          name={`scoreboard-${side}`}
-          position={[
-            side * (roof.innerRadiusX - structure.scoreboardDepth),
-            roof.innerHeight -
-              structure.scoreboardSupportDrop -
-              structure.scoreboardHeight / 2,
-            0,
-          ]}
-          rotation={[0, side === -1 ? Math.PI / 2 : -Math.PI / 2, 0]}
+          key={placement.side}
+          name={`scoreboard-${placement.side}`}
+          position={placement.position}
+          rotation={[0, placement.rotationY, 0]}
+          userData={{
+            placement: 'upper-virage-terrace',
+            terraceHeight: placement.terraceHeight,
+          }}
         >
           <mesh
             castShadow
@@ -82,81 +85,7 @@ export function Scoreboards() {
               roughness={0.56}
             />
           </mesh>
-          <mesh
-            position={[0, -structure.scoreboardHeight / 2 - 0.38, 0]}
-            receiveShadow
-          >
-            <boxGeometry
-              args={[
-                structure.scoreboardWidth + structure.scoreboardDeckWidthMargin,
-                0.22,
-                structure.scoreboardDeckDepth,
-              ]}
-            />
-            <meshStandardMaterial
-              color="#68706d"
-              metalness={0.42}
-              roughness={0.58}
-            />
-          </mesh>
-          {([-1, 1] as const).map((deckSide) => (
-            <mesh
-              key={`deck-rail-${deckSide}`}
-              position={[
-                0,
-                -structure.scoreboardHeight / 2 -
-                  0.38 +
-                  structure.scoreboardDeckRailHeight,
-                (deckSide * structure.scoreboardDeckDepth) / 2,
-              ]}
-            >
-              <boxGeometry
-                args={[
-                  structure.scoreboardWidth +
-                    structure.scoreboardDeckWidthMargin,
-                  0.07,
-                  0.07,
-                ]}
-              />
-              <meshStandardMaterial
-                color="#d9dfdc"
-                metalness={0.56}
-                roughness={0.38}
-              />
-            </mesh>
-          ))}
-          {Array.from({ length: 7 }, (_, postIndex) => postIndex).flatMap(
-            (postIndex) =>
-              ([-1, 1] as const).map((deckSide) => (
-                <mesh
-                  key={`deck-post-${postIndex}-${deckSide}`}
-                  position={[
-                    -(
-                      structure.scoreboardWidth +
-                      structure.scoreboardDeckWidthMargin
-                    ) /
-                      2 +
-                      (postIndex *
-                        (structure.scoreboardWidth +
-                          structure.scoreboardDeckWidthMargin)) /
-                        6,
-                    -structure.scoreboardHeight / 2 -
-                      0.38 +
-                      structure.scoreboardDeckRailHeight / 2,
-                    (deckSide * structure.scoreboardDeckDepth) / 2,
-                  ]}
-                >
-                  <cylinderGeometry
-                    args={[0.035, 0.035, structure.scoreboardDeckRailHeight, 6]}
-                  />
-                  <meshStandardMaterial
-                    color="#d9dfdc"
-                    metalness={0.56}
-                    roughness={0.38}
-                  />
-                </mesh>
-              )),
-          )}
+
           <mesh
             material={display.material}
             position={[0, 0, structure.scoreboardDepth / 2 + 0.03]}
@@ -165,27 +94,57 @@ export function Scoreboards() {
               args={[structure.scoreboardWidth, structure.scoreboardHeight]}
             />
           </mesh>
-          {([-0.42, -0.28, 0.28, 0.42] as const).map((xRatio) => (
+
+          <mesh
+            castShadow
+            position={[0, -structure.scoreboardHeight / 2 - 0.23, 0]}
+          >
+            <boxGeometry
+              args={[
+                structure.scoreboardWidth + 1.2,
+                0.26,
+                structure.scoreboardDeckDepth,
+              ]}
+            />
+            <meshStandardMaterial color="#6d736f" roughness={0.76} />
+          </mesh>
+
+          {([-0.32, 0.32] as const).map((xRatio) => (
             <mesh
+              castShadow
               key={xRatio}
               position={[
                 structure.scoreboardWidth * xRatio,
-                structure.scoreboardHeight / 2 +
-                  structure.scoreboardSupportDrop / 2,
+                -structure.scoreboardHeight / 2 - placement.supportHeight / 2,
                 0,
               ]}
-              rotation={[0, 0, xRatio < 0 ? -0.24 : 0.24]}
             >
-              <boxGeometry
-                args={[0.13, structure.scoreboardSupportDrop * 1.08, 0.13]}
-              />
+              <boxGeometry args={[0.32, placement.supportHeight, 0.42]} />
               <meshStandardMaterial
-                color="#222a2b"
-                metalness={0.58}
-                roughness={0.42}
+                color="#555d5a"
+                metalness={0.32}
+                roughness={0.64}
               />
             </mesh>
           ))}
+
+          <mesh
+            castShadow
+            position={[
+              0,
+              -structure.scoreboardHeight / 2 - placement.supportHeight - 0.11,
+              0,
+            ]}
+          >
+            <boxGeometry
+              args={[
+                structure.scoreboardWidth * 0.76,
+                0.22,
+                structure.scoreboardDeckDepth * 0.82,
+              ]}
+            />
+            <meshStandardMaterial color="#a9aaa3" roughness={0.94} />
+          </mesh>
         </group>
       ))}
     </group>

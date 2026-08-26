@@ -68,6 +68,19 @@ describe('radesStadiumConfig', () => {
     expect(roof.innerCatwalkRailHeight).toBeGreaterThan(0.9);
   });
 
+  it('places scoreboards on an upper-virage row rather than the roof', () => {
+    const upperTier = radesStadiumConfig.tiers.find(
+      (tier) => tier.id === 'upper',
+    );
+
+    expect(radesStadiumConfig.structure.scoreboardTerraceRow).toBeLessThan(
+      upperTier?.rowCount ?? 0,
+    );
+    expect(
+      radesStadiumConfig.structure.scoreboardBaseClearance,
+    ).toBeGreaterThan(0);
+  });
+
   it('records the reported honor and press tribune capacities separately', () => {
     expect(
       radesStadiumConfig.tiers.map((tier) => tier.historicalReportedCapacity),

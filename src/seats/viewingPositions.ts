@@ -91,3 +91,47 @@ export function findRepresentativeTerracePosition(
 
   return rowPositions[Math.floor(rowPositions.length / 2)] ?? null;
 }
+
+/**
+ * Resolves any end-stand section to the nearest open lower-virage POV. This
+ * lets the large but visitor-closed upper virage act as a discoverable click
+ * target without pretending that its own seats are publicly accessible.
+ */
+export function findClosestOpenTerracePosition(
+  sectionId: string,
+): SeatMetadata | null {
+  const directPosition = findRepresentativeTerracePosition(sectionId);
+  if (directPosition) return directPosition;
+
+  const [tierId, sectionNumberText] = sectionId.split('-');
+  const sourceTier = radesStadiumConfig.tiers.find(
+    (tier) => tier.id === tierId,
+  );
+  const lowerTier = radesStadiumConfig.tiers.find(
+    (tier) => tier.id === 'lower',
+  );
+  const sectionIndex = Number(sectionNumberText) - 1;
+  if (!sourceTier || !lowerTier || !Number.isInteger(sectionIndex)) return null;
+
+  const sourceProgress = (sectionIndex + 0.5) / sourceTier.sectionCount;
+  const closestTerraceIndex = lowerTier.seatlessSectionIndices.reduce(
+    (closest, candidate) => {
+      const candidateProgress = (candidate + 0.5) / lowerTier.sectionCount;
+      const rawDistance = Math.abs(candidateProgress - sourceProgress);
+      const wrappedDistance = Math.min(rawDistance, 1 - rawDistance);
+      const closestProgress = (closest + 0.5) / lowerTier.sectionCount;
+      const closestRawDistance = Math.abs(closestProgress - sourceProgress);
+      const closestWrappedDistance = Math.min(
+        closestRawDistance,
+        1 - closestRawDistance,
+      );
+      return wrappedDistance < closestWrappedDistance ? candidate : closest;
+    },
+    lowerTier.seatlessSectionIndices[0] ?? -1,
+  );
+  if (closestTerraceIndex < 0) return null;
+
+  return findRepresentativeTerracePosition(
+    getSectionId(lowerTier.id, closestTerraceIndex),
+  );
+}

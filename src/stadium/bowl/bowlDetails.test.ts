@@ -1,3 +1,4 @@
+import { Quaternion, Vector3 } from 'three';
 import { describe, expect, it } from 'vitest';
 
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
@@ -63,6 +64,10 @@ describe('procedural bowl details', () => {
     expect(features.signs).toHaveLength(portalCount);
     expect(features.walls).toHaveLength(portalCount * 2);
     expect(floorDistance).toBeGreaterThan(Math.hypot(portal.x, portal.z));
+
+    const wallScale = new Vector3();
+    features.walls[0].decompose(new Vector3(), new Quaternion(), wallScale);
+    expect(wallScale.y).toBeLessThan((firstOpening?.height ?? 0) / 2);
   });
 
   it('supports explicit wide portals and aisle widths per section', () => {

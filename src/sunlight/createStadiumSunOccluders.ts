@@ -22,6 +22,7 @@ import {
 } from '../stadium/geometry/stadiumPerimeter';
 import { createRoofGeometry } from '../stadium/roof/createRoofGeometry';
 import { createRoofTrussMatrices } from '../stadium/roof/createRoofTrussMatrices';
+import { createScoreboardPlacements } from '../stadium/roof/scoreboardPlacements';
 import { createCylinderBetweenMatrix } from '../utils/geometry';
 import { enableBvhRaycasting } from '../utils/setupBvh';
 
@@ -230,23 +231,17 @@ export function createStadiumSunOccluders(): Object3D[] {
     createMergedCylinderOccluder('sun-roof-masts', createMastMatrices()),
   );
 
-  ([-1, 1] as const).forEach((side) => {
+  createScoreboardPlacements(radesStadiumConfig).forEach((placement) => {
     occluders.push(
       createBoxOccluder(
-        `sun-scoreboard-${side}`,
+        `sun-scoreboard-${placement.side}`,
         [
           structure.scoreboardWidth + 0.7,
           structure.scoreboardHeight + 0.7,
           structure.scoreboardDepth,
         ],
-        [
-          side * (roof.innerRadiusX - structure.scoreboardDepth),
-          roof.innerHeight -
-            structure.scoreboardSupportDrop -
-            structure.scoreboardHeight / 2,
-          0,
-        ],
-        side === -1 ? Math.PI / 2 : -Math.PI / 2,
+        placement.position,
+        placement.rotationY,
       ),
     );
   });

@@ -43,9 +43,9 @@ export function Vomitories({ tier }: { tier: TierConfig }) {
         roughness: 0.42,
       }),
       sign: new MeshStandardMaterial({
-        color: '#74dea2',
-        emissive: '#43d58b',
-        emissiveIntensity: 0.72,
+        color: '#255fc4',
+        emissive: '#153d91',
+        emissiveIntensity: 0.48,
         roughness: 0.5,
       }),
     }),

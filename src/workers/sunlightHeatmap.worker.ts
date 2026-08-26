@@ -4,10 +4,9 @@ import { DateTime } from 'luxon';
 import type { Vector3 } from 'three';
 
 import { calculateSeatView } from '../camera/calculateSeatView';
-import { radesSeatLayout } from '../seats/seatMetadata';
 import type { SeatMetadata } from '../seats/seat.types';
+import { radesViewingPositionLayout } from '../seats/viewingPositions';
 import { radesStadiumConfig } from '../stadium/config/radesStadiumConfig';
-import { getSectionId } from '../stadium/bowl/sectionIds';
 import { calculateSeatShadow } from '../sunlight/calculateSeatShadow';
 import {
   calculateSunPosition,
@@ -38,15 +37,10 @@ function selectRepresentativeSeats(seats: SeatMetadata[]) {
 
 function getRepresentativeSeats(resolution: HeatmapResolution) {
   const groups = new Map<string, SeatMetadata[]>();
-  const closedSectionIds = new Set(
-    radesStadiumConfig.tiers.flatMap((tier) =>
-      tier.closedToVisitorsSectionIndices.map((sectionIndex) =>
-        getSectionId(tier.id, sectionIndex),
-      ),
-    ),
-  );
-  radesSeatLayout.metadata.forEach((seat) => {
-    if (closedSectionIds.has(seat.sectionId)) return;
+  // The simulation grid includes chairless lower terraces and the physical
+  // upper virage. Visitor access is a UI concern; sunlight still reaches and
+  // shades those real stadium surfaces.
+  radesViewingPositionLayout.metadata.forEach((seat) => {
     const key = getHeatmapGroupKey(seat.sectionId, seat.rowNumber, resolution);
     const group = groups.get(key);
     if (group) group.push(seat);

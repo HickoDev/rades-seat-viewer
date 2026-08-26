@@ -8,7 +8,7 @@ import type { StadiumConfig } from '../types/stadium.types';
  * estimates must not be presented as surveyed architectural measurements.
  */
 export const radesStadiumConfig = {
-  version: 'rades-procedural-24',
+  version: 'rades-procedural-25',
   identity: {
     name: 'Stade Olympique Hammadi-Agrebi',
     timezone: 'Africa/Tunis',
@@ -293,7 +293,9 @@ export const radesStadiumConfig = {
     scoreboardWidth: 14,
     scoreboardHeight: 6,
     scoreboardDepth: 1.1,
-    scoreboardSupportDrop: 3.4,
+    // Embedded into the upper end terrace, not suspended from the roof.
+    scoreboardTerraceRow: 14,
+    scoreboardBaseClearance: 0.9,
     scoreboardDeckDepth: 2.7,
     scoreboardDeckWidthMargin: 2.2,
     scoreboardDeckRailHeight: 1.05,
@@ -461,7 +463,7 @@ export const radesStadiumConfig = {
       'Goal nets, advertising hoardings, roof waves, support masts, and the ceremonial entrance are visual estimates from dated photographs and may vary by event or renovation state.',
       'The paired blue technical-area shelters are positioned from interior photographs; their exact dimensions and athletics-track offsets require a site survey.',
       'Crowd and player motion is a lightweight illustrative match-day simulation, not motion-captured behavior or a reconstruction of a real match.',
-      'Four circular access-ramp towers, the open X-braced upper facade, membrane seams, and suspended scoreboards are photo-calibrated visual estimates.',
+      'Four circular access-ramp towers, the open X-braced upper facade, membrane seams, and upper-virage scoreboards are photo-calibrated visual estimates.',
       'The paired ramp arrangement, faceted roof character, and ceremonial-side massing were independently rebuilt from an authorized public visual reference; no reference mesh or texture is included.',
       'The arched concourse bays, tier-separator fascia, track-bend event aprons, inner safety rail, and denser roof-edge lattice are visually calibrated from owner-supplied reference renders; their dimensions are not surveyed.',
       'Vomitories use explicit per-section access data, clear the tier and chairs, and extend toward the rear concourse as open passages rather than surface-mounted dark panels; their locations remain visual estimates pending seating plans.',
@@ -469,13 +471,13 @@ export const radesStadiumConfig = {
       'The honor, press, control-room, and service-core volumes are modeled separately from interior references; their envelope and window rhythm remain unsurveyed estimates.',
       'The two athletics bends have independent apron, runway, sand-pit, and throwing-circle layouts derived from interior views; they are intentionally not mirrored.',
       'Seat colors use broad section and row blocks rather than a fine checkerboard, while chairless lower virages use separate standing spectator instances.',
-      'The inner roof now includes an estimated maintenance catwalk, clustered floodlight banks, and scoreboard service decks visible from spectator viewpoints.',
+      'The inner roof includes an estimated maintenance catwalk and clustered floodlight banks; the scoreboard housings use compact terrace plinths at both upper virages.',
       'Astronomical lighting, selected-seat exposure, and heatmaps share the configured coordinates, project-owner selected 180-degree orientation reversal, and one procedural shadow-occluder model; roof and bowl calibration remains estimated rather than surveyed.',
       'The bowl, seating rows, walkways, and front safety rail now follow a rounded-stadium capsule perimeter with flat long sides instead of a continuous mathematical ellipse.',
       'Four full-depth lower-tier cuts separate the two virages from the lateral stands. They contain no stair, ramp, floor, or portal: the open void and safety barriers follow the supplied reference model and remain unsurveyed.',
       'Tier vomitories terminate inside the recessed passage and do not create a visual opening through the stadium exterior.',
       'Upper-virage sections remain physically modeled but are marked closed to visitors; they are excluded from public POV selection, crowds, and visitor-facing simulations.',
-      'The membrane, inner truss, fascia, lighting supports, and static shadow meshes now share the rounded-stadium plan visible in the supplied interior reference; the yellow scoreboard housings and diagonal hangers are visual estimates.',
+      'The membrane, inner truss, fascia, lighting supports, and static shadow meshes now share the rounded-stadium plan visible in the supplied interior reference; the yellow scoreboard housings are embedded into the upper virage instead of hanging from the roof.',
       'Repeated arched concourse bays, a continuous multi-level main-stand facade, and a blue VIP chair block are visually calibrated from the supplied interior model and remain unsurveyed.',
       'Public stand terminology follows Radès ticket categories: Enceinte inférieure and Enceinte supérieure occupy the main-stand side outside the official Tribune block, while Pelouse occupies the opposite long side. The two geometric tier names remain neutral.',
     ],

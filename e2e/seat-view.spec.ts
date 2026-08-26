@@ -210,7 +210,7 @@ test('automatically shows weather, exposure, and heatmap after seat selection', 
   await expect(
     page.getByText(/(Direct sun|Stadium shade) at this time/),
   ).toBeVisible();
-  await expect(page.getByText(/40 mapped groups/)).toBeVisible({
+  await expect(page.getByText(/64 mapped groups/)).toBeVisible({
     timeout: 25_000,
   });
   await expect(
@@ -224,8 +224,13 @@ test('automatically shows weather, exposure, and heatmap after seat selection', 
     page.getByRole('heading', { name: 'Stadium exposure plan' }),
   ).toBeVisible();
   await expect(page.locator('.exposure-map-zone')).toHaveCount(64);
+  await expect(page.locator('.exposure-map-zone--unavailable')).toHaveCount(0);
   await page.locator('[data-section-id="lower-05"]').click();
   await expect(page.locator('.exposure-map-detail')).toContainText('Section 5');
+  await page.locator('[data-section-id="upper-01"]').click();
+  await expect(page.locator('.exposure-map-detail')).toContainText(
+    'Closed to visitors · sunlight map only',
+  );
   await page.getByRole('button', { name: 'Close exposure map' }).click();
   await expect(
     page.getByRole('heading', { name: 'Stadium exposure plan' }),

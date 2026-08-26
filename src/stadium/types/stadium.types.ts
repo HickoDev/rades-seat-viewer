@@ -201,7 +201,8 @@ export type StadiumConfig = {
     scoreboardWidth: number;
     scoreboardHeight: number;
     scoreboardDepth: number;
-    scoreboardSupportDrop: number;
+    scoreboardTerraceRow: number;
+    scoreboardBaseClearance: number;
     scoreboardDeckDepth: number;
     scoreboardDeckWidthMargin: number;
     scoreboardDeckRailHeight: number;

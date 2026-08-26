@@ -7,6 +7,7 @@ This document records the final production behavior and the operational choices 
 - Production URL: <https://rades-seat-viewer.vercel.app>
 - Repository: <https://github.com/HickoDev/rades-seat-viewer>
 - The app is a Vite single-page application. Vercel serves hashed assets with immutable caching and adds conservative content-type, referrer, and browser-permission headers from `vercel.json`.
+- Vercel Web Analytics is mounted once at the React application root through `@vercel/analytics/react`. It records deployed visitors and page views in the Vercel dashboard without adding a public counter to the interface. The component is intentionally disabled on localhost and loopback previews, where Vercel's analytics endpoint is unavailable.
 - The GitHub Actions workflow uses Node.js 24, installs from `package-lock.json`, runs the complete static/unit/build check, and then runs the Playwright acceptance suite in Chromium.
 
 ## First-load behavior

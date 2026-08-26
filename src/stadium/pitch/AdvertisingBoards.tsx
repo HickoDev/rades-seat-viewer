@@ -10,6 +10,7 @@ import {
 import { useReducedMotion } from '../../utils/useReducedMotion';
 import { radesStadiumConfig } from '../config/radesStadiumConfig';
 import {
+  advertisingCampaignPhases,
   advertisingCampaigns,
   advertisingRotationIntervalMs,
   type AdvertisingCampaign,
@@ -99,7 +100,7 @@ function createRunPositions(
 export function AdvertisingBoards() {
   const { fieldFurniture, grandstand, pitch } = radesStadiumConfig;
   const prefersReducedMotion = useReducedMotion();
-  const [activeCampaignIndex, setActiveCampaignIndex] = useState(0);
+  const [activePhaseIndex, setActivePhaseIndex] = useState(0);
   const geometry = useMemo(
     () =>
       new BoxGeometry(
@@ -172,8 +173,8 @@ export function AdvertisingBoards() {
     if (prefersReducedMotion) return;
 
     const interval = window.setInterval(() => {
-      setActiveCampaignIndex(
-        (currentIndex) => (currentIndex + 1) % advertisingCampaigns.length,
+      setActivePhaseIndex(
+        (currentIndex) => (currentIndex + 1) % advertisingCampaignPhases.length,
       );
     }, advertisingRotationIntervalMs);
 
@@ -187,11 +188,29 @@ export function AdvertisingBoards() {
     [],
   );
 
-  const activeCampaign = advertisingCampaigns[activeCampaignIndex];
-  const activeMaterials = materialSets[activeCampaignIndex];
-  const openCampaign = (event: ThreeEvent<MouseEvent>) => {
+  const activeCampaignIds = advertisingCampaignPhases[activePhaseIndex];
+  const getBoardCampaign = (boardIndex: number, side: -1 | 1) => {
+    const sideOffset = side === 1 ? 1 : 0;
+    const campaignId =
+      activeCampaignIds[(boardIndex + sideOffset) % activeCampaignIds.length];
+    const campaignIndex = advertisingCampaigns.findIndex(
+      (campaign) => campaign.id === campaignId,
+    );
+    const campaign = advertisingCampaigns[campaignIndex];
+    const materials = materialSets[campaignIndex];
+
+    if (!campaign || !materials) {
+      throw new Error(`Missing advertising campaign: ${campaignId}`);
+    }
+
+    return { campaign, materials };
+  };
+  const openCampaign = (
+    event: ThreeEvent<MouseEvent>,
+    campaign: AdvertisingCampaign,
+  ) => {
     event.stopPropagation();
-    window.open(activeCampaign.href, '_blank', 'noopener,noreferrer');
+    window.open(campaign.href, '_blank', 'noopener,noreferrer');
   };
   const showLinkCursor = (event: ThreeEvent<PointerEvent>) => {
     event.stopPropagation();
@@ -206,27 +225,30 @@ export function AdvertisingBoards() {
     <group
       name="pitch-side-advertising-hoardings"
       userData={{
-        activeCampaign: activeCampaign.id,
-        campaignHref: activeCampaign.href,
+        activeCampaigns: [...activeCampaignIds],
       }}
     >
       {([-1, 1] as const).flatMap((side) =>
-        behindGoalPositions.map((offset, index) => (
-          <mesh
-            key={`goal-${side}-${index}`}
-            geometry={geometry}
-            material={activeMaterials}
-            onClick={openCampaign}
-            onPointerOut={restoreCursor}
-            onPointerOver={showLinkCursor}
-            position={[
-              side * (pitch.length / 2 + fieldFurniture.behindGoalOffset),
-              fieldFurniture.advertisingBoardHeight / 2,
-              offset,
-            ]}
-            rotation={[0, Math.PI / 2, 0]}
-          />
-        )),
+        behindGoalPositions.map((offset, index) => {
+          const { campaign, materials } = getBoardCampaign(index, side);
+
+          return (
+            <mesh
+              key={`goal-${side}-${index}`}
+              geometry={geometry}
+              material={materials}
+              onClick={(event) => openCampaign(event, campaign)}
+              onPointerOut={restoreCursor}
+              onPointerOver={showLinkCursor}
+              position={[
+                side * (pitch.length / 2 + fieldFurniture.behindGoalOffset),
+                fieldFurniture.advertisingBoardHeight / 2,
+                offset,
+              ]}
+              rotation={[0, Math.PI / 2, 0]}
+            />
+          );
+        }),
       )}
       {([-1, 1] as const).flatMap((side) =>
         sidelinePositions.map((offset, index) => {
@@ -237,12 +259,14 @@ export function AdvertisingBoards() {
                 fieldFurniture.advertisingBoardSegmentLength / 2;
           if (intersectsPlayerRoute) return null;
 
+          const { campaign, materials } = getBoardCampaign(index, side);
+
           return (
             <mesh
               key={`sideline-${side}-${index}`}
               geometry={geometry}
-              material={activeMaterials}
-              onClick={openCampaign}
+              material={materials}
+              onClick={(event) => openCampaign(event, campaign)}
               onPointerOut={restoreCursor}
               onPointerOver={showLinkCursor}
               position={[

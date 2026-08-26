@@ -1,5 +1,5 @@
 export type AdvertisingCampaign = {
-  id: 'itch' | 'github' | 'instagram';
+  id: AdvertisingCampaignId;
   brand: string;
   eyebrow: string;
   headline: string;
@@ -9,6 +9,9 @@ export type AdvertisingCampaign = {
   foreground: string;
   accent: string;
 };
+
+export type AdvertisingCampaignId =
+  'itch' | 'github' | 'instagram' | 'facebook';
 
 /**
  * Pitch-side LED campaign order. The itch.io portfolio is deliberately first
@@ -40,14 +43,32 @@ export const advertisingCampaigns = [
   {
     id: 'instagram',
     brand: 'ALI DRIDI',
-    eyebrow: 'PROCESS / PREVIEWS / UPDATES',
-    headline: 'FOLLOW THE BUILD',
-    address: '@ALIDRIDI_9',
+    eyebrow: 'MY SOCIALS / LET US TALK',
+    headline: 'CONTACT ME',
+    address: 'INSTAGRAM / @ALIDRIDI_9',
     href: 'https://www.instagram.com/alidridi_9/?hl=en',
     background: '#24131d',
     foreground: '#fff5ef',
     accent: '#f29a72',
   },
+  {
+    id: 'facebook',
+    brand: 'ALI DRIDI',
+    eyebrow: 'MY SOCIALS / LET US TALK',
+    headline: 'CONTACT ME',
+    address: 'FACEBOOK / ALI DRIDI',
+    href: 'https://www.facebook.com/ali.dridi.319/',
+    background: '#132238',
+    foreground: '#f5f8ff',
+    accent: '#75a7f7',
+  },
 ] as const satisfies readonly AdvertisingCampaign[];
+
+/**
+ * The final rotation step is one social/contact phase. Its two destinations
+ * alternate across adjacent boards so Instagram and Facebook appear together.
+ */
+export const advertisingCampaignPhases: readonly (readonly AdvertisingCampaignId[])[] =
+  [['itch'], ['github'], ['instagram', 'facebook']];
 
 export const advertisingRotationIntervalMs = 6_500;

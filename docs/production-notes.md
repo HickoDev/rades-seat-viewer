@@ -18,7 +18,7 @@ The production bundle uses explicit vendor groups for React, Three.js, React Thr
 ## Exposure map contract
 
 - Heatmap classifications never replace chair colors, spectator clothing, pitch materials, or stadium geometry.
-- Pitch-side advertising is an explicit HickoDev creator campaign, not a reconstruction of permanent stadium sponsorship. Its accessible sidebar links follow the same priority order as the LED-style board rotation: itch.io, GitHub, then Instagram.
+- Pitch-side advertising is an explicit HickoDev creator campaign, not a reconstruction of permanent stadium sponsorship. Its accessible sidebar links follow the same priority order as the LED-style board rotation: itch.io, GitHub, then an Instagram/Facebook contact phase.
 - The sidebar opens a separate accessible SVG top-view plan.
 - Every section is a pointer- and keyboard-selectable zone with a text label and numerical detail; color is never the only carrier of meaning.
 - Row-detail simulations are averaged into a section color for the overview. The selected section also lists its representative row samples.

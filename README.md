@@ -4,7 +4,7 @@ Radès View is an interactive procedural 3D representation of Stade Olympique Ha
 
 **Live website:** [rades-seat-viewer.vercel.app](https://rades-seat-viewer.vercel.app)
 
-**Creator:** [Play HickoDev games](https://hickodev.itch.io/) · [GitHub](https://github.com/HickoDev) · [Instagram](https://www.instagram.com/alidridi_9/?hl=en)
+**Creator:** [Play HickoDev games](https://hickodev.itch.io/) · [GitHub](https://github.com/HickoDev) · [Instagram](https://www.instagram.com/alidridi_9/?hl=en) · [Facebook](https://www.facebook.com/ali.dridi.319/)
 
 ## Product preview
 

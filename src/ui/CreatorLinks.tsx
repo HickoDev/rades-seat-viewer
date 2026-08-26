@@ -6,7 +6,11 @@ export function CreatorLinks() {
       {advertisingCampaigns.map((campaign, index) => (
         <a
           className={
-            index === 0 ? 'creator-link creator-link--primary' : 'creator-link'
+            index === 0
+              ? 'creator-link creator-link--primary'
+              : index === 1
+                ? 'creator-link creator-link--wide'
+                : 'creator-link'
           }
           href={campaign.href}
           key={campaign.id}
@@ -15,7 +19,11 @@ export function CreatorLinks() {
         >
           <span>
             <strong>
-              {campaign.id === 'itch' ? 'Play games' : campaign.id}
+              {campaign.id === 'itch'
+                ? 'Play games'
+                : campaign.id === 'github'
+                  ? 'View code'
+                  : `Contact me on ${campaign.id}`}
             </strong>
             <small>{campaign.address.toLowerCase()}</small>
           </span>

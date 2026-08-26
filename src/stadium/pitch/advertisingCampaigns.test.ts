@@ -1,6 +1,9 @@
 import { describe, expect, it } from 'vitest';
 
-import { advertisingCampaigns } from './advertisingCampaigns';
+import {
+  advertisingCampaignPhases,
+  advertisingCampaigns,
+} from './advertisingCampaigns';
 
 describe('advertisingCampaigns', () => {
   it('keeps the requested creator destinations in priority order', () => {
@@ -8,11 +11,21 @@ describe('advertisingCampaigns', () => {
       'itch',
       'github',
       'instagram',
+      'facebook',
     ]);
     expect(advertisingCampaigns.map(({ href }) => href)).toEqual([
       'https://hickodev.itch.io/',
       'https://github.com/HickoDev',
       'https://www.instagram.com/alidridi_9/?hl=en',
+      'https://www.facebook.com/ali.dridi.319/',
+    ]);
+  });
+
+  it('keeps Instagram and Facebook together in the contact phase', () => {
+    expect(advertisingCampaignPhases).toEqual([
+      ['itch'],
+      ['github'],
+      ['instagram', 'facebook'],
     ]);
   });
 

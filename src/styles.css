@@ -910,6 +910,10 @@ summary:focus-visible {
   background: #24211e;
 }
 
+.creator-link--wide {
+  grid-column: 1 / -1;
+}
+
 .creator-link > span,
 .creator-link strong,
 .creator-link small {

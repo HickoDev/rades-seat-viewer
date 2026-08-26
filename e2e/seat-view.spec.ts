@@ -72,6 +72,10 @@ test('loads the setup flow and foundation scene without runtime errors', async (
     'href',
     'https://www.instagram.com/alidridi_9/?hl=en',
   );
+  await expect(page.getByRole('link', { name: /facebook/i })).toHaveAttribute(
+    'href',
+    'https://www.facebook.com/ali.dridi.319/',
+  );
 
   expect(runtimeErrors).toEqual([]);
 });
